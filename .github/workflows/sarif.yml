@@ -1,3 +1,5 @@
+name: 'Code Analysis'
+
 env:
   # Path to the CMake build directory.
   build: '${{ github.workspace }}/build'
