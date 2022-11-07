@@ -2,6 +2,10 @@ env:
   # Path to the CMake build directory.
   build: '${{ github.workspace }}/build'
   config: 'Debug'
+  
+on:
+  push:
+    branches: [ "main" ]
 
 jobs:
   analyze:
