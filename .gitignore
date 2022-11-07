@@ -197,3 +197,8 @@ fabric.properties
 .history/
 
 # End of https://mrkandreev.name/snippets/gitignore-generator/#C,C++,macOS,CLion+all,VisualStudioCode
+
+./.idea
+./bin/*
+
+.idea/
