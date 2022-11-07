@@ -1,1 +1,1 @@
-# prj-socket
+# Gioco dell'impiccato (Socket)
