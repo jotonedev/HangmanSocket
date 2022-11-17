@@ -200,5 +200,5 @@ fabric.properties
 
 ./.idea
 ./bin/*
-
+.vs/
 .idea/
