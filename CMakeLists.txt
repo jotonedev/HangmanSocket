@@ -1,10 +1,12 @@
 cmake_minimum_required(VERSION 3.23)
-project(hangman_game CXX)
+set(CMAKE_CXX_COMPILER "g++.exe")
+set(CMAKE_C_COMPILER "gcc.exe")
 
-enable_language(C CXX)
+project(hangman_game CXX)
 
 set(CMAKE_C_STANDARD 23)
 set(CMAKE_CXX_STANDARD 23)
+
 set(INCLUDE_DIR ${CMAKE_SOURCE_DIR}/lib)
 set(HANGMAN_LIB ${INCLUDE_DIR}/Hangman)
 

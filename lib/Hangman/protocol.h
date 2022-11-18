@@ -9,7 +9,7 @@
 namespace Client {
     // Azioni che il client può inviare al server
     enum Action {
-        // Azione di ingresso nella partita
+        // Azione d'ingresso nella partita
         JOIN_GAME,
         // Azione di richiesta di una nuova lettera
         NEW_LETTER,
@@ -31,7 +31,7 @@ namespace Client {
         WORD_ACCEPTED,
         // Risposta di errore di una nuova parola o frase
         WORD_REJECTED,
-        
+
         // Risposta di conferma di uscita dal gioco
         GAME_QUIT,
         // Risposta di errore
@@ -54,7 +54,9 @@ namespace Client {
         char letter;
         // Bytes in eccesso
         uint8_t excess_data[255];
-    } typedef Message;
+    } typedef LetterMessage;
+
+    _Static_assert(sizeof(Message) == sizeof(LetterMessage), "sizes must match");
 };
 
 
@@ -79,7 +81,7 @@ namespace Server {
         // Segnalazione di un turno di un altro giocatore
         OTHER_TURN,
     };
-    
+
     struct Message {
         Action action;
 
@@ -89,13 +91,13 @@ namespace Server {
 
     struct UpdateUserMessage {
         Action action = UPDATE_USER;
-        
+
         uint8_t user_count;
         char usernames[3][64];
 
         // 63 bytes di dati in più per evitare che il client legga dati non validi
-        // Questo perchè tutti i messaggi hanno una lunghezza standard di 256 bytes + 1 byte per l'azione
-        uint8_t excess_data[63]; 
+        // Questo perchè tutti i messaggi hanno una lunghezza standard di 256 bytes + 4 byte per l'azione
+        uint8_t excess_data[63];
     } typedef UpdateUserMessage;
 
     struct UpdateWordMessage {
@@ -104,18 +106,24 @@ namespace Server {
         // Numero di errori fatti fino in quel momento
         uint8_t errors;
         // Parola o frase da indovinare
-        char shortphrase [255];
+        char shortphrase[255];
     } typedef UpdateWordMessage;
 
-    struct OtherOneTurn {
+    struct OtherTurnMessage {
         Action action = OTHER_TURN;
-        
+
         // Nome del giocatore che deve svolgere il turno
         char player_name[64];
         // Byte in eccesso siccome la lunghezza massima del nome di un player è 64 bytes
-        uint8_t excess_data[192]; 
-    }
+        uint8_t excess_data[192];
+    } typedef OtherOneTurnMessage;
+
+    _Static_assert(sizeof(Message) == sizeof(UpdateUserMessage), "sizes must match");
+    _Static_assert(sizeof(Message) == sizeof(UpdateWordMessage), "sizes must match");
+    _Static_assert(sizeof(Message) == sizeof(OtherTurnMessage), "sizes must match");
 };
 
+
+_Static_assert(sizeof(Client::Message) == sizeof(Server::Message), "sizes must match");
 
 #endif
