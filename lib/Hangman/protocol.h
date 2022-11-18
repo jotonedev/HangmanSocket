@@ -5,6 +5,9 @@
 #include <sys/socket.h>
 
 
+#define SHORTPHRASE_LENGTH 255
+
+
 // Il protocollo per il gioco dell'impiccato si basa su sistema di azione (Action) e risposta (Response)
 namespace Client {
     // Azioni che il client può inviare al server
@@ -56,7 +59,7 @@ namespace Client {
         uint8_t excess_data[255];
     } typedef LetterMessage;
 
-    _Static_assert(sizeof(Message) == sizeof(LetterMessage), "sizes must match");
+    static_assert(sizeof(Message) == sizeof(LetterMessage), "sizes must match");
 };
 
 
@@ -106,7 +109,7 @@ namespace Server {
         // Numero di errori fatti fino in quel momento
         uint8_t errors;
         // Parola o frase da indovinare
-        char shortphrase[255];
+        char shortphrase[SHORTPHRASE_LENGTH];
     } typedef UpdateWordMessage;
 
     struct OtherTurnMessage {
@@ -118,12 +121,12 @@ namespace Server {
         uint8_t excess_data[192];
     } typedef OtherOneTurnMessage;
 
-    _Static_assert(sizeof(Message) == sizeof(UpdateUserMessage), "sizes must match");
-    _Static_assert(sizeof(Message) == sizeof(UpdateWordMessage), "sizes must match");
-    _Static_assert(sizeof(Message) == sizeof(OtherTurnMessage), "sizes must match");
+    static_assert(sizeof(Message) == sizeof(UpdateUserMessage), "sizes must match");
+    static_assert(sizeof(Message) == sizeof(UpdateWordMessage), "sizes must match");
+    static_assert(sizeof(Message) == sizeof(OtherTurnMessage), "sizes must match");
 };
 
 
-_Static_assert(sizeof(Client::Message) == sizeof(Server::Message), "sizes must match");
+static_assert(sizeof(Client::Message) == sizeof(Server::Message), "sizes must match");
 
 #endif

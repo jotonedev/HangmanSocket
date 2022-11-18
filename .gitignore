@@ -111,14 +111,14 @@ fabric.properties
 .clang_complete
 .gcc-flags.json
 .pio
-./build
+/build
 
 .vscode/*
-!.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
 *.code-workspace
+
 
 # Local History for Visual Studio Code
 .history/
