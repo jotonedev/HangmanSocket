@@ -1,4 +1,4 @@
 set(CLIENT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
-add_executable(client ${CLIENT_SOURCE_DIR}/main.cpp ${HANGMAN_LIB}/client.h)
+add_executable(client ${CLIENT_SOURCE_DIR}/main.cpp ${HANGMAN_LIB}/client.cpp)
 install(TARGETS client RUNTIME DESTINATION bin)

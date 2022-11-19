@@ -6,6 +6,7 @@
 
 
 #define SHORTPHRASE_LENGTH 255
+#define USERNAME_LENGTH 64
 
 
 // Il protocollo per il gioco dell'impiccato si basa su sistema di azione (Action) e risposta (Response)
@@ -14,10 +15,12 @@ namespace Client {
     enum Action {
         // Azione d'ingresso nella partita
         JOIN_GAME,
-        // Azione di richiesta di una nuova lettera
-        NEW_LETTER,
-        // Azione di richiesta di una nuova parola o frase
-        NEW_WORD,
+        // Azione d'invio di una nuova lettera
+        LETTER,
+        // Azione d'invio di una nuova parola
+        WORD,
+        // Azione d'invio della soluzione
+        SHORT_PHRASE,
         // Azione di richiesta di uscita dal gioco
         QUIT
     };
@@ -26,15 +29,18 @@ namespace Client {
     enum Response {
         // Risposta di conferma di ingresso nella partita
         GAME_JOINED,
-        // Risposta di conferma di una nuova lettera
+        // Risposta di conferma della lettera
         LETTER_ACCEPTED,
-        // Risposta di errore di una nuova lettera
+        // Risposta di errore della lettera
         LETTER_REJECTED,
-        // Risposta di conferma di una nuova parola o frase
+        // Risposta di conferma della parola
         WORD_ACCEPTED,
-        // Risposta di errore di una nuova parola o frase
+        // Risposta di errore della parola
         WORD_REJECTED,
-
+        // Risposta di conferma della frase
+        SHORT_PHRASE_ACCEPTED,
+        // Risposta di errore della frase
+        SHORT_PHRASE_REJECTED,
         // Risposta di conferma di uscita dal gioco
         GAME_QUIT,
         // Risposta di errore
@@ -50,8 +56,19 @@ namespace Client {
     } typedef Message;
 
 
+    struct JoinMessage {
+        // Azione da inviare
+        Action action;
+
+        // Nome del giocatore
+        char username[USERNAME_LENGTH];
+
+        uint8_t excess_data[192];
+    } typedef JoinMessage;
+
+
     struct LetterMessage {
-        Action action = NEW_LETTER;
+        Action action = LETTER;
 
         // Nuova lettera
         char letter;
@@ -59,6 +76,7 @@ namespace Client {
         uint8_t excess_data[255];
     } typedef LetterMessage;
 
+    static_assert(sizeof(Message) == sizeof(JoinMessage), "sizes must match");
     static_assert(sizeof(Message) == sizeof(LetterMessage), "sizes must match");
 };
 
@@ -70,7 +88,7 @@ namespace Server {
         // Segnalazione del timeout per l'invio della risposta
         TIMEOUT,
         // Segnalazione di un update dello stato di gioco
-        UPDATE_WORD,
+        UPDATE_SHORTPHRASE,
         // Segnalazione dell'aggiornamento della lista dei giocatori
         UPDATE_USER,
         // Segnalazione di chiusura del server per un errore
@@ -96,15 +114,15 @@ namespace Server {
         Action action = UPDATE_USER;
 
         uint8_t user_count;
-        char usernames[3][64];
+        char usernames[3][USERNAME_LENGTH];
 
         // 63 bytes di dati in più per evitare che il client legga dati non validi
         // Questo perchè tutti i messaggi hanno una lunghezza standard di 256 bytes + 4 byte per l'azione
         uint8_t excess_data[63];
     } typedef UpdateUserMessage;
 
-    struct UpdateWordMessage {
-        Action action = UPDATE_WORD;
+    struct UpdateShortPhraseMessage {
+        Action action = UPDATE_SHORTPHRASE;
 
         // Numero di errori fatti fino in quel momento
         uint8_t errors;
@@ -116,7 +134,7 @@ namespace Server {
         Action action = OTHER_TURN;
 
         // Nome del giocatore che deve svolgere il turno
-        char player_name[64];
+        char player_name[USERNAME_LENGTH];
         // Byte in eccesso siccome la lunghezza massima del nome di un player è 64 bytes
         uint8_t excess_data[192];
     } typedef OtherOneTurnMessage;
