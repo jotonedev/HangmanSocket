@@ -5,46 +5,30 @@
 #include <sys/socket.h>
 
 
-#define SHORTPHRASE_LENGTH 255
-#define USERNAME_LENGTH 64
+#define SHORTPHRASE_LENGTH 123
+#define USERNAME_LENGTH 32
 
 
 // Il protocollo per il gioco dell'impiccato si basa su sistema di azione (Action) e risposta (Response)
 namespace Client {
-    // Azioni che il client può inviare al server
     enum Action {
+        // Azioni che il client può inviare al server
         // Azione d'ingresso nella partita
         JOIN_GAME,
         // Azione d'invio di una nuova lettera
         LETTER,
-        // Azione d'invio di una nuova parola
-        WORD,
-        // Azione d'invio della soluzione
+        // Azione d'invio della frase
         SHORT_PHRASE,
-        // Azione di richiesta di uscita dal gioco
-        QUIT
-    };
 
-    // Risposte che il server può inviare al client
-    enum Response {
-        // Risposta di conferma di ingresso nella partita
-        GAME_JOINED,
+        // Risposte che il server può inviare al client
         // Risposta di conferma della lettera
         LETTER_ACCEPTED,
         // Risposta di errore della lettera
         LETTER_REJECTED,
-        // Risposta di conferma della parola
-        WORD_ACCEPTED,
-        // Risposta di errore della parola
-        WORD_REJECTED,
         // Risposta di conferma della frase
         SHORT_PHRASE_ACCEPTED,
         // Risposta di errore della frase
         SHORT_PHRASE_REJECTED,
-        // Risposta di conferma di uscita dal gioco
-        GAME_QUIT,
-        // Risposta di errore
-        ERROR
     };
 
     struct Message {
@@ -52,7 +36,7 @@ namespace Client {
         Action action;
 
         // Messaggio da inviare
-        char message[256];
+        char data[124];
     } typedef Message;
 
 
@@ -63,7 +47,7 @@ namespace Client {
         // Nome del giocatore
         char username[USERNAME_LENGTH];
 
-        uint8_t excess_data[192];
+        uint8_t pad[124 - USERNAME_LENGTH];
     } typedef JoinMessage;
 
 
@@ -71,28 +55,36 @@ namespace Client {
         Action action = LETTER;
 
         // Nuova lettera
-        char letter;
-        // Bytes in eccesso
-        uint8_t excess_data[255];
+        char letter{};
+
+        uint8_t pad[123]{};
     } typedef LetterMessage;
+
+    struct ShortPhraseMessage {
+        Action action = SHORT_PHRASE;
+
+        // Frase proposta
+        char short_phrase[SHORTPHRASE_LENGTH]{};
+        // Bytes in eccesso
+        uint8_t pad[1]{};
+    } typedef ShortPhraseMessage;
 
     static_assert(sizeof(Message) == sizeof(JoinMessage), "sizes must match");
     static_assert(sizeof(Message) == sizeof(LetterMessage), "sizes must match");
-};
+    static_assert(sizeof(Message) == sizeof(ShortPhraseMessage), "sizes must match");
+}
 
 
 namespace Server {
     // Azioni che il server può inviare al client
     // Per nessuna di queste azioni il server si aspetta una risposta dal client
     enum Action {
-        // Segnalazione del timeout per l'invio della risposta
-        TIMEOUT,
         // Segnalazione di un update dello stato di gioco
         UPDATE_SHORTPHRASE,
         // Segnalazione dell'aggiornamento della lista dei giocatori
         UPDATE_USER,
-        // Segnalazione di chiusura del server per un errore
-        SERVER_ERROR,
+        // Segnalazione dell'aggiornamento della lista dei tentativi
+        UPDATE_ATTEMPTS,
         // Segnalazione di vittoria
         WIN,
         // Segnalazione di sconfitta
@@ -107,41 +99,58 @@ namespace Server {
         Action action;
 
         // Dati aggiuntivi
-        uint8_t data[256];
+        uint8_t data[124];
     } typedef Message;
 
     struct UpdateUserMessage {
         Action action = UPDATE_USER;
 
-        uint8_t user_count;
-        char usernames[3][USERNAME_LENGTH];
+        uint8_t user_count{};
+        char usernames[3][USERNAME_LENGTH]{};
 
-        // 63 bytes di dati in più per evitare che il client legga dati non validi
-        // Questo perchè tutti i messaggi hanno una lunghezza standard di 256 bytes + 4 byte per l'azione
-        uint8_t excess_data[63];
+        // Bytes in eccesso
+        uint8_t pad[124 - 1 - 3 * USERNAME_LENGTH]{};
     } typedef UpdateUserMessage;
 
     struct UpdateShortPhraseMessage {
         Action action = UPDATE_SHORTPHRASE;
 
         // Numero di errori fatti fino in quel momento
-        uint8_t errors;
+        uint8_t errors{};
         // Parola o frase da indovinare
-        char shortphrase[SHORTPHRASE_LENGTH];
+        char short_phrase[SHORTPHRASE_LENGTH]{};
     } typedef UpdateWordMessage;
+
+    struct UpdateAttemptsMessage {
+        Action action = UPDATE_ATTEMPTS;
+
+        // Numero di tentativi rimasti
+        uint8_t attempts{};
+        // Numero degli errori fatti
+        uint8_t errors{};
+        // Numero degli errori massimi
+        uint8_t max_errors{};
+        // Lista dei tentativi fatti
+        char attempts_list[26]{};
+
+        // Bytes in eccesso
+        uint8_t pad[124 - 1 - 1 - 1 - 26]{};
+    } typedef UpdateAttemptsMessage;
 
     struct OtherTurnMessage {
         Action action = OTHER_TURN;
 
         // Nome del giocatore che deve svolgere il turno
-        char player_name[USERNAME_LENGTH];
-        // Byte in eccesso siccome la lunghezza massima del nome di un player è 64 bytes
-        uint8_t excess_data[192];
+        char player_name[USERNAME_LENGTH]{};
+
+        // Byte in eccesso
+        uint8_t pad[124 - USERNAME_LENGTH]{};
     } typedef OtherOneTurnMessage;
 
     static_assert(sizeof(Message) == sizeof(UpdateUserMessage), "sizes must match");
     static_assert(sizeof(Message) == sizeof(UpdateWordMessage), "sizes must match");
     static_assert(sizeof(Message) == sizeof(OtherTurnMessage), "sizes must match");
+    static_assert(sizeof(Message) == sizeof(UpdateAttemptsMessage), "sizes must match");
 };
 
 

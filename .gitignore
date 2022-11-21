@@ -124,3 +124,4 @@ fabric.properties
 .history/
 
 # End of https://mrkandreev.username/snippets/gitignore-generator/#C++,CLion,PlatformIO,VisualStudioCode
+.idea/
