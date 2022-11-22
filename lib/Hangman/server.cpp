@@ -9,6 +9,10 @@
 #include "server.h"
 
 
+/**
+ * Cambia il case della stringa in maiuscolo
+ * @param str La stringa da modificare
+ */
 void str_to_upper(char *str) {
     std::transform(str, str + strlen(str), str, ::toupper);
 }
@@ -56,9 +60,15 @@ namespace Server {
     HangmanServer::~HangmanServer() {
         // Chiusura della sockfd
         shutdown(sockfd, SHUT_RDWR);
+
+        // Elimina i giocatori
+        for (auto &player: players) {
+            _remove_player(&player);
+        }
     }
 
-    void HangmanServer::start(uint8_t _max_errors, const std::string &_start_blocked_letters, uint8_t _blocked_attempts) {
+    void
+    HangmanServer::start(uint8_t _max_errors, const std::string &_start_blocked_letters, uint8_t _blocked_attempts) {
         // Inizializzazione delle variabili
         this->max_errors = _max_errors;
         this->current_errors = 0;
@@ -123,7 +133,7 @@ namespace Server {
     }
 
     template<typename TypeMessage>
-    bool HangmanServer::_read(Player *player, TypeMessage message, int timeout) {
+    bool HangmanServer::_read(Player *player, TypeMessage &message, int timeout) {
         // Legge il messaggio dal giocatore
         int n = read(player->sockfd, &message, sizeof(Message));
 
@@ -160,7 +170,7 @@ namespace Server {
     }
 
     template<typename TypeMessage>
-    void HangmanServer::_send(Player *player, TypeMessage message) {
+    void HangmanServer::_send(Player *player, TypeMessage &message) {
         if (send(player->sockfd, &message, sizeof(Message), 0) < 0) {
             _remove_player(player);
         }
@@ -326,7 +336,7 @@ namespace Server {
 
     int8_t HangmanServer::_get_letter_from_player(Player *player, int timeout) {
         Client::LetterMessage packet;
-        _read(player, &packet, timeout);
+        _read(player, packet, timeout);
 
         if (packet.action != Client::Action::LETTER) {
             _remove_player(player);
@@ -377,7 +387,7 @@ namespace Server {
 
     int8_t HangmanServer::_get_short_phrase_from_player(Player *player, int timeout) {
         Client::ShortPhraseMessage packet;
-        _read(player, &packet, timeout);
+        _read(player, packet, timeout);
 
         // Controlla se il pacchetto è corretto
         if (packet.action != Client::Action::SHORT_PHRASE) {
@@ -446,6 +456,4 @@ namespace Server {
             _broadcast_update_attempts();
         }
     }
-
-
 }

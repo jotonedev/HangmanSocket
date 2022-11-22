@@ -11,6 +11,7 @@
 
 // Il protocollo per il gioco dell'impiccato si basa su sistema di azione (Action) e risposta (Response)
 namespace Client {
+    // Le azioni che il client può inviare al server o le risposte che il server può inviare al client
     enum Action {
         // Azioni che il client può inviare al server
         // Azione d'ingresso nella partita
@@ -31,6 +32,7 @@ namespace Client {
         SHORT_PHRASE_REJECTED,
     };
 
+    // Struttura che rappresenta un messaggio base
     struct Message {
         // Azione da inviare
         Action action;
@@ -39,7 +41,7 @@ namespace Client {
         char data[124];
     } typedef Message;
 
-
+    // Struttura che rappresenta un messaggio di ingresso nella partita
     struct JoinMessage {
         // Azione da inviare
         Action action;
@@ -50,7 +52,7 @@ namespace Client {
         uint8_t pad[124 - USERNAME_LENGTH];
     } typedef JoinMessage;
 
-
+    // Struttura che rappresenta un messaggio di invio di una nuova lettera
     struct LetterMessage {
         Action action = LETTER;
 
@@ -60,6 +62,7 @@ namespace Client {
         uint8_t pad[123]{};
     } typedef LetterMessage;
 
+    // Struttura che rappresenta un messaggio di invio della frase
     struct ShortPhraseMessage {
         Action action = SHORT_PHRASE;
 
@@ -69,6 +72,8 @@ namespace Client {
         uint8_t pad[1]{};
     } typedef ShortPhraseMessage;
 
+
+    // Verifica che le struct siano di dimensione corretta
     static_assert(sizeof(Message) == sizeof(JoinMessage), "sizes must match");
     static_assert(sizeof(Message) == sizeof(LetterMessage), "sizes must match");
     static_assert(sizeof(Message) == sizeof(ShortPhraseMessage), "sizes must match");
@@ -95,6 +100,7 @@ namespace Server {
         OTHER_TURN,
     };
 
+    // Struttura che rappresenta un messaggio base
     struct Message {
         Action action;
 
@@ -102,6 +108,7 @@ namespace Server {
         uint8_t data[124];
     } typedef Message;
 
+    // Struttura che rappresenta un messaggio di segnalazione di un update dello stato di gioco
     struct UpdateUserMessage {
         Action action = UPDATE_USER;
 
@@ -112,6 +119,7 @@ namespace Server {
         uint8_t pad[124 - 1 - 3 * USERNAME_LENGTH]{};
     } typedef UpdateUserMessage;
 
+    // Struttura che rappresenta un messaggio di segnalazione dell'aggiornamento della lista dei giocatori
     struct UpdateShortPhraseMessage {
         Action action = UPDATE_SHORTPHRASE;
 
@@ -121,6 +129,7 @@ namespace Server {
         char short_phrase[SHORTPHRASE_LENGTH]{};
     } typedef UpdateWordMessage;
 
+    // Struttura che rappresenta un messaggio di segnalazione dell'aggiornamento della lista dei tentativi
     struct UpdateAttemptsMessage {
         Action action = UPDATE_ATTEMPTS;
 
@@ -137,7 +146,8 @@ namespace Server {
         uint8_t pad[124 - 1 - 1 - 1 - 26]{};
     } typedef UpdateAttemptsMessage;
 
-    struct OtherTurnMessage {
+    // Struttura che rappresenta un messaggio di cambio turno
+    struct OtherOneTurnMessage {
         Action action = OTHER_TURN;
 
         // Nome del giocatore che deve svolgere il turno
@@ -147,13 +157,15 @@ namespace Server {
         uint8_t pad[124 - USERNAME_LENGTH]{};
     } typedef OtherOneTurnMessage;
 
+
+    // Verifica che le struct siano di dimensione corretta
     static_assert(sizeof(Message) == sizeof(UpdateUserMessage), "sizes must match");
     static_assert(sizeof(Message) == sizeof(UpdateWordMessage), "sizes must match");
-    static_assert(sizeof(Message) == sizeof(OtherTurnMessage), "sizes must match");
+    static_assert(sizeof(Message) == sizeof(OtherOneTurnMessage), "sizes must match");
     static_assert(sizeof(Message) == sizeof(UpdateAttemptsMessage), "sizes must match");
 };
 
-
+// Verifica che le struct siano di dimensione corretta
 static_assert(sizeof(Client::Message) == sizeof(Server::Message), "sizes must match");
 
 #endif
