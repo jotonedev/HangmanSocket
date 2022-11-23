@@ -5,6 +5,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <fstream>
+#include <iostream>
 
 #include "server.h"
 
@@ -67,8 +68,7 @@ namespace Server {
         }
     }
 
-    void
-    HangmanServer::start(uint8_t _max_errors, const std::string &_start_blocked_letters, uint8_t _blocked_attempts) {
+    void HangmanServer::start(uint8_t _max_errors, const std::string &_start_blocked_letters, uint8_t _blocked_attempts) {
         // Inizializzazione delle variabili
         this->max_errors = _max_errors;
         this->current_errors = 0;
@@ -421,6 +421,8 @@ namespace Server {
         }
 
         packet.attempts = current_attempt;
+        std::sort(attempts.begin(), attempts.end(),
+        [](unsigned char c1, unsigned char c2){ return c1 < c2; });
         strncpy(packet.attempts_list, attempts.data(), packet.attempts);
     }
 
@@ -454,6 +456,42 @@ namespace Server {
         } else {
             _broadcast_update_short_phrase();
             _broadcast_update_attempts();
+        }
+    }
+
+    void HangmanServer::run(const bool verbose) {
+        int prev_n_players = 0;
+        this->start();
+
+        while (true) {
+            try {
+                loop();
+                
+                if (verbose && players_connected > 0) {
+                    std::cout << "Players connected: " << players_connected << "\n";
+                    std::cout << "Current player: " << current_player->username << "\n";
+                    std::cout << "Current errors: " << current_errors << "\n";
+                    std::cout << "Current attempt: " << current_attempt << "\n";
+                    std::cout << "Short phrase: " << short_phrase << "\n";
+                    std::cout << "Short phrase masked: " << short_phrase_masked << "\n";
+                    std::cout << "Attempts: ";
+                    for (char i: attempts)
+                        std::cout << i << ' ';
+                    std::cout << "\n";
+                }
+
+                if (verbose && players_connected > 0 && prev_n_players == 0)
+                    std::cout << "Exited idle state" << "\n";
+                else if (verbose && players_connected == 0 && prev_n_players > 0)
+                    std::cout << "Entered idle state" << "\n";
+
+                prev_n_players = players_connected;
+                std::cout << "\n" << std::endl;
+            } 
+            catch(const std::exception& e) {
+                if (verbose)
+                    std::cerr << e.what() << std::endl;
+            }
         }
     }
 }

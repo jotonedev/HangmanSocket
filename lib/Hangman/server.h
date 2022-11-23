@@ -199,6 +199,12 @@ namespace Server {
         void start(uint8_t _max_errors = 10, const std::string &_start_blocked_letters = "AEIOU",
                    uint8_t _blocked_attempts = 3);
 
+        /*
+         * Esegue tutte le funzioni del server
+         * @brief Permette di lasciare la gestione del server alla classe stessa, che si occuperà di avviare il server e gestire il loop di gioco
+        */
+        void run(const bool verbose = true);
+
         /**
          * Loop del server
          * @brief Si occupa di gestire le connessioni e le richieste dei client, quindi di eseguire il gioco

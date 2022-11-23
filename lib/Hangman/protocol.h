@@ -3,6 +3,7 @@
 
 
 #include <sys/socket.h>
+#include <stdint.h>
 
 
 #define SHORTPHRASE_LENGTH 123
