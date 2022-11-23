@@ -202,6 +202,7 @@ namespace Server {
         /*
          * Esegue tutte le funzioni del server
          * @brief Permette di lasciare la gestione del server alla classe stessa, che si occuperà di avviare il server e gestire il loop di gioco
+         * @param verbose Se deve stampare un resoconto dello stato del server ad ogni loop
         */
         void run(const bool verbose = true);
 
