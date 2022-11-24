@@ -169,4 +169,7 @@ namespace Server {
 // Verifica che le struct siano di dimensione corretta
 static_assert(sizeof(Client::Message) == sizeof(Server::Message), "sizes must match");
 
+#define MessageSize sizeof(Client::Message)
+
+
 #endif

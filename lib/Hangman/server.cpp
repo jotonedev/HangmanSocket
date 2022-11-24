@@ -23,10 +23,10 @@ namespace Server {
     HangmanServer::HangmanServer(const std::string &ip, uint16_t port) {
         struct sockaddr_in address{};
 
-        // Inizializzazione della sockfd
+        // Inizializzazione del socket
         sockfd = socket(AF_INET, SOCK_STREAM, 0);
         if (sockfd < 0) {
-            throw std::runtime_error("Errore nell'inizializzazione della sockfd");
+            throw std::runtime_error("Errore nell'inizializzazione della socket");
         }
         // Imposta il sockfd in modalità non bloccante
         fcntl(sockfd, F_SETFL, O_NONBLOCK);
@@ -51,7 +51,7 @@ namespace Server {
 
         // Collegamento della sockfd al server
         if (bind(sockfd, (struct sockaddr *) &address, sizeof(address)) < 0) {
-            throw std::runtime_error("Errore nel collegamento della sockfd al server");
+            throw std::runtime_error("Errore nel collegamento della socket al server");
         }
 
         // Carica le markov chain

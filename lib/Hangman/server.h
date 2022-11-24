@@ -219,6 +219,11 @@ namespace Server {
         void new_round();
 
         /**
+         * Permette di chiudere il server
+         */
+        void close();
+
+        /**
          * Permette di sapere il giocatore corrente
          * @return Il giocatore corrente
          */
@@ -242,7 +247,6 @@ namespace Server {
          */
         [[nodiscard]] bool is_full() const { return players_connected >= MAX_CLIENTS; };
 
-        // Funzione che
         /**
          * Permette di sapere se il server è vuoto
          * @return Se il server è vuoto
