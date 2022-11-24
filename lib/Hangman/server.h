@@ -15,46 +15,61 @@
 
 
 namespace Server {
-    // Classe che rappresenta un client connesso al server
+    /**
+     * Rappresenta il giocatore
+     *
+     * Contiene il nome del giocatore e il descrittore del suo socket
+     *
+     * @author John Toniutti
+     */
     struct Player {
-        // Socket del client
+        /// Socket del client
         int sockfd;
-        // Nome del client
+        /// Nome del client
         char username[USERNAME_LENGTH];
     } typedef Player;
 
 
-    // Classe che rappresenta il server del gioco dell'impiccato
+    /**
+     * Questa classe rappresenta l'intero server del gioco dell'impiccato
+     *
+     * Provvede a dare una funzione per eseguire il gioco direttamente e a dare le funzioni per crearsi il proprio loop
+     * di gioco nel caso fosse necessario.
+     * @note Questa classe non è thread-safe
+     * @warning Se un client non rispetta il protocollo, questo viene disconnesso
+     *
+     * @author John Toniutti
+     */
     class HangmanServer {
     private:
-        // Descrittore del socket del server
+        /// Descrittore del socket del server
         int sockfd;
 
-        // Rappresenta il numero di errori massimo che i giocatori possono commettere
+        /// Rappresenta il numero di errori massimo che i giocatori possono commettere
         uint8_t max_errors{};
-        // Rappresenta il numero di errori commessi dai giocatori
+        /// Rappresenta il numero di errori commessi dai giocatori
         uint8_t current_errors{};
-        // Rappresenta i tentativi fatti fin'ora
+        /// Rappresenta i tentativi fatti fin'ora
         std::vector<char> attempts;
-        // Rappresenta quanti tentativi sono stati fatti
+        /// Rappresenta quanti tentativi sono stati fatti
         uint8_t current_attempt{};
-        // Rappresenta la parola o frase da indovinare
+        /// Rappresenta la parola o frase da indovinare
         char short_phrase[SHORTPHRASE_LENGTH]{};
-        // Rappresenta la parola o frase da indovinare con i caratteri non ancora indovinati sostituiti da _
+        /// Rappresenta la parola o frase da indovinare con i caratteri non ancora indovinati sostituiti da _
         char short_phrase_masked[SHORTPHRASE_LENGTH]{};
-        // Rappresenta le lettere che non si possono indovinare all'inizio
+        /// Rappresenta le lettere che non si possono indovinare all'inizio
         const char *start_blocked_letters{};
-        // Rappresenta il numero di tentativi che devono essere fatti prima di poter usare le lettere bloccate
+        /// Rappresenta il numero di tentativi che devono essere fatti prima di poter usare le lettere bloccate
         uint8_t blocked_attempts{};
-        // Lista dei client connessi
+        /// Lista dei client connessi
         std::vector<Player> players;
-        // Rappresenta il numero di giocatori connessi
+        /// Rappresenta il numero di giocatori connessi
         uint8_t players_connected{};
-        // Rappresenta il giocatore corrente
+        /// Rappresenta il giocatore corrente
         Player *current_player{};
 
-        // La Markov Chain permette di creare un modello matematico per prevedere
-        // quale è la successiva parola più probabile data una parola di partenza
+        /// La Markov Chain permette di creare un modello matematico per prevedere
+        /// quale è la successiva parola più probabile data una parola di partenza
         Markov::Chain chain{1};
 
 
@@ -80,11 +95,14 @@ namespace Server {
 
         /**
          * Permette di inviare a tutti i giocatori un'azione
+         * @param action L'azione da inviare
          */
         void _broadcast_action(Server::Action action);
 
         /**
          * Permette di inviare a tutti i giocatori un messaggio
+         * @tparam TypeMessage Un tipo di messaggio di 128 bytes
+         * @param message Il messaggio da inviare
          */
         template<typename TypeMessage>
         void _broadcast(TypeMessage message);
@@ -195,11 +213,12 @@ namespace Server {
          * @param _max_errors Il numero massimo di errori prima che la partita sia persa
          * @param _start_blocked_letters Le lettere che non si possono indovinare all'inizio
          * @param _blocked_attempts Il numero di tentativi che devono essere fatti prima di poter usare le lettere bloccate
+         * @throws std::runtime_error Se il server non è stato avviato
          */
         void start(uint8_t _max_errors = 10, const std::string &_start_blocked_letters = "AEIOU",
                    uint8_t _blocked_attempts = 3);
 
-        /*
+        /**
          * Esegue tutte le funzioni del server
          * @brief Permette di lasciare la gestione del server alla classe stessa, che si occuperà di avviare il server e gestire il loop di gioco
          * @param verbose Se deve stampare un resoconto dello stato del server ad ogni loop
@@ -239,43 +258,43 @@ namespace Server {
          * Permette di sapere il numero di giocatori connessi
          * @return Il numero di giocatori connessi
          */
-        [[nodiscard]] int get_players_count() const { return players_connected; };
+        [[nodiscard]] int get_players_count() { return players_connected; };
 
         /**
          * Permette di sapere se il server è pieno
          * @return Se il server è pieno
          */
-        [[nodiscard]] bool is_full() const { return players_connected >= MAX_CLIENTS; };
+        [[nodiscard]] bool is_full() { return players_connected >= MAX_CLIENTS; };
 
         /**
          * Permette di sapere se il server è vuoto
          * @return Se il server è vuoto
          */
-        [[nodiscard]] bool is_empty() const { return players_connected == 0; };
+        [[nodiscard]] bool is_empty() { return players_connected == 0; };
 
         /**
          * Permette di sapere il numero di errori che sono stati commessi
          * @return Il numero di errori che sono stati commessi
          */
-        [[nodiscard]] int get_current_errors() const { return current_errors; };
+        [[nodiscard]] int get_current_errors() { return current_errors; };
 
         /**
          * Permette di sapere quanti tentativi sono stati fatti fino a quel momento nel round
          * @return Il numero di tentativi fatti
          */
-        [[nodiscard]] int get_current_attempt() const { return current_attempt; };
+        [[nodiscard]] int get_current_attempt() { return current_attempt; };
 
         /**
          * Permette di sapere qual'è la frase corrente
          * @return La frase corrente
          */
-        [[nodiscard]] const char *get_short_phrase() const { return short_phrase; };
+        [[nodiscard]] const char *get_short_phrase() { return short_phrase; };
 
         /**
          * Permette di sapere qual'è stato l'ultimo tentativo
          * @return L'ultimo tentativo fatto
          */
-        [[nodiscard]] char get_last_attempt() const { return attempts.back(); };
+        [[nodiscard]] char get_last_attempt() { return attempts.back(); };
     };
 
 }

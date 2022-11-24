@@ -68,6 +68,16 @@ namespace Server {
         }
     }
 
+    void HangmanServer::close() {
+        // Chiusura della sockfd
+        shutdown(sockfd, SHUT_RDWR);
+
+        // Elimina i giocatori
+        for (auto &player: players) {
+            _remove_player(&player);
+        }
+    }
+
     void HangmanServer::start(uint8_t _max_errors, const std::string &_start_blocked_letters, uint8_t _blocked_attempts) {
         // Inizializzazione delle variabili
         this->max_errors = _max_errors;
