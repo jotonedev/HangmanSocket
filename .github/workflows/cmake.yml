@@ -19,13 +19,34 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          submodules: true
 
       - name: Configure CMake
         # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
         # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_CXX_FLAGS="-O2 -pie -s" -DCMAKE_C_FLAGS="-O2 -pie -s"
+        run: cmake -G "Unix Makefiles" -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_CXX_FLAGS="-O2 -pie -s" -DCMAKE_C_FLAGS="-O2 -pie -s"
 
       - name: Build
         # Build your program with the given configuration
         run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} -DCMAKE_CXX_FLAGS="-O2 -pie -s" -DCMAKE_C_FLAGS="-O2 -pie -s"
       
+      - name: Generate Artifacts
+        run: cmake --install ${{github.workspace}}/build
+      
+      - name: Upload a Server Artifact
+        uses: actions/upload-artifact@v3.1.1
+        with:
+          # Artifact name
+          name: "Server Executable Linux"
+          # A file, directory or wildcard pattern that describes what to upload
+          path: ${{github.workspace}}/server/bin/
+          
+      - name: Upload a Client Artifact
+        uses: actions/upload-artifact@v3.1.1
+        with:
+          # Artifact name
+          name: "Client Executable Linux"
+          # A file, directory or wildcard pattern that describes what to upload
+          path: ${{github.workspace}}/client/bin/
+
