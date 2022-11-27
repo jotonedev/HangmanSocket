@@ -1,3 +1,0 @@
-[submodule "lib/Markov"]
-	path = lib/Markov
-	url = https://github.com/sdmg15/cppmarkov

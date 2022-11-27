@@ -26,45 +26,48 @@ namespace Client {
      * @authors Genero Albis Federico, Amato Davide, Toniutti John
      */
     class HangmanClient {
-        private:
-            /// Descrittore del socket del server
-            int sockfd;
+    private:
+        /// Descrittore del socket del server
+        int sockfd;
 
-            /// Rappresenta i tentativi fatti fino al momento di accessi durante la partita
-            char attempts[26];
-            /// Rappresenta la lunghezza dell'array attempts
-            int attempts_count;
+        /// Rappresenta i tentativi fatti fino al momento di accessi durante la partita
+        char attempts[26];
+        /// Rappresenta la lunghezza dell'array attempts
+        int attempts_count;
 
-            /// Rappresenta la frase da indovinare
-            char short_phrase[SHORTPHRASE_LENGTH];
-            /// Rappresenta le lettere che non si possono usare all'inizio
-            char blocked_letters[6] = "AEIOU";
-            /// Rappresenta il numero di turni dopo i quali si possono usare le lettere bloccate
-            uint8_t blocked_letters_round = 3;
+        /// Rappresenta la frase da indovinare
+        char short_phrase[SHORTPHRASE_LENGTH];
+        /// Rappresenta le lettere che non si possono usare all'inizio
+        char blocked_letters[6] = "AEIOU";
+        /// Rappresenta il numero di turni dopo i quali si possono usare le lettere bloccate
+        uint8_t blocked_letters_round = 3;
 
-            template<typename TypeMessage> void _send(TypeMessage &message);
-            template<typename TypeMessage> void _receive(TypeMessage &message);
-            
-        public:
-            HangmanClient(const char address[], const char port[]);
+        template<typename TypeMessage>
+        void _send(TypeMessage &message);
 
-            ~HangmanClient();
+        template<typename TypeMessage>
+        void _receive(TypeMessage &message);
 
-            void join(const char username[]);
+    public:
+        HangmanClient(const char address[], const char port[]);
 
-            void loop();
+        ~HangmanClient();
 
-            void run();
+        void join(const char username[]);
 
-            void close();
+        void loop();
 
-            void sendLetter(char letter);
+        void run();
 
-            void sendShortPhrase(const char phrase[]);
-        
-            char* getAttempts() { return attempts; };
+        void close();
 
-            char* getShortPhrase() { return short_phrase; };
+        void sendLetter(char letter);
+
+        void sendShortPhrase(const char phrase[]);
+
+        char *getAttempts() { return attempts; };
+
+        char *getShortPhrase() { return short_phrase; };
     };
 }
 

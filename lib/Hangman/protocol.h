@@ -164,7 +164,7 @@ namespace Server {
     static_assert(sizeof(Message) == sizeof(UpdateWordMessage), "sizes must match");
     static_assert(sizeof(Message) == sizeof(OtherOneTurnMessage), "sizes must match");
     static_assert(sizeof(Message) == sizeof(UpdateAttemptsMessage), "sizes must match");
-};
+}
 
 // Verifica che le struct siano di dimensione corretta
 static_assert(sizeof(Client::Message) == sizeof(Server::Message), "sizes must match");

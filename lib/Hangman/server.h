@@ -7,14 +7,19 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 
-#include "Markov/src/Markov.hpp"
 #include "protocol.h"
 
 
 #define MAX_CLIENTS 3
 
 
+using std::string;
+using std::cout;
+
+
 namespace Server {
+    typedef uint8_t status;
+
     /**
      * Rappresenta il giocatore
      *
@@ -26,7 +31,7 @@ namespace Server {
         /// Socket del client
         int sockfd;
         /// Nome del client
-        char username[USERNAME_LENGTH];
+        char username[USERNAME_LENGTH]{};
     } typedef Player;
 
 
@@ -68,20 +73,11 @@ namespace Server {
         /// Rappresenta il giocatore corrente
         Player *current_player{};
 
-        /// La Markov Chain permette di creare un modello matematico per prevedere
-        /// quale è la successiva parola più probabile data una parola di partenza
-        Markov::Chain chain{1};
-
 
         /**
          * Permette di verificare se ci sono nuovi client che vogliono connettersi e di accettarli
          */
         void _accept();
-
-        /**
-         * Permette di carica la Markov Chain usando i testi nella cartella "data/"
-         */
-        void _load_markov_chain();
 
         /**
          * Permette di generare una nuova frase da indovinare
@@ -181,7 +177,7 @@ namespace Server {
          * @retval -1 Se la lettera è bloccata o se è già stata usata
          * @retval -2 Se ha mandato un pacchetto sbagliato (in questo caso il client viene disconnesso)
          */
-        int8_t _get_letter_from_player(Player *player, int timeout = 5);
+        status _get_letter_from_player(Player *player, int timeout = 5);
 
         /**
          * Permette di ricevere da un player un tentativo sulla frase da indovinare
@@ -192,7 +188,7 @@ namespace Server {
          * @retval 0 Se il tentativo è andato a buon fine e non ha indovinato
          * @retval -2 Se ha mandato un pacchetto sbagliato (in questo caso il client viene disconnesso)
          */
-        int8_t _get_short_phrase_from_player(Player *player, int timeout = 10);
+        status _get_short_phrase_from_player(Player *player, int timeout = 10);
 
     public:
         /**
@@ -200,7 +196,7 @@ namespace Server {
          * @param _ip L'indirizzo IP del server (se lasciato come default usa tutte le interfacce disponibili)
          * @param _port La porta del server
          */
-        explicit HangmanServer(const std::string &_ip = "0.0.0.0", uint16_t _port = 9090);
+        explicit HangmanServer(const string &_ip = "0.0.0.0", uint16_t _port = 9090);
 
         /**
          * Distruttore della classe HangmanServer
@@ -215,7 +211,7 @@ namespace Server {
          * @param _blocked_attempts Il numero di tentativi che devono essere fatti prima di poter usare le lettere bloccate
          * @throws std::runtime_error Se il server non è stato avviato
          */
-        void start(uint8_t _max_errors = 10, const std::string &_start_blocked_letters = "AEIOU",
+        void start(uint8_t _max_errors = 10, const string &_start_blocked_letters = "AEIOU",
                    uint8_t _blocked_attempts = 3);
 
         /**

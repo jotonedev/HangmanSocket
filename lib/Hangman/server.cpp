@@ -20,7 +20,7 @@ void str_to_upper(char *str) {
 
 
 namespace Server {
-    HangmanServer::HangmanServer(const std::string &ip, uint16_t port) {
+    HangmanServer::HangmanServer(const string &ip, uint16_t port) {
         struct sockaddr_in address{};
 
         // Inizializzazione del socket
@@ -53,9 +53,6 @@ namespace Server {
         if (bind(sockfd, (struct sockaddr *) &address, sizeof(address)) < 0) {
             throw std::runtime_error("Errore nel collegamento della socket al server");
         }
-
-        // Carica le markov chain
-        _load_markov_chain();
     }
 
     HangmanServer::~HangmanServer() {
@@ -78,7 +75,8 @@ namespace Server {
         }
     }
 
-    void HangmanServer::start(uint8_t _max_errors, const std::string &_start_blocked_letters, uint8_t _blocked_attempts) {
+    void
+    HangmanServer::start(uint8_t _max_errors, const string &_start_blocked_letters, uint8_t _blocked_attempts) {
         // Inizializzazione delle variabili
         this->max_errors = _max_errors;
         this->current_errors = 0;
@@ -195,7 +193,6 @@ namespace Server {
 
     void HangmanServer::_send_action(Player *player, Server::Action action) {
         Message packet;
-        bzero(&packet, sizeof(packet));
         packet.action = action;
 
         _send(player, packet);
@@ -203,7 +200,6 @@ namespace Server {
 
     void HangmanServer::_send_response(Player *player, Client::Action action) {
         Client::Message packet;
-        bzero(&packet, sizeof(packet));
         packet.action = action;
 
         _send(player, packet);
@@ -212,7 +208,6 @@ namespace Server {
 
     void HangmanServer::_broadcast_action(Server::Action action) {
         Message packet;
-        bzero(&packet, sizeof(packet));
         packet.action = action;
 
         _broadcast(packet);
@@ -220,7 +215,6 @@ namespace Server {
 
     void HangmanServer::_broadcast_update_short_phrase() {
         UpdateShortPhraseMessage packet;
-        bzero(&packet, sizeof(packet));
         packet.errors = current_errors;
         strncpy(packet.short_phrase, short_phrase_masked, SHORTPHRASE_LENGTH);
 
@@ -229,7 +223,6 @@ namespace Server {
 
     void HangmanServer::_broadcast_update_players() {
         UpdateUserMessage packet;
-        bzero(&packet, sizeof(packet));
         packet.user_count = players_connected;
 
         for (uint i = 0; i < players_connected; i++) {
@@ -265,8 +258,6 @@ namespace Server {
 
         // Invia il messaggio di turno agli altri giocatori
         OtherOneTurnMessage packet;
-        bzero(&packet, sizeof(packet));
-        packet.action = Action::OTHER_TURN;
         strncpy(packet.player_name, current_player->username, USERNAME_LENGTH);
 
         for (auto player: players) {
@@ -290,7 +281,6 @@ namespace Server {
         // Non possiamo ancora aggiungere il suo nome perché non è ancora stato inviato
         Player player;
         player.sockfd = client_socket;
-        bzero(player.username, USERNAME_LENGTH);
 
         // Legge il nome del giocatore
         Client::JoinMessage packet;
@@ -309,27 +299,21 @@ namespace Server {
         _broadcast_update_players();
     }
 
-    void HangmanServer::_load_markov_chain() {
+    void HangmanServer::_generate_short_phrase() {
         // Apre il file contenente i testi su cui costruire la Markov chain
-        std::ifstream file("markov_chain.txt");
+        std::ifstream file("data/data.txt");
         if (!file.is_open()) {
             throw std::runtime_error("Errore nell'apertura del file");
         }
 
-        // Legge il file riga per riga e carica le righe nella Markov chain
-        std::string line;
-        while (std::getline(file, line)) {
-            // è una soluzione un po' bruttina,
-            // ma è il modo più semplice per convertire la variabile da rvalue a lvalue
-            chain.add(static_cast<std::string &&>(line));
+        std::string temp_text;
+        for (int i=0; i < rand() % 270; i++) {
+            if (!std::getline(file, temp_text))
+                break;
         }
 
         file.close();
-    }
 
-    void HangmanServer::_generate_short_phrase() {
-        // Usa la markov chain per creare una frase di un numero di parole casuale tra 1 e 5
-        std::string temp_text = chain.generateWord(rand() % 5 + 1); // NOLINT(cert-msc50-cpp)
         strncpy(short_phrase, temp_text.c_str(), SHORTPHRASE_LENGTH);
         str_to_upper(short_phrase);
 
@@ -338,13 +322,15 @@ namespace Server {
         for (int i = 0; i < SHORTPHRASE_LENGTH; i++) {
             if (short_phrase[i] == ' ') {
                 short_phrase_masked[i] = ' ';
+            } else if (short_phrase[i] == '\0') {
+                continue;
             } else {
-                short_phrase_masked[i] = '_';
+                    short_phrase_masked[i] = '_';
             }
         }
     }
 
-    int8_t HangmanServer::_get_letter_from_player(Player *player, int timeout) {
+    status HangmanServer::_get_letter_from_player(Player *player, int timeout) {
         Client::LetterMessage packet;
         _read(player, packet, timeout);
 
@@ -353,6 +339,11 @@ namespace Server {
             return -2;
         }
         packet.letter = toupper(packet.letter); // NOLINT(cppcoreguidelines-narrowing-conversions)
+
+        if (isalpha(packet.letter) == 0) {
+            _send_response(player, Client::Action::LETTER_REJECTED);
+            return -1;
+        }
 
         // Controlla se la lettera è bloccata
         if (current_attempt > blocked_attempts) {
@@ -395,7 +386,7 @@ namespace Server {
         }
     }
 
-    int8_t HangmanServer::_get_short_phrase_from_player(Player *player, int timeout) {
+    status HangmanServer::_get_short_phrase_from_player(Player *player, int timeout) {
         Client::ShortPhraseMessage packet;
         _read(player, packet, timeout);
 
@@ -419,7 +410,6 @@ namespace Server {
     void HangmanServer::_broadcast_update_attempts() {
         // Invia il messaggio di aggiornamento delle lettere usate
         Server::UpdateAttemptsMessage packet;
-        bzero(&packet, sizeof(packet));
         packet.action = Server::Action::UPDATE_ATTEMPTS;
         packet.max_errors = max_errors;
         packet.errors = current_errors;
@@ -432,7 +422,7 @@ namespace Server {
 
         packet.attempts = current_attempt;
         std::sort(attempts.begin(), attempts.end(),
-        [](unsigned char c1, unsigned char c2){ return c1 < c2; });
+                  [](unsigned char c1, unsigned char c2) { return c1 < c2; });
         strncpy(packet.attempts_list, attempts.data(), packet.attempts);
     }
 
@@ -471,34 +461,35 @@ namespace Server {
 
     void HangmanServer::run(const bool verbose) {
         int prev_n_players = 0;
-        this->start();
+        start();
+
+        cout << "Short phrase: " << short_phrase << "\n";
 
         while (true) {
             try {
                 loop();
-                
+
                 if (verbose && players_connected > 0) {
-                    std::cout << "Players connected: " << players_connected << "\n";
-                    std::cout << "Current player: " << current_player->username << "\n";
-                    std::cout << "Current errors: " << current_errors << "\n";
-                    std::cout << "Current attempt: " << current_attempt << "\n";
-                    std::cout << "Short phrase: " << short_phrase << "\n";
-                    std::cout << "Short phrase masked: " << short_phrase_masked << "\n";
-                    std::cout << "Attempts: ";
+                    cout << "Players connected: " << players_connected << "\n";
+                    cout << "Current player: " << current_player->username << "\n";
+                    cout << "Current errors: " << current_errors << "\n";
+                    cout << "Current attempt: " << current_attempt << "\n";
+                    cout << "Short phrase: " << short_phrase << "\n";
+                    cout << "Short phrase masked: " << short_phrase_masked << "\n";
+                    cout << "Attempts: ";
                     for (char i: attempts)
-                        std::cout << i << ' ';
-                    std::cout << "\n";
+                        cout << i << ' ';
+                    cout << "\n";
                 }
 
                 if (verbose && players_connected > 0 && prev_n_players == 0)
-                    std::cout << "Exited idle state" << "\n";
+                    cout << "Exited idle state" << "\n";
                 else if (verbose && players_connected == 0 && prev_n_players > 0)
-                    std::cout << "Entered idle state" << "\n";
+                    cout << "Entered idle state" << "\n";
 
                 prev_n_players = players_connected;
-                std::cout << "\n" << std::endl;
-            } 
-            catch(const std::exception& e) {
+            }
+            catch (const std::exception &e) {
                 if (verbose)
                     std::cerr << e.what() << std::endl;
             }

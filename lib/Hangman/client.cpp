@@ -19,7 +19,7 @@ namespace Client {
             throw std::runtime_error("Errore nella connessione al server");
         }
     }
-    
+
     void HangmanClient::join(const char username[]) {
         JoinMessage message;
         message.action = JOIN_GAME;
@@ -31,10 +31,10 @@ namespace Client {
         _send(message);
     }
 
-    void HangmanClient::close(){
+    void HangmanClient::close() {
         shutdown(sockfd, SHUT_RDWR);
     }
-    
+
     void HangmanClient::sendLetter(char letter) {
         LetterMessage message;
         message.action = LETTER;
@@ -54,7 +54,7 @@ namespace Client {
 
         _send(message);
     }
-    
+
     template<typename TypeMessage>
     void HangmanClient::_send(TypeMessage &message) {
         send(sockfd, &message, MessageSize, 0);
