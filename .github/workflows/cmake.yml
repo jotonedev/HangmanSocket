@@ -26,7 +26,7 @@ jobs:
         uses: egor-tensin/setup-cygwin@v3
         with:
           platform: x64
-          packages: cmake gcc-g++ make
+          packages: cmake gcc-core gcc-g++ make ninja
 
       - name: Configure CMake
         # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
@@ -44,7 +44,7 @@ jobs:
         uses: actions/upload-artifact@v3.1.1
         with:
           # Artifact name
-          name: "Server Executable Windows"
+          name: format('{0} {1}', 'Server', ${{matrix.os}})
           # A file, directory or wildcard pattern that describes what to upload
           path: ${{github.workspace}}/server/bin/
 
@@ -52,7 +52,7 @@ jobs:
         uses: actions/upload-artifact@v3.1.1
         with:
           # Artifact name
-          name: "Client Executable Windows"
+          name: format('{0} {1}', 'Client', ${{matrix.os}})
           # A file, directory or wildcard pattern that describes what to upload
           path: ${{github.workspace}}/client/bin/
 
@@ -83,7 +83,7 @@ jobs:
         uses: actions/upload-artifact@v3.1.1
         with:
           # Artifact name
-          name: "Server Executable Unix"
+          name: format('{0} {1}', 'Server', ${{matrix.os}})
           # A file, directory or wildcard pattern that describes what to upload
           path: ${{github.workspace}}/server/bin/
           
@@ -91,7 +91,7 @@ jobs:
         uses: actions/upload-artifact@v3.1.1
         with:
           # Artifact name
-          name: "Client Executable Linux"
+          name: format('{0} {1}', 'Client', ${{matrix.os}})
           # A file, directory or wildcard pattern that describes what to upload
           path: ${{github.workspace}}/client/bin/
 
