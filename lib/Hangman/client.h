@@ -1,16 +1,12 @@
 #ifndef hangman_client_h
 #define hangman_client_h
 
-#include <sys/types.h>
-#include <sys/socket.h>
 #include <iterator>
 #include <algorithm>
 #include <unistd.h>
 #include <cstring>
 #include <fcntl.h>
 #include <cctype>
-#include <netinet/in.h>
-#include <arpa/inet.h>
 
 #include "protocol.h"
 

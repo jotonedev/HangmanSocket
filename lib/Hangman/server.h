@@ -4,19 +4,17 @@
 #include <iterator>
 #include <algorithm>
 #include <vector>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <cctype>
+#include <fstream>
 
+
+#include "utils.h"
 #include "protocol.h"
 
 
 #define MAX_CLIENTS 3
-
-
-using std::string;
-using std::cout;
 
 
 namespace Server {
@@ -210,6 +208,7 @@ namespace Server {
          * Costruttore della classe HangmanServer
          * @param _ip L'indirizzo IP del server (se lasciato come default usa tutte le interfacce disponibili)
          * @param _port La porta del server
+         * @throws std::runtime_error Se non è possibile creare il socket
          */
         explicit HangmanServer(const string &_ip = "0.0.0.0", uint16_t _port = 9090);
 
@@ -251,7 +250,7 @@ namespace Server {
         /**
          * Permette di chiudere il server
          */
-        void close();
+        void close_socket();
 
         /**
          * Permette di sapere il giocatore corrente

@@ -1,4 +1,12 @@
 set(CLIENT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
-add_executable(client ${CLIENT_SOURCE_DIR}/main.cpp ${HANGMAN_LIB}/client.cpp ../lib/Hangman/utils.h)
+IF (WIN32)
+    set(APP_ICON_RESOURCE_WINDOWS "${CMAKE_CURRENT_SOURCE_DIR}/data/res.rc")
+    set(CMAKE_CXX_STANDARD_LIBRARIES "-lws2_32 ${CMAKE_CXX_STANDARD_LIBRARIES}")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${GCC_COVERAGE_LINK_FLAGS} -static")
+    add_executable(client ${CLIENT_SOURCE_DIR}/main.cpp ${HANGMAN_LIB}/client.cpp ${HANGMAN_LIB}/utils.h ${APP_ICON_RESOURCE_WINDOWS})
+else()
+    add_executable(client ${CLIENT_SOURCE_DIR}/main.cpp ${HANGMAN_LIB}/client.cpp ${HANGMAN_LIB}/utils.h)
+endif()
+
 install(TARGETS client RUNTIME DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/bin)

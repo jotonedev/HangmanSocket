@@ -1,23 +1,26 @@
-#include <unistd.h>
-#include <cstring>
-#include <fcntl.h>
-#include <cctype>
-#include <fstream>
-#include <iostream>
-
-#include "utils.h"
 #include "server.h"
 
 
 namespace Server {
     HangmanServer::HangmanServer(const string &ip, uint16_t port) {
         // Inizializzazione del socket
+#ifdef _WIN32
+        WSADATA wsa_data;
+        WSAStartup(MAKEWORD(1, 1), &wsa_data);
+#endif
+
         sockfd = socket(AF_INET, SOCK_STREAM, 0);
         if (sockfd < 0) {
             throw std::runtime_error("Errore nell'inizializzazione della socket");
         }
+
         // Imposta il sockfd in modalità non bloccante
+#ifdef _WIN32
+        u_long mode = 1;
+        ioctlsocket(sockfd, FIONBIO, &mode);
+#else
         fcntl(sockfd, F_SETFL, O_NONBLOCK);
+#endif
 
         // Imposta il timeout di 5ms per la lettura
         struct timeval tv{};
@@ -30,9 +33,15 @@ namespace Server {
 
         // Assegna l'indirizzo IP e la porta del server
         address.sin_family = AF_INET;
-        if ( inet_aton( ip.c_str(), &address.sin_addr ) == 0) {
+#ifdef _WIN32
+        if (inet_pton(AF_INET, ip.c_str(), &address.sin_addr) == 0) {
             throw std::runtime_error("Errore nella conversione dell'indirizzo IP");
         }
+#else
+        if (inet_aton(ip.c_str(), &address.sin_addr) == 0) {
+            throw std::runtime_error("Errore nella conversione dell'indirizzo IP");
+        }
+#endif
         address.sin_port = htons(port);
 
         // Collegamento della sockfd al server
@@ -45,13 +54,21 @@ namespace Server {
         // Chiusura della sockfd
         shutdown(sockfd, SHUT_RDWR);
 
+#ifdef _WIN32
+        closesocket(sockfd);
+        WSACleanup();
+#else
+        close(sockfd);
+#endif
+
+
         // Elimina i giocatori
         for (auto &player: players) {
             _remove_player(&player);
         }
     }
 
-    void HangmanServer::close() {
+    void HangmanServer::close_socket() {
         // Chiusura della sockfd
         shutdown(sockfd, SHUT_RDWR);
 
@@ -62,7 +79,8 @@ namespace Server {
     }
 
     void
-    HangmanServer::start(uint8_t _max_errors, const string &_start_blocked_letters, uint8_t _blocked_attempts, const string &filename) {
+    HangmanServer::start(uint8_t _max_errors, const string &_start_blocked_letters, uint8_t _blocked_attempts,
+                         const string &filename) {
         // Inizializzazione delle variabili
         this->max_errors = _max_errors;
         this->current_errors = 0;
@@ -170,7 +188,7 @@ namespace Server {
 
     template<typename TypeMessage>
     void HangmanServer::_send(Player *player, TypeMessage &message) {
-        if (send(player->sockfd, &message, sizeof(Message), 0) < 0) {
+        if (send(player->sockfd, (char *) (&message), sizeof(Message), 0) < 0) {
             _remove_player(player);
         }
     }
@@ -216,7 +234,7 @@ namespace Server {
         UpdateUserMessage packet;
         packet.user_count = players_connected;
 
-        for (uint i = 0; i < players_connected; i++) {
+        for (unsigned int i = 0; i < players_connected; i++) {
             strncpy(packet.usernames[i], players.at(i).username, USERNAME_LENGTH);
         }
 
@@ -276,7 +294,8 @@ namespace Server {
         // Legge il nome del giocatore
         Client::JoinMessage packet;
 
-        if (recv(client_socket, &packet, sizeof(packet), MSG_WAITALL) < 0) {
+        // Il casting to char è necessario per evitare un errore di compilazione su Windows
+        if (recv(client_socket, (char *) (&packet), sizeof(packet), MSG_WAITALL) < 0) {
             return;
         }
 
@@ -323,7 +342,7 @@ namespace Server {
             } else if (short_phrase[i] == '\0') {
                 continue;
             } else {
-                    short_phrase_masked[i] = '_';
+                short_phrase_masked[i] = '_';
             }
         }
     }
@@ -464,19 +483,19 @@ namespace Server {
             start();
         } catch (const std::exception &e) {
             if (verbose)
-                std::cerr << e.what() << std::endl;
-            exit(EXIT_FAILURE );
+                std::cerr << e.what() << endl;
+            exit(EXIT_FAILURE);
         }
 
         // Scrive a schermo l'indirizzo IP del server e la sua porta
         if (verbose) {
             char str[INET_ADDRSTRLEN];
             inet_ntop(AF_INET, &address.sin_addr, str, INET_ADDRSTRLEN);
-            std::cout << "Server address: " << str << "\n";
-            std::cout << "Server port: " << ntohs(address.sin_port)  << "\n\n";
+            cout << "Server address: " << str << "\n";
+            cout << "Server port: " << ntohs(address.sin_port) << "\n\n";
         }
 
-        cout << "Short phrase: " << short_phrase << std::endl;
+        cout << "Short phrase: " << short_phrase << endl;
 
         while (true) {
             try {
@@ -504,7 +523,7 @@ namespace Server {
             }
             catch (const std::exception &e) {
                 if (verbose)
-                    std::cerr << e.what() << std::endl;
+                    cerr << e.what() << endl;
             }
         }
     }

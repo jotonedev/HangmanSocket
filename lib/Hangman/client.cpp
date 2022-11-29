@@ -55,11 +55,11 @@ namespace Client {
 
     template<typename TypeMessage>
     void HangmanClient::_send(TypeMessage &message) {
-        send(sockfd, &message, MessageSize, 0);
+        send(sockfd, (char *) (&message), MessageSize, 0);
     }
 
     template<typename TypeMessage>
     void HangmanClient::_receive(TypeMessage &message) {
-        receive(sockfd, &message, MessageSize, MSG_WAITALL);
+        recv(sockfd, (char *) (&message), MessageSize, MSG_WAITALL);
     }
 }

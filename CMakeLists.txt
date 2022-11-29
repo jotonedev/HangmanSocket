@@ -8,6 +8,8 @@ set(CMAKE_CXX_STANDARD 20)
 set(INCLUDE_DIR ${CMAKE_SOURCE_DIR}/lib)
 set(HANGMAN_LIB ${INCLUDE_DIR}/Hangman)
 
+set(CMAKE_CXX_STANDARD_LIBRARIES "-static-libgcc -static-libstdc++ ${CMAKE_CXX_STANDARD_LIBRARIES}")
+
 include_directories(${INCLUDE_DIR})
 
 add_subdirectory(client)

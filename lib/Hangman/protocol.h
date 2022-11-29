@@ -1,10 +1,36 @@
 #ifndef hangman_protocol_h
 #define hangman_protocol_h
 
+#ifdef _WIN32
+#include <winsock2.h>
+#include <Ws2tcpip.h>
 
+#define bzero(b, len) (memset((b), '\0', (len)), (void) 0)
+#define bcopy(b1, b2, len) (memmove((b2), (b1), (len)), (void) 0)
+#define inet_aton(addr, in) ((*(in)).s_addr = inet_addr(addr))
+
+#define SHUT_RDWR SD_BOTH
+
+#define socklen_t int
+#define ssize_t int
+#else
 #include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#endif
+
 #include <locale>
 #include <stdint.h>
+#include <cstring>
+#include <iostream>
+#include <sys/types.h>
+
+
+using std::string;
+using std::cin;
+using std::cout;
+using std::cerr;
+using std::endl;
 
 
 #define SHORTPHRASE_LENGTH 123
