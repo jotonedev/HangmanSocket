@@ -3,6 +3,7 @@
 
 
 #include <sys/socket.h>
+#include <locale>
 #include <stdint.h>
 
 

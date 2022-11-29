@@ -6,6 +6,8 @@
 #include <vector>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 
 #include "protocol.h"
 
@@ -50,6 +52,9 @@ namespace Server {
         /// Descrittore del socket del server
         int sockfd;
 
+        /// Contiene l'indirizzo IP e la porta del server
+        struct sockaddr_in address{};
+
         /// Rappresenta il numero di errori massimo che i giocatori possono commettere
         uint8_t max_errors{};
         /// Rappresenta il numero di errori commessi dai giocatori
@@ -72,12 +77,22 @@ namespace Server {
         uint8_t players_connected{};
         /// Rappresenta il giocatore corrente
         Player *current_player{};
+        /// Contiene tutte le possibili frasi da indovinare
+        std::vector<string> all_phrases;
 
 
         /**
          * Permette di verificare se ci sono nuovi client che vogliono connettersi e di accettarli
          */
         void _accept();
+
+        /**
+         * Carica le frasi da un file
+         *
+         * @param filename il nome del file da cui caricare le frasi
+         * @throws std::runtime_error se il file non esiste
+         */
+        void _load_short_phrases(const string &filename = "data/data.txt");
 
         /**
          * Permette di generare una nuova frase da indovinare
@@ -101,7 +116,7 @@ namespace Server {
          * @param message Il messaggio da inviare
          */
         template<typename TypeMessage>
-        void _broadcast(TypeMessage message);
+        inline void _broadcast(TypeMessage message);
 
         /**
          * Permette di inviare a tutti i giocatori un aggiornamento sullo stato del gioco
@@ -212,7 +227,7 @@ namespace Server {
          * @throws std::runtime_error Se il server non è stato avviato
          */
         void start(uint8_t _max_errors = 10, const string &_start_blocked_letters = "AEIOU",
-                   uint8_t _blocked_attempts = 3);
+                   uint8_t _blocked_attempts = 3, const string &filename = "data/data.txt");
 
         /**
          * Esegue tutte le funzioni del server
@@ -242,7 +257,7 @@ namespace Server {
          * Permette di sapere il giocatore corrente
          * @return Il giocatore corrente
          */
-        [[nodiscard]] Player *get_current_player() { return current_player; };
+        [[nodiscard]] Player get_current_player() { return *current_player; };
 
         /**
          * Permette di sapere i giocatori connessi
@@ -254,43 +269,43 @@ namespace Server {
          * Permette di sapere il numero di giocatori connessi
          * @return Il numero di giocatori connessi
          */
-        [[nodiscard]] int get_players_count() { return players_connected; };
+        [[nodiscard]] inline int get_players_count() { return players_connected; };
 
         /**
          * Permette di sapere se il server è pieno
          * @return Se il server è pieno
          */
-        [[nodiscard]] bool is_full() { return players_connected >= MAX_CLIENTS; };
+        [[nodiscard]] inline bool is_full() { return players_connected >= MAX_CLIENTS; };
 
         /**
          * Permette di sapere se il server è vuoto
          * @return Se il server è vuoto
          */
-        [[nodiscard]] bool is_empty() { return players_connected == 0; };
+        [[nodiscard]] inline bool is_empty() { return players_connected == 0; };
 
         /**
          * Permette di sapere il numero di errori che sono stati commessi
          * @return Il numero di errori che sono stati commessi
          */
-        [[nodiscard]] int get_current_errors() { return current_errors; };
+        [[nodiscard]] inline int get_current_errors() { return current_errors; };
 
         /**
          * Permette di sapere quanti tentativi sono stati fatti fino a quel momento nel round
          * @return Il numero di tentativi fatti
          */
-        [[nodiscard]] int get_current_attempt() { return current_attempt; };
+        [[nodiscard]] inline int get_current_attempt() { return current_attempt; };
 
         /**
          * Permette di sapere qual'è la frase corrente
          * @return La frase corrente
          */
-        [[nodiscard]] const char *get_short_phrase() { return short_phrase; };
+        [[nodiscard]] inline const char *get_short_phrase() { return short_phrase; };
 
         /**
          * Permette di sapere qual'è stato l'ultimo tentativo
          * @return L'ultimo tentativo fatto
          */
-        [[nodiscard]] char get_last_attempt() { return attempts.back(); };
+        [[nodiscard]] inline char get_last_attempt() { return attempts.back(); };
     };
 
 }

@@ -2,27 +2,15 @@
 #include <cstring>
 #include <fcntl.h>
 #include <cctype>
-#include <netinet/in.h>
-#include <arpa/inet.h>
 #include <fstream>
 #include <iostream>
 
+#include "utils.h"
 #include "server.h"
-
-
-/**
- * Cambia il case della stringa in maiuscolo
- * @param str La stringa da modificare
- */
-void str_to_upper(char *str) {
-    std::transform(str, str + strlen(str), str, ::toupper);
-}
 
 
 namespace Server {
     HangmanServer::HangmanServer(const string &ip, uint16_t port) {
-        struct sockaddr_in address{};
-
         // Inizializzazione del socket
         sockfd = socket(AF_INET, SOCK_STREAM, 0);
         if (sockfd < 0) {
@@ -42,10 +30,8 @@ namespace Server {
 
         // Assegna l'indirizzo IP e la porta del server
         address.sin_family = AF_INET;
-        if (ip == "0.0.0.0") {
-            address.sin_addr.s_addr = htonl(INADDR_ANY);
-        } else {
-            address.sin_addr.s_addr = inet_addr(ip.c_str());
+        if ( inet_aton( ip.c_str(), &address.sin_addr ) == 0) {
+            throw std::runtime_error("Errore nella conversione dell'indirizzo IP");
         }
         address.sin_port = htons(port);
 
@@ -76,7 +62,7 @@ namespace Server {
     }
 
     void
-    HangmanServer::start(uint8_t _max_errors, const string &_start_blocked_letters, uint8_t _blocked_attempts) {
+    HangmanServer::start(uint8_t _max_errors, const string &_start_blocked_letters, uint8_t _blocked_attempts, const string &filename) {
         // Inizializzazione delle variabili
         this->max_errors = _max_errors;
         this->current_errors = 0;
@@ -85,6 +71,9 @@ namespace Server {
         this->blocked_attempts = _blocked_attempts;
         this->current_player = nullptr;
         this->attempts.clear();
+
+        // Carica le frasi dal file
+        _load_short_phrases(filename);
 
         // Generazione della parola o frase da indovinare
         _generate_short_phrase();
@@ -96,6 +85,8 @@ namespace Server {
         if (listen(sockfd, MAX_CLIENTS) < 0) {
             throw std::runtime_error("Errore nell'avvio del server");
         }
+
+
     }
 
     void HangmanServer::new_round() {
@@ -299,23 +290,30 @@ namespace Server {
         _broadcast_update_players();
     }
 
-    void HangmanServer::_generate_short_phrase() {
-        // Apre il file contenente i testi su cui costruire la Markov chain
-        std::ifstream file("data/data.txt");
+    void HangmanServer::_load_short_phrases(const std::string &filename) {
+        all_phrases.clear();
+        std::ifstream file(filename);
+
         if (!file.is_open()) {
             throw std::runtime_error("Errore nell'apertura del file");
         }
 
         std::string temp_text;
-        for (int i=0; i < rand() % 270; i++) {
-            if (!std::getline(file, temp_text))
-                break;
+        while (std::getline(file, temp_text)) {
+            str_to_upper(temp_text);
+            trim(temp_text);
+            all_phrases.push_back(temp_text);
         }
 
         file.close();
+    }
 
-        strncpy(short_phrase, temp_text.c_str(), SHORTPHRASE_LENGTH);
-        str_to_upper(short_phrase);
+    void HangmanServer::_generate_short_phrase() {
+        // Prende una frase random
+        int index = rand() % all_phrases.size();
+
+        bzero(short_phrase, SHORTPHRASE_LENGTH);
+        strncpy(short_phrase, all_phrases.at(index).c_str(), SHORTPHRASE_LENGTH);
 
         // Maschera la frase
         bzero(short_phrase_masked, SHORTPHRASE_LENGTH);
@@ -461,9 +459,24 @@ namespace Server {
 
     void HangmanServer::run(const bool verbose) {
         int prev_n_players = 0;
-        start();
 
-        cout << "Short phrase: " << short_phrase << "\n";
+        try {
+            start();
+        } catch (const std::exception &e) {
+            if (verbose)
+                std::cerr << e.what() << std::endl;
+            exit(EXIT_FAILURE );
+        }
+
+        // Scrive a schermo l'indirizzo IP del server e la sua porta
+        if (verbose) {
+            char str[INET_ADDRSTRLEN];
+            inet_ntop(AF_INET, &address.sin_addr, str, INET_ADDRSTRLEN);
+            std::cout << "Server address: " << str << "\n";
+            std::cout << "Server port: " << ntohs(address.sin_port)  << "\n\n";
+        }
+
+        cout << "Short phrase: " << short_phrase << std::endl;
 
         while (true) {
             try {

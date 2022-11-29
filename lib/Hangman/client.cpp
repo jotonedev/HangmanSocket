@@ -22,7 +22,7 @@ namespace Client {
 
     void HangmanClient::join(const char username[]) {
         JoinMessage message;
-        message.action = JOIN_GAME;
+
         if (strlen(username) < USERNAME_LENGTH)
             strncpy(message.username, username, strlen(username));
         else
@@ -37,7 +37,6 @@ namespace Client {
 
     void HangmanClient::sendLetter(char letter) {
         LetterMessage message;
-        message.action = LETTER;
         message.letter = letter;
 
         _send(message);
@@ -45,7 +44,6 @@ namespace Client {
 
     void HangmanClient::sendShortPhrase(const char phrase[]) {
         ShortPhraseMessage message;
-        message.action = SHORT_PHRASE;
 
         if (strlen(phrase) < SHORTPHRASE_LENGTH)
             strncpy(message.short_phrase, phrase, strlen(phrase));
