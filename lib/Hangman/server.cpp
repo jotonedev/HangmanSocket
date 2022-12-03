@@ -141,6 +141,11 @@ namespace Server {
 
         // Chiude la connessione con il giocatore
         shutdown(player->sockfd, SHUT_RDWR);
+#ifdef _WIN32
+        closesocket(player->sockfd);
+#else
+        close(player->sockfd);
+#endif
         players_connected--;
 
         // Elimina il giocatore
@@ -295,8 +300,13 @@ namespace Server {
         // Legge il nome del giocatore
         Client::JoinMessage packet;
 
-        // Il casting to char è necessario per evitare un errore di compilazione su Windows
-        if (_read(&player, packet, packet.action)) {
+        if (!_read(&player, packet, packet.action)) {
+            shutdown(player.sockfd, SHUT_RDWR);
+#ifdef _WIN32
+            closesocket(player.sockfd);
+#else
+            close(player.sockfd);
+#endif
             return;
         }
 
