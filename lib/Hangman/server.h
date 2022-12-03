@@ -32,6 +32,58 @@ namespace Server {
         int sockfd;
         /// Nome del client
         char username[USERNAME_LENGTH]{};
+
+        /**
+         * Permette di ottenere l'indirizzo IP del client
+         *
+         * @return L'indirizzo IP del client
+         */
+        [[nodiscard]] std::string get_address() {
+            sockaddr_in addr{};
+            socklen_t addr_size = sizeof(addr);
+            getpeername(sockfd, (sockaddr *) &addr, &addr_size);
+
+            return inet_ntoa(addr.sin_addr);
+        }
+
+        /**
+         * Permette di ottenere la porta del client
+         *
+         * @return La porta del client
+         */
+        [[nodiscard]] uint16_t get_port() {
+            sockaddr_in addr{};
+            socklen_t addr_size = sizeof(addr);
+            getpeername(sockfd, (sockaddr *) &addr, &addr_size);
+
+            return ntohs(addr.sin_port);
+        }
+
+        /**
+         * Permette di ottenere l'indirizzo del server
+         *
+         * @return L'indirizzo del server
+         */
+        [[nodiscard]] std::string get_server_address() {
+            sockaddr_in addr{};
+            socklen_t addr_size = sizeof(addr);
+            getsockname(sockfd, (sockaddr *) &addr, &addr_size);
+
+            return inet_ntoa(addr.sin_addr);
+        }
+
+        /**
+         * Permette di ottenere la porta del server
+         *
+         * @return La porta del server
+         */
+        [[nodiscard]] uint16_t get_server_port() {
+            sockaddr_in addr{};
+            socklen_t addr_size = sizeof(addr);
+            getsockname(sockfd, (sockaddr *) &addr, &addr_size);
+
+            return ntohs(addr.sin_port);
+        }
     } typedef Player;
 
 
@@ -78,11 +130,6 @@ namespace Server {
         /// Contiene tutte le possibili frasi da indovinare
         std::vector<string> all_phrases;
 
-
-        /**
-         * Permette di verificare se ci sono nuovi client che vogliono connettersi e di accettarli
-         */
-        void _accept();
 
         /**
          * Carica le frasi da un file
@@ -150,7 +197,8 @@ namespace Server {
          * @tparam TypeMessage Un tipo di messaggio di 128 bytes
          * @param player Il giocatore a cui inviare il messaggio
          * @param message Il messaggio da inviare
-         * @return Se la lettura è andata a buon fine
+         *
+         * @note Se l'invio fallisce, il giocatore viene disconnesso
          */
         template<typename TypeMessage>
         void _send(Player *player, TypeMessage &message);
@@ -158,13 +206,16 @@ namespace Server {
         /**
          * Permette di leggere un messaggio da un certo giocatore
          * @tparam TypeMessage Un tipo di messaggio di 128 bytes
+         * @tparam TypeAction L'azione che ci si aspetta di ricevere
+         *
          * @param player Il giocatore da cui aspettarsi il messaggio
          * @param message Dove salvare il messaggio
          * @param timeout I secondi massimi di attesa
+         *
          * @return Se la lettura è andata a buon fine
          */
-        template<typename TypeMessage>
-        bool _read(Player *player, TypeMessage &message, int timeout = 5);
+        template<class TypeMessage, typename TypeAction>
+        bool _read(Player *player, TypeMessage &message, TypeAction action = GENERIC_ACTION, int timeout=5);
 
         /**
          * Permette di eliminare un giocatore dalla lista dei giocatori
@@ -236,6 +287,11 @@ namespace Server {
         void run(const bool verbose = true);
 
         /**
+         * Permette di verificare se ci sono nuovi client che vogliono connettersi e di accettarli
+         */
+        void accept();
+
+        /**
          * Loop del server
          * @brief Si occupa di gestire le connessioni e le richieste dei client, quindi di eseguire il gioco
          * @note Deve trovarsi all'interno di un while loop
@@ -262,49 +318,69 @@ namespace Server {
          * Permette di sapere i giocatori connessi
          * @return Lista dei giocatori connessi
          */
-        [[nodiscard]] std::vector<Player> getPlayers() { return players; };
+        [[nodiscard]] std::vector<Player> get_players() { return players; };
 
         /**
          * Permette di sapere il numero di giocatori connessi
          * @return Il numero di giocatori connessi
          */
-        [[nodiscard]] inline int get_players_count() { return players_connected; };
+        [[nodiscard]] int get_players_count() { return players_connected; };
 
         /**
          * Permette di sapere se il server è pieno
          * @return Se il server è pieno
          */
-        [[nodiscard]] inline bool is_full() { return players_connected >= MAX_CLIENTS; };
+        [[nodiscard]] bool is_full() { return players_connected >= MAX_CLIENTS; };
 
         /**
          * Permette di sapere se il server è vuoto
          * @return Se il server è vuoto
          */
-        [[nodiscard]] inline bool is_empty() { return players_connected == 0; };
+        [[nodiscard]] bool is_empty() { return players_connected == 0; };
 
         /**
          * Permette di sapere il numero di errori che sono stati commessi
          * @return Il numero di errori che sono stati commessi
          */
-        [[nodiscard]] inline int get_current_errors() { return current_errors; };
+        [[nodiscard]] int get_current_errors() { return current_errors; };
 
         /**
          * Permette di sapere quanti tentativi sono stati fatti fino a quel momento nel round
          * @return Il numero di tentativi fatti
          */
-        [[nodiscard]] inline int get_current_attempt() { return current_attempt; };
+        [[nodiscard]] int get_current_attempt() { return current_attempt; };
 
         /**
          * Permette di sapere qual'è la frase corrente
          * @return La frase corrente
          */
-        [[nodiscard]] inline const char *get_short_phrase() { return short_phrase; };
+        [[nodiscard]] const char *get_short_phrase() { return short_phrase; };
+
+        /**
+         * Permette di sapere qual'è la frase masked corrente
+         * @return La frase masked corrente
+         */
+        [[nodiscard]] const char *get_masked_short_phrase() { return short_phrase_masked; };
 
         /**
          * Permette di sapere qual'è stato l'ultimo tentativo
          * @return L'ultimo tentativo fatto
          */
-        [[nodiscard]] inline char get_last_attempt() { return attempts.back(); };
+        [[nodiscard]] char get_last_attempt() { return attempts.back(); };
+
+        /**
+         * Permette di ottenere la porta del server
+         *
+         * @return La porta del server
+         */
+        [[nodiscard]] int get_server_port();
+
+        /**
+         * Permette di ottenere l'indirizzo del server
+         *
+         * @return L'indirizzo del server
+         */
+        [[nodiscard]] std::string get_server_address();
     };
 
 }

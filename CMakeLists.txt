@@ -15,6 +15,7 @@ endif()
 
 
 include_directories(${INCLUDE_DIR})
+set(HANGMAN ${HANGMAN_LIB}/protocol.h ${HANGMAN_LIB}/utils.h ${HANGMAN_LIB}/client.h ${HANGMAN_LIB}/client.cpp ${HANGMAN_LIB}/server.h ${HANGMAN_LIB}/server.cpp)
 set(HANGMAN_CLIENT ${HANGMAN_LIB}/protocol.h ${HANGMAN_LIB}/utils.h ${HANGMAN_LIB}/client.h ${HANGMAN_LIB}/client.cpp)
 set(HANGMAN_SERVER ${HANGMAN_LIB}/protocol.h ${HANGMAN_LIB}/utils.h ${HANGMAN_LIB}/server.h ${HANGMAN_LIB}/server.cpp)
 add_library(hangman OBJECT ${HANGMAN_CLIENT} ${HANGMAN_SERVER})

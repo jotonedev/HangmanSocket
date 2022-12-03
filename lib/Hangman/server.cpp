@@ -103,8 +103,6 @@ namespace Server {
         if (listen(sockfd, MAX_CLIENTS) < 0) {
             throw std::runtime_error("Errore nell'avvio del server");
         }
-
-
     }
 
     void HangmanServer::new_round() {
@@ -149,20 +147,24 @@ namespace Server {
         delete player;
     }
 
-    template<typename TypeMessage>
-    bool HangmanServer::_read(Player *player, TypeMessage &message, int timeout) {
+    template<class TypeMessage, typename TypeAction>
+    bool HangmanServer::_read(Player *player, TypeMessage &message, TypeAction action, int timeout) {
         // Legge il messaggio dal giocatore
         int n = read(player->sockfd, &message, sizeof(Message));
 
         // Se il giocatore ha chiuso la connessione
         if (n == 0) {
-            _remove_player(player);
             return false;
         }
 
         // Se il giocatore ha inviato un messaggio
-        if (n > 0) {
-            return true;
+        if (n == sizeof(TypeMessage)) {
+            // Se il messaggio inviato ha un action diversa da quella richiesta
+            if (action != GENERIC_ACTION && message.action != action) {
+                return false;
+            } else {
+                return true;
+            }
         }
 
         // Se il giocatore non ha inviato un messaggio
@@ -178,11 +180,10 @@ namespace Server {
 
             // Ritenta la lettura (32 è il numero massimo di chiamate ricorsive)
             if (timeout < 32)
-                return _read(player, message, timeout - 1);
+                return _read(player, message, action, timeout - 1);
         }
 
         // Se il giocatore ha chiuso la connessione
-        _remove_player(player);
         return false;
     }
 
@@ -277,10 +278,10 @@ namespace Server {
         }
     }
 
-    void HangmanServer::_accept() {
+    void HangmanServer::accept() {
         struct sockaddr_in client_address{};
         socklen_t client_address_len = sizeof(client_address);
-        int client_socket = accept(sockfd, (struct sockaddr *) &client_address, &client_address_len);
+        int client_socket = ::accept(sockfd, (struct sockaddr *) &client_address, &client_address_len);
 
         if (client_socket < 0) {
             return;
@@ -295,7 +296,7 @@ namespace Server {
         Client::JoinMessage packet;
 
         // Il casting to char è necessario per evitare un errore di compilazione su Windows
-        if (recv(client_socket, (char *) (&packet), sizeof(packet), MSG_WAITALL) < 0) {
+        if (_read(&player, packet, packet.action)) {
             return;
         }
 
@@ -349,7 +350,11 @@ namespace Server {
 
     status HangmanServer::_get_letter_from_player(Player *player, int timeout) {
         Client::LetterMessage packet;
-        _read(player, packet, timeout);
+
+        if (!_read(player, packet, packet.action, timeout)) {
+            _remove_player(player);
+            return -3;
+        }
 
         if (packet.action != Client::Action::LETTER) {
             _remove_player(player);
@@ -405,7 +410,10 @@ namespace Server {
 
     status HangmanServer::_get_short_phrase_from_player(Player *player, int timeout) {
         Client::ShortPhraseMessage packet;
-        _read(player, packet, timeout);
+        if (!_read(player, packet, packet.action, timeout)) {
+            _remove_player(player);
+            return -3;
+        }
 
         // Controlla se il pacchetto è corretto
         if (packet.action != Client::Action::SHORT_PHRASE) {
@@ -444,9 +452,6 @@ namespace Server {
     }
 
     void HangmanServer::loop() {
-        // Controlla se ci sono nuove connessioni
-        _accept();
-
         // Se il numero di giocatori è insufficiente, non fa nulla
         if (players_connected == 0) {
             return;
@@ -499,6 +504,8 @@ namespace Server {
 
         while (true) {
             try {
+                // Controlla se ci sono nuove connessioni
+                accept();
                 loop();
 
                 if (verbose && players_connected > 0) {
@@ -526,5 +533,21 @@ namespace Server {
                     cerr << e.what() << endl;
             }
         }
+    }
+
+    std::string HangmanServer::get_server_address() {
+        sockaddr_in addr{};
+        socklen_t addr_size = sizeof(addr);
+        getsockname(sockfd, (sockaddr *) &addr, &addr_size);
+
+        return inet_ntoa(addr.sin_addr);
+    }
+
+    int HangmanServer::get_server_port() {
+        sockaddr_in addr{};
+        socklen_t addr_size = sizeof(addr);
+        getsockname(sockfd, (sockaddr *) &addr, &addr_size);
+
+        return ntohs(addr.sin_port);
     }
 }

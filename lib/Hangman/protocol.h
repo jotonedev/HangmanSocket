@@ -35,6 +35,7 @@ using std::endl;
 
 #define SHORTPHRASE_LENGTH 123
 #define USERNAME_LENGTH 32
+#define GENERIC_ACTION 0xFF
 
 
 // Il protocollo per il gioco dell'impiccato si basa su sistema di azione (Action) e risposta (Response)
@@ -58,12 +59,15 @@ namespace Client {
         SHORT_PHRASE_ACCEPTED,
         // Risposta di errore della frase
         SHORT_PHRASE_REJECTED,
+
+        // Valore da sostituire
+        GENERIC = GENERIC_ACTION,
     };
 
     // Struttura che rappresenta un messaggio base
     struct Message {
         // Azione da inviare
-        Action action;
+        Action action = GENERIC;
 
         // Messaggio da inviare
         char data[124];
@@ -72,7 +76,7 @@ namespace Client {
     // Struttura che rappresenta un messaggio di ingresso nella partita
     struct JoinMessage {
         // Azione da inviare
-        Action action;
+        Action action = JOIN_GAME;
 
         // Nome del giocatore
         char username[USERNAME_LENGTH];
@@ -126,11 +130,14 @@ namespace Server {
         YOUR_TURN,
         // Segnalazione di un turno di un altro giocatore
         OTHER_TURN,
+
+        // Valore da sostituire
+        GENERIC = GENERIC_ACTION,
     };
 
     // Struttura che rappresenta un messaggio base
     struct Message {
-        Action action;
+        Action action = GENERIC;
 
         // Dati aggiuntivi
         uint8_t data[124];
