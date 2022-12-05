@@ -525,7 +525,7 @@ namespace Server {
 
         cout << "Short phrase: " << short_phrase << endl;
 
-        while (true) {
+        while(true) {
             try {
                 // Controlla se ci sono nuove connessioni
                 accept();

@@ -6,6 +6,8 @@
 #include <cstring>
 #include <string>
 
+#include "protocol.h"
+
 
 // trim from start (in place)
 static inline void ltrim(std::string &s) {
@@ -46,6 +48,81 @@ inline void str_to_upper(char *str) {
 inline void str_to_upper(std::string &str) {
     std::transform(str.begin(), str.end(), str.begin(), ::toupper);
 }
+
+/**
+ * Go to x and y coordinates
+*/
+void gotoxy(int x, int y)
+{
+    printf("%c[%d;%df",0x1B,y,x);
+}
+
+
+/**
+ * Clear screen
+ */
+void clear_screen() {
+#ifdef _WIN32
+    system("cls");
+#else
+    system("clear");
+#endif
+}
+
+/**
+ * Struttura che rappresenta le dimensioni del terminale
+ */
+struct TerminalSize {
+    int width;
+    int height;
+} typedef TerminalSize;
+
+/**
+ * Ritorna le dimensioni del terminale
+ * @return Le dimensioni del terminale
+ */
+inline TerminalSize get_terminal_size() {
+    TerminalSize size;
+    size.width = 0;
+    size.height = 0;
+
+#ifdef _WIN32
+        CONSOLE_SCREEN_BUFFER_INFO csbi;
+        int columns, rows;
+
+        GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
+        columns = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+        rows = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
+
+        size.width = columns;
+        size.height = rows;
+#else
+        struct winsize w;
+        ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+
+        size.width = w.ws_col;
+        size.height = w.ws_row;
+#endif
+
+    return size;
+}
+
+
+/**
+ * Cancella un certo numero di caratteri dal terminale a partire dalla posizione del cursore
+ */
+inline void clear_chars(int chars) {
+    // Sostituisce con degli spazi
+    for (int i = 0; i < chars; i++) {
+        printf(" ");
+    }
+    
+    // Torna indietro
+    for (int i = 0; i < chars; i++) {
+        printf("\b");
+    }
+}
+ 
 
 
 #endif

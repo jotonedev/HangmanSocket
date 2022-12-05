@@ -4,6 +4,7 @@
 #ifdef _WIN32
 #include <winsock2.h>
 #include <Ws2tcpip.h>
+#include <windows.h>
 
 #define bzero(b, len) (memset((b), '\0', (len)), (void) 0)
 #define bcopy(b1, b2, len) (memmove((b2), (b1), (len)), (void) 0)
@@ -17,6 +18,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <sys/ioctl.h>
 #endif
 
 #include <locale>

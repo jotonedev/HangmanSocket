@@ -9,9 +9,19 @@
 #include <cctype>
 
 #include "protocol.h"
+#include "utils.h"
 
 
 namespace Client {
+    typedef union {
+        Server::Message message;
+        Server::UpdateUserMessage update_user_message;
+        Server::UpdateShortPhraseMessage update_short_phrase_message;
+        Server::UpdateAttemptsMessage update_attempts_message;
+        Server::OtherOneTurnMessage other_one_turn_message;
+    } ServerMessageUnion;
+
+
     /**
      * Questa classe rappresenta il client del gioco dell'impiccato.
      *
@@ -39,10 +49,15 @@ namespace Client {
         uint8_t blocked_letters_round = 3;
 
         template<typename TypeMessage>
-        void _send(TypeMessage &message);
+        bool _send(TypeMessage &message);
 
         template<typename TypeMessage>
-        void _receive(TypeMessage &message);
+        bool _receive(TypeMessage &message);
+
+    protected:
+        bool _get_letter();
+
+        bool _get_short_phrase();
 
     public:
         HangmanClient(const char address[], const char port[]);
@@ -53,9 +68,27 @@ namespace Client {
 
         void loop();
 
-        void run();
+        void run(bool verbose=true);
 
         void close();
+
+        void yourTurn(Server::Message* message);
+
+        void waitAction();
+
+        void printPlayerList(Server::UpdateUserMessage* message);
+
+        void printShortPhrase(Server::UpdateShortPhraseMessage* message);
+
+        void printAttempts(Server::UpdateAttemptsMessage* message);
+
+        void printOtherTurn(Server::OtherOneTurnMessage* message);
+
+        void printWin();
+        
+        void printLose();
+
+        void reset();
 
         void sendLetter(char letter);
 
