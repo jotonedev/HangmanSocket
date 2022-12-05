@@ -1,9 +1,5 @@
-//
-// Created by johnt on 29/11/2022.
-//
-
-#ifndef HANGMAN_GAME_UTILS_H
-#define HANGMAN_GAME_UTILS_H
+#ifndef UTILS_H
+#define UTILS_H
 
 #include <algorithm>
 #include <cctype>
@@ -52,4 +48,4 @@ inline void str_to_upper(std::string &str) {
 }
 
 
-#endif //HANGMAN_GAME_UTILS_H
+#endif

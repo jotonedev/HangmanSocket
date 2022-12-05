@@ -1,5 +1,5 @@
-#ifndef hangman_protocol_h
-#define hangman_protocol_h
+#ifndef PROTOCOL_H
+#define PROTOCOL_H
 
 #ifdef _WIN32
 #include <winsock2.h>

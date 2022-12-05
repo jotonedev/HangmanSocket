@@ -22,10 +22,10 @@ namespace Server {
         fcntl(sockfd, F_SETFL, O_NONBLOCK);
 #endif
 
-        // Imposta il timeout di 5ms per la lettura
+        // Imposta il timeout di 3ms per la lettura
         struct timeval tv{};
         tv.tv_sec = 0;
-        tv.tv_usec = 5000;
+        tv.tv_usec = 3000;
         setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (const char *) &tv, sizeof tv);
 
         // Inizializzazione dell'indirizzo del server
@@ -154,6 +154,19 @@ namespace Server {
 
     template<class TypeMessage, typename TypeAction>
     bool HangmanServer::_read(Player *player, TypeMessage &message, TypeAction action, int timeout) {
+        // Imposta il timeout
+        struct pollfd fd;
+        int status;
+
+        fd.fd = player->sockfd; // your socket handler
+        fd.events = POLLIN;
+#ifdef _WIN32
+        status = WSAPoll(&fd, 1, timeout);
+#else
+        status = poll(&fd, 1, timeout * 1000);
+#endif
+
+
         // Legge il messaggio dal giocatore
         int n = read(player->sockfd, &message, sizeof(Message));
 
@@ -180,10 +193,10 @@ namespace Server {
                 return false;
             }
 
-            // Aspetta 1ms
-            usleep(1000);
+            // Aspetta 10ms
+            usleep(100'000);
 
-            // Ritenta la lettura (32 è il numero massimo di chiamate ricorsive)
+            // Ritenta la lettura (32 è il numero massimo di chiamate ricorsive, quindi 320 ms di timeout)
             if (timeout < 32)
                 return _read(player, message, action, timeout - 1);
         }

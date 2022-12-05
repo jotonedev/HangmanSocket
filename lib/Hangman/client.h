@@ -1,5 +1,5 @@
-#ifndef hangman_client_h
-#define hangman_client_h
+#ifndef CLIENT_H
+#define CLIENT_H
 
 #include <iterator>
 #include <algorithm>

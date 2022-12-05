@@ -1,5 +1,5 @@
-#ifndef hangman_server_h
-#define hangman_server_h
+#ifndef SERVER_H
+#define SERVER_H
 
 #include <iterator>
 #include <algorithm>
@@ -210,7 +210,7 @@ namespace Server {
          *
          * @param player Il giocatore da cui aspettarsi il messaggio
          * @param message Dove salvare il messaggio
-         * @param timeout I secondi massimi di attesa
+         * @param timeout Il tempo massimo di attesa per il messaggio (in secondi)
          *
          * @return Se la lettura è andata a buon fine
          */
