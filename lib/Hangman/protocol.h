@@ -4,7 +4,6 @@
 #ifdef _WIN32
 #include <winsock2.h>
 #include <Ws2tcpip.h>
-#include <windows.h>
 
 #define bzero(b, len) (memset((b), '\0', (len)), (void) 0)
 #define bcopy(b1, b2, len) (memmove((b2), (b1), (len)), (void) 0)
@@ -19,12 +18,14 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <sys/ioctl.h>
+#include <poll.h>
 #endif
 
 #include <locale>
 #include <stdint.h>
 #include <cstring>
 #include <iostream>
+#include <variant>
 #include <sys/types.h>
 
 
@@ -52,16 +53,6 @@ namespace Client {
         // Azione d'invio della frase
         SHORT_PHRASE,
 
-        // Risposte che il server può inviare al client
-        // Risposta di conferma della lettera
-        LETTER_ACCEPTED,
-        // Risposta di errore della lettera
-        LETTER_REJECTED,
-        // Risposta di conferma della frase
-        SHORT_PHRASE_ACCEPTED,
-        // Risposta di errore della frase
-        SHORT_PHRASE_REJECTED,
-
         // Valore da sostituire
         GENERIC = GENERIC_ACTION,
     };
@@ -72,7 +63,7 @@ namespace Client {
         Action action = GENERIC;
 
         // Messaggio da inviare
-        char data[124];
+        char data[124]{};
     } typedef Message;
 
     // Struttura che rappresenta un messaggio di ingresso nella partita
@@ -81,9 +72,9 @@ namespace Client {
         Action action = JOIN_GAME;
 
         // Nome del giocatore
-        char username[USERNAME_LENGTH];
+        char username[USERNAME_LENGTH]{};
 
-        uint8_t pad[124 - USERNAME_LENGTH];
+        uint8_t pad[124 - USERNAME_LENGTH]{};
     } typedef JoinMessage;
 
     // Struttura che rappresenta un messaggio di invio di una nuova lettera
@@ -111,6 +102,8 @@ namespace Client {
     static_assert(sizeof(Message) == sizeof(JoinMessage), "sizes must match");
     static_assert(sizeof(Message) == sizeof(LetterMessage), "sizes must match");
     static_assert(sizeof(Message) == sizeof(ShortPhraseMessage), "sizes must match");
+
+    using ClientMessage = std::variant<Client::Message, Client::JoinMessage, Client::LetterMessage, Client::ShortPhraseMessage>;
 }
 
 
@@ -132,6 +125,22 @@ namespace Server {
         YOUR_TURN,
         // Segnalazione di un turno di un altro giocatore
         OTHER_TURN,
+        // Segnalazione di avvio di una nuova partita
+        NEW_GAME,
+        // Segnalazione di invio di una nuova lettera
+        SEND_LETTER,
+        // Segnalazione di invio della frase
+        SEND_SHORT_PHRASE,
+
+        // Risposte che il server può inviare al client
+        // Risposta di conferma della lettera
+        LETTER_ACCEPTED,
+        // Risposta di errore della lettera
+        LETTER_REJECTED,
+        // Risposta di conferma della frase
+        SHORT_PHRASE_ACCEPTED,
+        // Risposta di errore della frase
+        SHORT_PHRASE_REJECTED,
 
         // Valore da sostituire
         GENERIC = GENERIC_ACTION,
@@ -142,7 +151,7 @@ namespace Server {
         Action action = GENERIC;
 
         // Dati aggiuntivi
-        uint8_t data[124];
+        uint8_t data[124]{};
     } typedef Message;
 
     // Struttura che rappresenta un messaggio di segnalazione di un update dello stato di gioco
@@ -200,6 +209,8 @@ namespace Server {
     static_assert(sizeof(Message) == sizeof(UpdateWordMessage), "sizes must match");
     static_assert(sizeof(Message) == sizeof(OtherOneTurnMessage), "sizes must match");
     static_assert(sizeof(Message) == sizeof(UpdateAttemptsMessage), "sizes must match");
+
+    using ServerMessage = std::variant<Server::Message, Server::UpdateUserMessage, Server::UpdateWordMessage, Server::OtherOneTurnMessage, Server::UpdateAttemptsMessage>;
 }
 
 // Verifica che le struct siano di dimensione corretta

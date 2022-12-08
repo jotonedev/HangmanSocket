@@ -1,28 +1,44 @@
 #include "client.h"
+#include "terminal_utils.h"
 
 namespace Client {
     HangmanClient::HangmanClient(const char address[], const char port[]) {
         // Creazione del socket
+#ifdef _WIN32
+        WSADATA wsa_data;
+        WSAStartup(MAKEWORD(1, 1), &wsa_data);
+#endif
         sockfd = socket(AF_INET, SOCK_STREAM, 0);
         if (sockfd < 0) {
             throw std::runtime_error("Errore nell'inizializzazione della socket");
         }
 
         // Creazione dell'indirizzo del server
-        struct sockaddr_in server_address;
         server_address.sin_family = AF_INET;
         server_address.sin_port = htons(atoi(port));
         server_address.sin_addr.s_addr = inet_addr(address);
+    }
 
+    HangmanClient::~HangmanClient() {
+        // Chiusura della sockfd
+        shutdown(sockfd, SHUT_RDWR);
+
+#ifdef _WIN32
+        closesocket(sockfd);
+        WSACleanup();
+#else
+        ::close(sockfd);
+#endif
+    }
+
+    void HangmanClient::join(const char username[]) {
         // Connessione al server
         if (connect(sockfd, (struct sockaddr *) &server_address, sizeof(server_address)) < 0) {
             throw std::runtime_error("Errore nella connessione al server");
         }
-    }
 
-    void HangmanClient::join(const char username[]) {
+        // Invio username
         JoinMessage message;
-
         if (strlen(username) < USERNAME_LENGTH)
             strncpy(message.username, username, strlen(username));
         else
@@ -84,30 +100,50 @@ namespace Client {
 
         // Esegue l'azione corrispondente al messaggio ricevuto
         switch(raw_msg.action) {
-            case Server::Action::UPDATE_USER:
+            case Server::Action::UPDATE_USER: {
                 printPlayerList(&message.update_user_message);
                 break;
-            case Server::Action::UPDATE_SHORTPHRASE:
+            }
+            case Server::Action::UPDATE_SHORTPHRASE: {
                 printShortPhrase(&message.update_short_phrase_message);
                 break;
-            case Server::Action::UPDATE_ATTEMPTS:
+            }
+            case Server::Action::UPDATE_ATTEMPTS: {
                 printAttempts(&message.update_attempts_message);
                 break;
-            case Server::Action::YOUR_TURN:
-                yourTurn(&message.message);
+            }
+            case Server::Action::YOUR_TURN: {
+                printYourTurn(&message.message);
                 break;
-            case Server::Action::OTHER_TURN:
+            }
+            case Server::Action::OTHER_TURN: {
                 printOtherTurn(&message.other_one_turn_message);
                 break;
-            case Server::Action::WIN:
+            }
+            case Server::Action::WIN: {
                 printWin();
                 break;
-            case Server::Action::LOSE:
+            }
+            case Server::Action::LOSE: {
                 printLose();
                 break;
-
-            default:
+            }
+            case Server::Action::NEW_GAME: {
+                clear_screen();
                 break;
+            }
+            case Server::Action::SEND_LETTER: {
+                _get_letter();
+                break;
+            }
+            case Server::Action::SEND_SHORT_PHRASE: {
+                _get_short_phrase();
+                break;
+            }
+
+            default: {
+                break;
+            }
         }
     }
 
@@ -115,6 +151,9 @@ namespace Client {
         char username[USERNAME_LENGTH];
         cout << "Inserisci lo username: ";
         cin >> username;
+        cin.clear();
+        cin.ignore(10000, '\n');
+
         try {
             join(username);
         } catch (const std::exception &e) {
@@ -140,26 +179,24 @@ namespace Client {
     void HangmanClient::printShortPhrase(Server::UpdateShortPhraseMessage* message) {
         // Scrive a metà schermo sulla sinistra con un certo margine la shortphrase
         TerminalSize size = get_terminal_size();
-        gotoxy(4, size.height / 2);
-        clear_chars(123);
+        int x = 2;
+        int y = size.height / 2;
+
+        clear_chars(SHORTPHRASE_LENGTH, x, y);
         std::cout << message->short_phrase;
     }
 
     void HangmanClient::printAttempts(Server::UpdateAttemptsMessage* message) {
-        TerminalSize size = get_terminal_size();
-        
-        gotoxy(4, 2);
-        clear_chars(60);
+        clear_chars(60, 2, 2);
+
         for (int i = 0; i < message->attempts; i++) {
             char atp = message->attempts_list[i];
             if (atp != '\0')
                 std::cout << atp << " ";
         }
 
-        gotoxy(4, 3);
-        clear_chars(30);
-        std::cout << "Errori fatti fin'ora" << message->errors << "/" << message->max_errors;
-        
+        clear_chars(30, 2, 3);
+        std::cout << "Errori fatti fin'ora: " << (int)message->errors << "/" << (int)message->max_errors;
     }
 
     void HangmanClient::printPlayerList(Server::UpdateUserMessage* message) {
@@ -168,9 +205,11 @@ namespace Client {
         int x = size.width-((USERNAME_LENGTH-4)%(size.width/2));
         int y = (size.height / 8);
 
+        clear_chars(USERNAME_LENGTH, x, y-2);
+        std::cout << "Players";
+
         for (int i = 0; i < message->user_count; i++) {
-            gotoxy(x, y+i);
-            clear_chars(USERNAME_LENGTH);
+            clear_chars(USERNAME_LENGTH, x, y+i);
             std::cout << message->usernames[i];
         }
     }
@@ -179,40 +218,185 @@ namespace Client {
         TerminalSize size = get_terminal_size();
 
         int x = size.width-((USERNAME_LENGTH-4)%(size.width/2));
-        int y = (size.height / 8)+3;
+        int y = (size.height / 8)+4;
 
-        clear_chars(USERNAME_LENGTH+14);
+        clear_chars(USERNAME_LENGTH+14, x, y);
         std::cout << message->player_name << " sta giocando";
+
+        y = size.height-2;
+        clear_chars(SHORTPHRASE_LENGTH,2, y);
     }
 
-    void HangmanClient::yourTurn(Server::Message* message) {
+    void HangmanClient::printYourTurn(Server::Message* message) {
         TerminalSize size = get_terminal_size();
 
         int x = size.width-((USERNAME_LENGTH-4)%(size.width/2));
         int y = (size.height / 8)+3;
 
-        clear_chars(USERNAME_LENGTH+14);
+        clear_chars(USERNAME_LENGTH+14, x, y);
         std::cout << "E' il tuo turno";
-
-        if (!_get_letter())
-            return;
     }
 
     bool HangmanClient::_get_letter() {
         TerminalSize size = get_terminal_size();
 
-        int x = size.width-4;
-        int y = size.height-4;
+        int x = 2;
+        int y = size.height-2;
 
-        std::cout << "+";
+        clear_chars(SHORTPHRASE_LENGTH, x, y);
+
+        std::cout << "+" << std::flush;
         char letter;
-        // Aspetta che l'utente inserisca una lettera per 5 secondi
-        
-        std::cin >> letter;
 
+        // Aspetta che l'utente inserisca una lettera per 5 secondi
+#ifndef _WIN32
+        fd_set set;
+        FD_ZERO(&set);
+        FD_SET(STDIN_FILENO, &set);
+        struct timeval timeout;
+        timeout.tv_sec = 5;
+        timeout.tv_usec = 0;
+        int rv = select(STDIN_FILENO + 1, &set, NULL, NULL, &timeout);
+
+        if (rv == -1) {
+            clear_chars(SHORTPHRASE_LENGTH, x, y);
+            std::cerr << "Errore nella lettura della lettera" << std::endl;
+            return false;
+        } else if (rv == 0) {
+            clear_chars(SHORTPHRASE_LENGTH, x, y);
+            std::cout << "Tempo scaduto" << std::endl;
+            return false;
+        } else {
+            std::cin >> letter;
+            clear_chars(SHORTPHRASE_LENGTH, x, y);
+        }
+#else
+        // Per implementare il timeout correttamente su windows serve l'uso dei thread
+        std::cin >> letter;
+        clear_chars(SHORTPHRASE_LENGTH, x, y);
+#endif
+        // Pulisce il buffer di input
+        cin.clear();
+        cin.ignore(10000, '\n');
+
+        // Invia la lettera al server
         LetterMessage letterMessage;
         letterMessage.letter = letter;
 
-        return _send(letterMessage);
+        bool res = _send(letterMessage);
+        if (!res)
+            return false;
+
+        // Aspetta la risposta dal server
+        Server::Message response;
+        _receive(response);
+
+        if (response.action == Server::LETTER_ACCEPTED)
+            return true;
+        else
+            return false;
+    }
+
+    bool HangmanClient::_get_short_phrase() {
+        TerminalSize size = get_terminal_size();
+
+        int x = 2;
+        int y = size.height-2;
+
+        clear_chars(SHORTPHRASE_LENGTH, x, y);
+
+        std::cout << "> " << std::flush;
+        string phrase;
+
+#ifndef _WIN32
+        fd_set set;
+        FD_ZERO(&set);
+        FD_SET(STDIN_FILENO, &set);
+        struct timeval timeout;
+        timeout.tv_sec = 10;
+        timeout.tv_usec = 0;
+        int rv = select(STDIN_FILENO + 1, &set, NULL, NULL, &timeout);
+
+        if (rv == -1) {
+            clear_chars(SHORTPHRASE_LENGTH, x, y);
+            std::cerr << "Errore nella lettura della lettera" << std::endl;
+            return false;
+        } else if (rv == 0) {
+            clear_chars(SHORTPHRASE_LENGTH, x, y);
+            std::cout << "Tempo scaduto" << std::endl;
+            return false;
+        } else {
+            std::getline(std::cin, phrase);
+            clear_chars(SHORTPHRASE_LENGTH, x, y);
+        }
+#else
+        // Per implementare il timeout correttamente su windows serve l'uso dei thread
+        do {
+            std::getline(std::cin, phrase);
+        } while (phrase.length() == 0);
+#endif
+        ShortPhraseMessage shortPhraseMessage;
+        if (strlen(phrase.c_str()) > SHORTPHRASE_LENGTH)
+            strncpy(shortPhraseMessage.short_phrase, phrase.c_str(), SHORTPHRASE_LENGTH);
+        else
+            strncpy(shortPhraseMessage.short_phrase, phrase.c_str(), strlen(phrase.c_str()));
+
+        bool res = _send(shortPhraseMessage);
+
+        if (!res)
+            return false;
+
+        Server::Message response;
+        _receive(response);
+
+        if (response.action == Server::LETTER_ACCEPTED)
+            return true;
+        else
+            return false;
+    }
+
+    void HangmanClient::printWin() {
+        TerminalSize size = get_terminal_size();
+
+        int y = size.height-2;
+
+        gotoxy(2, y);
+        std::cout << "You Win!" << std::flush;
+    }
+
+    void HangmanClient::printLose() {
+        TerminalSize size = get_terminal_size();
+
+        int y = size.height-2;
+
+        gotoxy(2, y);
+        std::cout << "You Lose." << std::flush;
+    }
+
+    bool HangmanClient::_wait_for_input(int timeout) {
+#ifndef _WIN32
+        struct pollfd poller;
+        poller.fd = STDIN_FILENO;
+        poller.events = POLLIN;
+        poller.revents = 0;
+
+        int rc = poll(&poller, 1, timeout);
+
+        if (rc <= 0)
+            return false;
+        else
+            return true;
+#else
+        for (int i = 0; i < timeout * 10; i++) {
+            char c = std::cin.peek();
+
+            if (c != EOF)
+                return true;
+
+            // Dorme per 100 millisecond
+            usleep(100'000);
+        }
+        return false;
+#endif
     }
 }

@@ -8,8 +8,11 @@
 #include <fcntl.h>
 #include <cctype>
 
+#ifdef _WIN32
+#include <chrono>
+#endif
+
 #include "protocol.h"
-#include "utils.h"
 
 
 namespace Client {
@@ -36,6 +39,9 @@ namespace Client {
         /// Descrittore del socket del server
         int sockfd;
 
+        /// Struttura contenente le informazioni del server
+        struct sockaddr_in server_address;
+
         /// Rappresenta i tentativi fatti fino al momento di accessi durante la partita
         char attempts[26];
         /// Rappresenta la lunghezza dell'array attempts
@@ -59,6 +65,8 @@ namespace Client {
 
         bool _get_short_phrase();
 
+        bool _wait_for_input(int timeout);
+
     public:
         HangmanClient(const char address[], const char port[]);
 
@@ -72,7 +80,7 @@ namespace Client {
 
         void close();
 
-        void yourTurn(Server::Message* message);
+        void printYourTurn(Server::Message* message);
 
         void waitAction();
 
@@ -88,15 +96,9 @@ namespace Client {
         
         void printLose();
 
-        void reset();
-
         void sendLetter(char letter);
 
         void sendShortPhrase(const char phrase[]);
-
-        char *getAttempts() { return attempts; };
-
-        char *getShortPhrase() { return short_phrase; };
     };
 }
 

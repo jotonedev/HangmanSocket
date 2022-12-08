@@ -9,17 +9,14 @@
 #include <cctype>
 #include <fstream>
 
-
-#include "utils.h"
 #include "protocol.h"
+#include "string_utils.h"
 
 
 #define MAX_CLIENTS 3
 
 
 namespace Server {
-    typedef uint8_t status;
-
     /**
      * Rappresenta il giocatore
      *
@@ -106,13 +103,13 @@ namespace Server {
         struct sockaddr_in address{};
 
         /// Rappresenta il numero di errori massimo che i giocatori possono commettere
-        uint8_t max_errors{};
+        unsigned int max_errors{};
         /// Rappresenta il numero di errori commessi dai giocatori
-        uint8_t current_errors{};
+        unsigned int current_errors{};
         /// Rappresenta i tentativi fatti fin'ora
         std::vector<char> attempts;
         /// Rappresenta quanti tentativi sono stati fatti
-        uint8_t current_attempt{};
+        unsigned int current_attempt{};
         /// Rappresenta la parola o frase da indovinare
         char short_phrase[SHORTPHRASE_LENGTH]{};
         /// Rappresenta la parola o frase da indovinare con i caratteri non ancora indovinati sostituiti da _
@@ -120,11 +117,11 @@ namespace Server {
         /// Rappresenta le lettere che non si possono indovinare all'inizio
         const char *start_blocked_letters{};
         /// Rappresenta il numero di tentativi che devono essere fatti prima di poter usare le lettere bloccate
-        uint8_t blocked_attempts{};
+        unsigned int blocked_attempts{};
         /// Lista dei client connessi
         std::vector<Player> players;
         /// Rappresenta il numero di giocatori connessi
-        uint8_t players_connected{};
+        int players_connected{};
         /// Rappresenta il giocatore corrente
         Player *current_player{};
         /// Contiene tutte le possibili frasi da indovinare
@@ -156,17 +153,14 @@ namespace Server {
         void _broadcast_action(Server::Action action);
 
         /**
-         * Permette di inviare a tutti i giocatori un messaggio
-         * @tparam TypeMessage Un tipo di messaggio di 128 bytes
-         * @param message Il messaggio da inviare
-         */
-        template<typename TypeMessage>
-        inline void _broadcast(TypeMessage message);
-
-        /**
          * Permette di inviare a tutti i giocatori un aggiornamento sullo stato del gioco
          */
         void _broadcast_update_short_phrase();
+
+        /**
+         * Permette di inviare a un giocatore un aggiornamento sullo stato del gioco
+         */
+        inline void _send_update_short_phrase(Player &player);
 
         /**
          * Permette di inviare a tutti i giocatori un aggiornamento sui tentativi che sono stati fatti
@@ -174,9 +168,19 @@ namespace Server {
         void _broadcast_update_attempts();
 
         /**
+         * Permette di inviare a un giocatore un aggiornamento sul numero di errori commessi
+         */
+        inline void _send_update_attempts(Player &player);
+
+        /**
          * Permette di inviare a tutti i giocatori un aggiornamento sulla lista dei giocatori
          */
         void _broadcast_update_players();
+
+        /**
+         * Permette di inviare a un giocatore un aggiornamento sulla lista dei giocatori
+         */
+        inline void _send_update_players(Player &player);
 
         /**
          * Permette di inviare un'azione ad un certo giocatore
@@ -184,13 +188,6 @@ namespace Server {
          * @param action L'azione da inviare
          */
         void _send_action(Player *player, Server::Action action);
-
-        /**
-         * Permette di inviare una risposta a un certo giocatore
-         * @param player Il giocatore a cui inviare la risposta
-         * @param action L'azione con la quale rispondergli
-         */
-        void _send_response(Player *player, Client::Action action);
 
         /**
          * Permette di inviare un messaggio ad un certo giocatore
@@ -241,7 +238,7 @@ namespace Server {
          * @retval -1 Se la lettera è bloccata o se è già stata usata
          * @retval -2 Se ha mandato un pacchetto sbagliato (in questo caso il client viene disconnesso)
          */
-        status _get_letter_from_player(Player *player, int timeout = 5);
+        int _get_letter_from_player(Player *player, int timeout = 5);
 
         /**
          * Permette di ricevere da un player un tentativo sulla frase da indovinare
@@ -252,7 +249,7 @@ namespace Server {
          * @retval 0 Se il tentativo è andato a buon fine e non ha indovinato
          * @retval -2 Se ha mandato un pacchetto sbagliato (in questo caso il client viene disconnesso)
          */
-        status _get_short_phrase_from_player(Player *player, int timeout = 10);
+        int _get_short_phrase_from_player(Player *player, int timeout = 10);
 
     public:
         /**
@@ -261,7 +258,7 @@ namespace Server {
          * @param _port La porta del server
          * @throws std::runtime_error Se non è possibile creare il socket
          */
-        explicit HangmanServer(const string &_ip = "0.0.0.0", uint16_t _port = 9090);
+        explicit HangmanServer(const string &_ip = "127.0.0.1", uint16_t _port = 9090);
 
         /**
          * Distruttore della classe HangmanServer
