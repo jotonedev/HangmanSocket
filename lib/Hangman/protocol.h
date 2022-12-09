@@ -9,6 +9,7 @@
 #define inet_aton(addr, in) ((*(in)).s_addr = inet_addr(addr))
 
 #define SHUT_RDWR SD_BOTH
+#define MSG_NOSIGNAL 0
 
 #define socklen_t int
 #define ssize_t int
