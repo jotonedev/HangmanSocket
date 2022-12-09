@@ -15,7 +15,7 @@ namespace Client {
 
         // Creazione dell'indirizzo del server
         server_address.sin_family = AF_INET;
-        server_address.sin_port = htons(atoi(port));
+        server_address.sin_port = htons(strtol(port, nullptr, 10));
         server_address.sin_addr.s_addr = inet_addr(address);
     }
 

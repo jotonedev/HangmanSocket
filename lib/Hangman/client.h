@@ -40,15 +40,15 @@ namespace Client {
         int sockfd;
 
         /// Struttura contenente le informazioni del server
-        struct sockaddr_in server_address;
+        struct sockaddr_in server_address{};
 
         /// Rappresenta i tentativi fatti fino al momento di accessi durante la partita
-        char attempts[26];
+        char attempts[26]{};
         /// Rappresenta la lunghezza dell'array attempts
-        int attempts_count;
+        int attempts_count{};
 
         /// Rappresenta la frase da indovinare
-        char short_phrase[SHORTPHRASE_LENGTH];
+        char short_phrase[SHORTPHRASE_LENGTH]{};
         /// Rappresenta le lettere che non si possono usare all'inizio
         char blocked_letters[6] = "AEIOU";
         /// Rappresenta il numero di turni dopo i quali si possono usare le lettere bloccate
@@ -69,6 +69,8 @@ namespace Client {
 
     public:
         HangmanClient(const char address[], const char port[]);
+        HangmanClient(const std::string& address, int port) : HangmanClient(address.c_str(), std::to_string(port).c_str()) {};
+        HangmanClient(const std::string& address, const std::string& port) : HangmanClient(address.c_str(), port.c_str()) {};
 
         ~HangmanClient();
 
