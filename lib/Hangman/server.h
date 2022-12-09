@@ -29,58 +29,6 @@ namespace Server {
         int sockfd;
         /// Nome del client
         char username[USERNAME_LENGTH]{};
-
-        /**
-         * Permette di ottenere l'indirizzo IP del client
-         *
-         * @return L'indirizzo IP del client
-         */
-        [[nodiscard]] std::string get_address() {
-            sockaddr_in addr{};
-            socklen_t addr_size = sizeof(addr);
-            getpeername(sockfd, (sockaddr *) &addr, &addr_size);
-
-            return inet_ntoa(addr.sin_addr);
-        }
-
-        /**
-         * Permette di ottenere la porta del client
-         *
-         * @return La porta del client
-         */
-        [[nodiscard]] uint16_t get_port() {
-            sockaddr_in addr{};
-            socklen_t addr_size = sizeof(addr);
-            getpeername(sockfd, (sockaddr *) &addr, &addr_size);
-
-            return ntohs(addr.sin_port);
-        }
-
-        /**
-         * Permette di ottenere l'indirizzo del server
-         *
-         * @return L'indirizzo del server
-         */
-        [[nodiscard]] std::string get_server_address() {
-            sockaddr_in addr{};
-            socklen_t addr_size = sizeof(addr);
-            getsockname(sockfd, (sockaddr *) &addr, &addr_size);
-
-            return inet_ntoa(addr.sin_addr);
-        }
-
-        /**
-         * Permette di ottenere la porta del server
-         *
-         * @return La porta del server
-         */
-        [[nodiscard]] uint16_t get_server_port() {
-            sockaddr_in addr{};
-            socklen_t addr_size = sizeof(addr);
-            getsockname(sockfd, (sockaddr *) &addr, &addr_size);
-
-            return ntohs(addr.sin_port);
-        }
     } typedef Player;
 
 
@@ -127,68 +75,6 @@ namespace Server {
         /// Contiene tutte le possibili frasi da indovinare
         std::vector<string> all_phrases;
 
-
-        /**
-         * Carica le frasi da un file
-         *
-         * @param filename il nome del file da cui caricare le frasi
-         * @throws std::runtime_error se il file non esiste
-         */
-        void _load_short_phrases(const string &filename = "data/data.txt");
-
-        /**
-         * Permette di generare una nuova frase da indovinare
-         */
-        void _generate_short_phrase();
-
-        /**
-         * Permette di passare il turno al giocatore successivo
-         */
-        void _next_turn();
-
-        /**
-         * Permette di inviare a tutti i giocatori un'azione
-         * @param action L'azione da inviare
-         */
-        void _broadcast_action(Server::Action action);
-
-        /**
-         * Permette di inviare a tutti i giocatori un aggiornamento sullo stato del gioco
-         */
-        void _broadcast_update_short_phrase();
-
-        /**
-         * Permette di inviare a un giocatore un aggiornamento sullo stato del gioco
-         */
-        inline void _send_update_short_phrase(Player &player);
-
-        /**
-         * Permette di inviare a tutti i giocatori un aggiornamento sui tentativi che sono stati fatti
-         */
-        void _broadcast_update_attempts();
-
-        /**
-         * Permette di inviare a un giocatore un aggiornamento sul numero di errori commessi
-         */
-        inline void _send_update_attempts(Player &player);
-
-        /**
-         * Permette di inviare a tutti i giocatori un aggiornamento sulla lista dei giocatori
-         */
-        void _broadcast_update_players();
-
-        /**
-         * Permette di inviare a un giocatore un aggiornamento sulla lista dei giocatori
-         */
-        inline void _send_update_players(Player &player);
-
-        /**
-         * Permette di inviare un'azione ad un certo giocatore
-         * @param player Il giocatore a cui inviare l'azione
-         * @param action L'azione da inviare
-         */
-        void _send_action(Player *player, Server::Action action);
-
         /**
          * Permette di inviare un messaggio ad un certo giocatore
          * @tparam TypeMessage Un tipo di messaggio di 128 bytes
@@ -211,8 +97,61 @@ namespace Server {
          *
          * @return Se la lettura è andata a buon fine
          */
-        template<class TypeMessage, typename TypeAction>
-        bool _read(Player *player, TypeMessage &message, TypeAction action = GENERIC_ACTION, int timeout=5);
+        template<class TypeMessage>
+        bool _read(Player *player, TypeMessage &message, Client::Action action = Client::Action::GENERIC, int timeout=5);
+
+    protected:
+        /**
+         * Carica le frasi da un file
+         *
+         * @param filename il nome del file da cui caricare le frasi
+         * @throws std::runtime_error se il file non esiste
+         */
+        void _load_short_phrases(const string &filename = "data/data.txt");
+
+        /**
+         * Permette di generare una nuova frase da indovinare
+         */
+        void _generate_short_phrase();
+
+        /**
+         * Permette di passare il turno al giocatore successivo
+         */
+        void _next_turn();
+
+        /**
+         * Permette di inviare a tutti i giocatori un'azione
+         * @param action L'azione da inviare
+         */
+        inline void _broadcast_action(Server::Action action);
+
+        /**
+         * Permette di inviare a un giocatore un aggiornamento sullo stato del gioco
+         *
+         * @param player Il giocatore a cui inviare l'aggiornamento
+         */
+        inline void _send_update_short_phrase(Player &player);
+
+        /**
+         * Permette di inviare a un giocatore un aggiornamento sul numero di errori commessi
+         *
+         * @param player Il giocatore a cui inviare l'aggiornamento
+         */
+        inline void _send_update_attempts(Player &player);
+
+        /**
+         * Permette di inviare a un giocatore un aggiornamento sulla lista dei giocatori
+         *
+         * @param player Il giocatore a cui inviare l'aggiornamento
+         */
+        inline void _send_update_players(Player &player);
+
+        /**
+         * Permette di inviare un'azione ad un certo giocatore
+         * @param player Il giocatore a cui inviare l'azione
+         * @param action L'azione da inviare
+         */
+        inline void _send_action(Player *player, Server::Action action);
 
         /**
          * Permette di eliminare un giocatore dalla lista dei giocatori
@@ -231,7 +170,7 @@ namespace Server {
         /**
          * Permette di ricevere da un player un tentativo contenente una lettera
          * @param player Il player che deve fare il tentativo
-         * @param timeout Il tempo massimo da aspettare
+         * @param timeout Il tempo massimo da aspettare in secondi
          * @return Un numero che rappresenta il risultato della funzione
          * @retval 1 Se il tentativo è andato a buon fine e ha indovinato
          * @retval 0 Se il tentativo è andato a buon fine e non ha indovinato
@@ -243,13 +182,30 @@ namespace Server {
         /**
          * Permette di ricevere da un player un tentativo sulla frase da indovinare
          * @param player Il player che deve fare il tentativo
-         * @param timeout Il tempo massimo da aspettare
+         * @param timeout Il tempo massimo da aspettare in secondi
          * @return Un numero che rappresenta il risultato della funzione
          * @retval 1 Se il tentativo è andato a buon fine e ha indovinato
          * @retval 0 Se il tentativo è andato a buon fine e non ha indovinato
          * @retval -2 Se ha mandato un pacchetto sbagliato (in questo caso il client viene disconnesso)
          */
         int _get_short_phrase_from_player(Player *player, int timeout = 10);
+
+        /**
+         * Permette di verificare se ci sono nuovi client che vogliono connettersi e di accettarli
+         */
+        void accept();
+
+        /**
+         * Loop del server
+         * @brief Si occupa di gestire le connessioni e le richieste dei client, quindi di eseguire il gioco
+         * @note Deve trovarsi all'interno di un while loop
+         */
+        void loop();
+
+        /**
+         * Permette di avviare un nuovo round
+         */
+        void new_round();
 
     public:
         /**
@@ -271,6 +227,7 @@ namespace Server {
          * @param _max_errors Il numero massimo di errori prima che la partita sia persa
          * @param _start_blocked_letters Le lettere che non si possono indovinare all'inizio
          * @param _blocked_attempts Il numero di tentativi che devono essere fatti prima di poter usare le lettere bloccate
+         * @param filename Il nome del file da cui caricare le frasi
          * @throws std::runtime_error Se il server non è stato avviato
          */
         void start(uint8_t _max_errors = 10, const string &_start_blocked_letters = "AEIOU",
@@ -282,102 +239,6 @@ namespace Server {
          * @param verbose Se deve stampare un resoconto dello stato del server ad ogni loop
         */
         void run(const bool verbose = true);
-
-        /**
-         * Permette di verificare se ci sono nuovi client che vogliono connettersi e di accettarli
-         */
-        void accept();
-
-        /**
-         * Loop del server
-         * @brief Si occupa di gestire le connessioni e le richieste dei client, quindi di eseguire il gioco
-         * @note Deve trovarsi all'interno di un while loop
-         */
-        void loop();
-
-        /**
-         * Permette di avviare un nuovo round
-         */
-        void new_round();
-
-        /**
-         * Permette di chiudere il server
-         */
-        void close_socket();
-
-        /**
-         * Permette di sapere il giocatore corrente
-         * @return Il giocatore corrente
-         */
-        [[nodiscard]] Player get_current_player() { return *current_player; };
-
-        /**
-         * Permette di sapere i giocatori connessi
-         * @return Lista dei giocatori connessi
-         */
-        [[nodiscard]] std::vector<Player> get_players() { return players; };
-
-        /**
-         * Permette di sapere il numero di giocatori connessi
-         * @return Il numero di giocatori connessi
-         */
-        [[nodiscard]] int get_players_count() { return players_connected; };
-
-        /**
-         * Permette di sapere se il server è pieno
-         * @return Se il server è pieno
-         */
-        [[nodiscard]] bool is_full() { return players_connected >= MAX_CLIENTS; };
-
-        /**
-         * Permette di sapere se il server è vuoto
-         * @return Se il server è vuoto
-         */
-        [[nodiscard]] bool is_empty() { return players_connected == 0; };
-
-        /**
-         * Permette di sapere il numero di errori che sono stati commessi
-         * @return Il numero di errori che sono stati commessi
-         */
-        [[nodiscard]] int get_current_errors() { return current_errors; };
-
-        /**
-         * Permette di sapere quanti tentativi sono stati fatti fino a quel momento nel round
-         * @return Il numero di tentativi fatti
-         */
-        [[nodiscard]] int get_current_attempt() { return current_attempt; };
-
-        /**
-         * Permette di sapere qual'è la frase corrente
-         * @return La frase corrente
-         */
-        [[nodiscard]] const char *get_short_phrase() { return short_phrase; };
-
-        /**
-         * Permette di sapere qual'è la frase masked corrente
-         * @return La frase masked corrente
-         */
-        [[nodiscard]] const char *get_masked_short_phrase() { return short_phrase_masked; };
-
-        /**
-         * Permette di sapere qual'è stato l'ultimo tentativo
-         * @return L'ultimo tentativo fatto
-         */
-        [[nodiscard]] char get_last_attempt() { return attempts.back(); };
-
-        /**
-         * Permette di ottenere la porta del server
-         *
-         * @return La porta del server
-         */
-        [[nodiscard]] int get_server_port();
-
-        /**
-         * Permette di ottenere l'indirizzo del server
-         *
-         * @return L'indirizzo del server
-         */
-        [[nodiscard]] std::string get_server_address();
     };
 
 }

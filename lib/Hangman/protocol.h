@@ -6,7 +6,6 @@
 #include <Ws2tcpip.h>
 
 #define bzero(b, len) (memset((b), '\0', (len)), (void) 0)
-#define bcopy(b1, b2, len) (memmove((b2), (b1), (len)), (void) 0)
 #define inet_aton(addr, in) ((*(in)).s_addr = inet_addr(addr))
 
 #define SHUT_RDWR SD_BOTH
@@ -25,7 +24,6 @@
 #include <stdint.h>
 #include <cstring>
 #include <iostream>
-#include <variant>
 #include <sys/types.h>
 
 
@@ -102,8 +100,6 @@ namespace Client {
     static_assert(sizeof(Message) == sizeof(JoinMessage), "sizes must match");
     static_assert(sizeof(Message) == sizeof(LetterMessage), "sizes must match");
     static_assert(sizeof(Message) == sizeof(ShortPhraseMessage), "sizes must match");
-
-    using ClientMessage = std::variant<Client::Message, Client::JoinMessage, Client::LetterMessage, Client::ShortPhraseMessage>;
 }
 
 
@@ -209,8 +205,6 @@ namespace Server {
     static_assert(sizeof(Message) == sizeof(UpdateWordMessage), "sizes must match");
     static_assert(sizeof(Message) == sizeof(OtherOneTurnMessage), "sizes must match");
     static_assert(sizeof(Message) == sizeof(UpdateAttemptsMessage), "sizes must match");
-
-    using ServerMessage = std::variant<Server::Message, Server::UpdateUserMessage, Server::UpdateWordMessage, Server::OtherOneTurnMessage, Server::UpdateAttemptsMessage>;
 }
 
 // Verifica che le struct siano di dimensione corretta

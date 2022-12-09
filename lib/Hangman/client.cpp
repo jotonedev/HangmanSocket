@@ -39,10 +39,7 @@ namespace Client {
 
         // Invio username
         JoinMessage message;
-        if (strlen(username) < USERNAME_LENGTH)
-            strncpy(message.username, username, strlen(username));
-        else
-            strncpy(message.username, username, USERNAME_LENGTH);
+        strncat(message.username, username, USERNAME_LENGTH-1);
 
         _send(message);
     }
@@ -60,11 +57,7 @@ namespace Client {
 
     void HangmanClient::sendShortPhrase(const char phrase[]) {
         ShortPhraseMessage message;
-
-        if (strlen(phrase) < SHORTPHRASE_LENGTH)
-            strncpy(message.short_phrase, phrase, strlen(phrase));
-        else
-            strncpy(message.short_phrase, phrase, SHORTPHRASE_LENGTH);
+        strncat(message.short_phrase, phrase, SHORTPHRASE_LENGTH-1);
 
         _send(message);
     }
@@ -113,7 +106,7 @@ namespace Client {
                 break;
             }
             case Server::Action::YOUR_TURN: {
-                printYourTurn(&message.message);
+                printYourTurn();
                 break;
             }
             case Server::Action::OTHER_TURN: {
@@ -224,10 +217,10 @@ namespace Client {
         std::cout << message->player_name << " sta giocando";
 
         y = size.height-2;
-        clear_chars(SHORTPHRASE_LENGTH,2, y);
+        clear_chars(SHORTPHRASE_LENGTH, 2, y);
     }
 
-    void HangmanClient::printYourTurn(Server::Message* message) {
+    void HangmanClient::printYourTurn() {
         TerminalSize size = get_terminal_size();
 
         int x = size.width-((USERNAME_LENGTH-4)%(size.width/2));
@@ -336,10 +329,7 @@ namespace Client {
         } while (phrase.length() == 0);
 #endif
         ShortPhraseMessage shortPhraseMessage;
-        if (strlen(phrase.c_str()) > SHORTPHRASE_LENGTH)
-            strncpy(shortPhraseMessage.short_phrase, phrase.c_str(), SHORTPHRASE_LENGTH);
-        else
-            strncpy(shortPhraseMessage.short_phrase, phrase.c_str(), strlen(phrase.c_str()));
+        strncat(shortPhraseMessage.short_phrase, phrase.c_str(), SHORTPHRASE_LENGTH-1);
 
         bool res = _send(shortPhraseMessage);
 

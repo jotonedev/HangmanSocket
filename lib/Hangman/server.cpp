@@ -62,16 +62,6 @@ namespace Server {
         }
     }
 
-    void HangmanServer::close_socket() {
-        // Chiusura della sockfd
-        shutdown(sockfd, SHUT_RDWR);
-
-        // Elimina i giocatori
-        for (auto &player: players) {
-            _remove_player(&player);
-        }
-    }
-
     void
     HangmanServer::start(uint8_t _max_errors, const string &_start_blocked_letters, uint8_t _blocked_attempts,
                          const string &filename) {
@@ -106,16 +96,16 @@ namespace Server {
         this->current_attempt = 0;
         this->current_player = nullptr;
         this->attempts.clear();
-        //bzero(this->short_phrase, SHORTPHRASE_LENGTH);
-        //bzero(this->short_phrase_masked, SHORTPHRASE_LENGTH);
 
         // Generazione della parola o frase da indovinare
         _generate_short_phrase();
 
         // Invia tutti i dati della partita ai player connessi
-        _broadcast_update_short_phrase();
-        _broadcast_update_attempts();
-        _broadcast_update_players();
+        for (auto &player: players) {
+            _send_update_players(player);
+            _send_update_attempts(player);
+            _send_update_short_phrase(player);
+        }
     }
 
     bool HangmanServer::_is_short_phrase_guessed() {
@@ -152,8 +142,8 @@ namespace Server {
         players_connected--;
     }
 
-    template<class TypeMessage, typename TypeAction>
-    bool HangmanServer::_read(Player *player, TypeMessage &message, TypeAction action, int timeout) {
+    template<class TypeMessage>
+    bool HangmanServer::_read(Player *player, TypeMessage &message, Client::Action action, int timeout) {
         int n = 0;
 
         // Aspetta di ricevere un messaggio entro il timeout in secondi dato
@@ -175,7 +165,7 @@ namespace Server {
         // Se il giocatore ha inviato un messaggio
         if (n == MessageSize) {
             // Se il messaggio inviato ha un action diversa da quella richiesta
-            if (action != GENERIC_ACTION && message.action != action) {
+            if (action != Client::GENERIC && message.action != action) {
                 return false;
             } else {
                 return true;
@@ -201,18 +191,12 @@ namespace Server {
         _send(player, packet);
     }
 
-    void HangmanServer::_broadcast_action(Server::Action action) {
+    inline void HangmanServer::_broadcast_action(Server::Action action) {
         Message packet;
         packet.action = action;
 
-        for (auto player: players) {
+        for (auto &player: players) {
             _send(&player, packet);
-        }
-    }
-
-    void HangmanServer::_broadcast_update_short_phrase() {
-        for (auto player: players) {
-            _send_update_short_phrase(player);
         }
     }
 
@@ -220,23 +204,9 @@ namespace Server {
         UpdateShortPhraseMessage packet;
         packet.action = Action::UPDATE_SHORTPHRASE;
         packet.errors = current_errors;
-        strncpy(packet.short_phrase, short_phrase_masked, SHORTPHRASE_LENGTH);
+        strncat(packet.short_phrase, short_phrase_masked, SHORTPHRASE_LENGTH-1);
 
         _send(&player, packet);
-    }
-
-    void HangmanServer::_broadcast_update_players() {
-        UpdateUserMessage packet;
-        packet.action = Action::UPDATE_USER;
-        packet.user_count = players_connected;
-
-        for (unsigned int i = 0; i < players_connected; i++) {
-            strncpy(packet.usernames[i], players.at(i).username, USERNAME_LENGTH);
-        }
-
-        for (auto player: players) {
-            _send(&player, packet);
-        }
     }
 
     inline void HangmanServer::_send_update_players(Server::Player &player) {
@@ -245,7 +215,7 @@ namespace Server {
         packet.user_count = players_connected;
 
         for (unsigned int i = 0; i < players_connected; i++) {
-            strncpy(packet.usernames[i], players.at(i).username, USERNAME_LENGTH);
+            strncat(packet.usernames[i], players.at(i).username, USERNAME_LENGTH-1);
         }
 
         _send(&player, packet);
@@ -256,7 +226,7 @@ namespace Server {
             current_player = &players.at(0);
         } else {  // Se non è il primo turno, determina il giocatore successivo
             // Trova l'indice del giocatore corrente
-            unsigned int i=0;
+            unsigned int i;
             for (i=0; i < players_connected; i++) {
                 if (players.at(i).sockfd == current_player->sockfd)
                     break;
@@ -278,9 +248,9 @@ namespace Server {
 
         // Invia il messaggio di turno agli altri giocatori
         OtherOneTurnMessage packet;
-        strncpy(packet.player_name, current_player->username, USERNAME_LENGTH);
+        strncat(packet.player_name, current_player->username, USERNAME_LENGTH-1);
 
-        for (auto player: players) {
+        for (auto &player: players) {
             if (player.sockfd == current_player->sockfd)
                 continue;
 
@@ -302,34 +272,36 @@ namespace Server {
 
         // Aggiunge il giocatore alla lista
         // Non possiamo ancora aggiungere il suo nome perché non è ancora stato inviato
-        Player player;
-        player.sockfd = client_socket;
+        Player new_player;
+        new_player.sockfd = client_socket;
 
         // Legge il nome del giocatore
         Client::JoinMessage packet;
 
-        bool res = _read(&player, packet, packet.action, 1);
+        bool res = _read(&new_player, packet, packet.action, 1);
         if (res) {
             // Copia il nome del giocatore nella lista
-            strncpy(player.username, packet.username, USERNAME_LENGTH);
+            strncat(new_player.username, packet.username, USERNAME_LENGTH-1);
 
-            players.push_back(player);
+            players.push_back(new_player);
             players_connected++;
 
             // Invia il messaggio di aggiornamento della lista dei giocatori
-            _broadcast_update_players();
+            for (auto &player: players) {
+                _send_update_players(player);
+            }
 
             // Invia la frase al nuovo player
-            _send_update_short_phrase(player);
+            _send_update_short_phrase(new_player);
 
             // Invia i tentativi fatti fino ad ora al nuovo player
-            _send_update_attempts(player);
+            _send_update_attempts(new_player);
         } else {
-            shutdown(player.sockfd, SHUT_RDWR);
+            shutdown(new_player.sockfd, SHUT_RDWR);
 #ifdef _WIN32
-            closesocket(player.sockfd);
+            closesocket(new_player.sockfd);
 #else
-            close(player.sockfd);
+            close(new_player.sockfd);
 #endif
         }
     }
@@ -359,11 +331,7 @@ namespace Server {
         bzero(short_phrase, SHORTPHRASE_LENGTH);
 
         std::string phrase = all_phrases.at(index);
-        if (phrase.length() > SHORTPHRASE_LENGTH) {
-            strncpy(short_phrase, phrase.c_str(), SHORTPHRASE_LENGTH);
-        } else {
-            strncpy(short_phrase, phrase.c_str(), phrase.length());
-        }
+        strncat(short_phrase, phrase.c_str(), SHORTPHRASE_LENGTH-1);
 
         // Maschera la frase
         bzero(short_phrase_masked, SHORTPHRASE_LENGTH);
@@ -483,25 +451,21 @@ namespace Server {
         packet.attempts = current_attempt;
         std::sort(attempts.begin(), attempts.end(),
                   [](unsigned char c1, unsigned char c2) { return c1 < c2; });
-        strncpy(packet.attempts_list, attempts.data(), packet.attempts);
+        strncat(packet.attempts_list, attempts.data(), packet.attempts);
 
         _send(&player, packet);
     }
 
-    void HangmanServer::_broadcast_update_attempts() {
-        for (auto &player: players) {
-            _send_update_attempts(player);
-        }
-    }
-
     void HangmanServer::loop() {
-        std::cout << "Nuovo turno" << std::endl;;
+        std::cout << "Nuovo turno" << std::endl;
         // Se il numero di giocatori è sufficiente, allora continua con il turno successivo
         _next_turn();
 
-        int &&res_letter = _get_letter_from_player(current_player);
-        _broadcast_update_short_phrase();
-        _broadcast_update_attempts();
+        int res_letter = _get_letter_from_player(current_player);
+        for (auto &player: players) {
+            _send_update_short_phrase(player);
+            _send_update_attempts(player);
+        }
 
         if (_is_short_phrase_guessed()) {
             _broadcast_action(Action::WIN);
@@ -517,7 +481,7 @@ namespace Server {
             return;
         }
 
-        int &&res_phrase = -1;
+        int res_phrase = -1;
         if (res_letter >= 0)
             res_phrase = _get_short_phrase_from_player(current_player);
 
@@ -536,20 +500,17 @@ namespace Server {
         try {
             start();
         } catch (const std::exception &e) {
-            if (verbose)
-                std::cerr << e.what() << endl;
+            std::cerr << e.what() << endl;
             exit(EXIT_FAILURE);
         }
 
-        // Scrive a schermo l'indirizzo IP del server e la sua porta
-        if (verbose) {
-            char str[INET_ADDRSTRLEN];
-            inet_ntop(AF_INET, &address.sin_addr, str, INET_ADDRSTRLEN);
-            cout << "Server address: " << str << "\n";
-            cout << "Server port: " << ntohs(address.sin_port) << "\n\n";
-        }
 
-        cout << "Short phrase: " << short_phrase << endl;
+        // Scrive a schermo l'indirizzo IP del server e la sua porta
+        char str[INET_ADDRSTRLEN];
+        inet_ntop(AF_INET, &address.sin_addr, str, INET_ADDRSTRLEN);
+        cout << "Server address: " << str << "\n";
+        cout << "Server port: " << ntohs(address.sin_port) << "\n\n";
+
 
         while(true) {
             try {
@@ -557,49 +518,25 @@ namespace Server {
                 accept();
 
                 if (verbose && players_connected > 0 && prev_n_players == 0)
-                    cout << "Exited idle state" << "\n";
+                    cout << "Exited idle state" << "\n" << endl;
 
                 if (players_connected > 0)
                     loop();
 
                 if (verbose && players_connected > 0 && current_player != nullptr) {
-                    cout << "Players connected: " << players_connected << "\n";
-                    cout << "Current player: " << current_player->username << "\n";
-                    cout << "Current errors: " << current_errors << "\n";
-                    cout << "Current attempt: " << current_attempt << "\n";
                     cout << "Short phrase: " << short_phrase << "\n";
-                    cout << "Short phrase masked: " << short_phrase_masked << "\n";
-                    cout << "Attempts: ";
-                    for (char i: attempts)
-                        cout << i << ' ';
-                    cout << "\n";
+                    cout << "Current player: " << current_player->username << "\n";
+                    cout << "Current attempt: " << current_attempt << "\n" << endl;
                 }
 
                 if (verbose && players_connected == 0 && prev_n_players > 0)
-                    cout << "Entered idle state" << "\n";
+                    cout << "Entered idle state" << "\n" << endl;
 
                 prev_n_players = players_connected;
             }
             catch (const std::exception &e) {
-                if (verbose)
-                    cerr << e.what() << endl;
+                cerr << e.what() << endl;
             }
         }
-    }
-
-    std::string HangmanServer::get_server_address() {
-        sockaddr_in addr{};
-        socklen_t addr_size = sizeof(addr);
-        getsockname(sockfd, (sockaddr *) &addr, &addr_size);
-
-        return inet_ntoa(addr.sin_addr);
-    }
-
-    int HangmanServer::get_server_port() {
-        sockaddr_in addr{};
-        socklen_t addr_size = sizeof(addr);
-        getsockname(sockfd, (sockaddr *) &addr, &addr_size);
-
-        return ntohs(addr.sin_port);
     }
 }

@@ -82,7 +82,7 @@ namespace Client {
 
         void close();
 
-        void printYourTurn(Server::Message* message);
+        void printYourTurn();
 
         void waitAction();
 
