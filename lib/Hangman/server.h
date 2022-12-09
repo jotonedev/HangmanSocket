@@ -258,7 +258,7 @@ namespace Server {
          * @param _port La porta del server
          * @throws std::runtime_error Se non è possibile creare il socket
          */
-        explicit HangmanServer(const string &_ip = "127.0.0.1", uint16_t _port = 9090);
+        explicit HangmanServer(const string &_ip = "0.0.0.0", uint16_t _port = 9090);
 
         /**
          * Distruttore della classe HangmanServer
