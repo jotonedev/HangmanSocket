@@ -256,7 +256,7 @@ namespace Server {
             current_player = &players.at(0);
         } else {  // Se non è il primo turno, determina il giocatore successivo
             // Trova l'indice del giocatore corrente
-            int i=0;
+            unsigned int i=0;
             for (i=0; i < players_connected; i++) {
                 if (players.at(i).sockfd == current_player->sockfd)
                     break;
@@ -357,7 +357,13 @@ namespace Server {
         int index = rand() % all_phrases.size();
 
         bzero(short_phrase, SHORTPHRASE_LENGTH);
-        strncpy(short_phrase, all_phrases.at(index).c_str(), SHORTPHRASE_LENGTH);
+
+        std::string phrase = all_phrases.at(index);
+        if (phrase.length() > SHORTPHRASE_LENGTH) {
+            strncpy(short_phrase, phrase.c_str(), SHORTPHRASE_LENGTH);
+        } else {
+            strncpy(short_phrase, phrase.c_str(), phrase.length());
+        }
 
         // Maschera la frase
         bzero(short_phrase_masked, SHORTPHRASE_LENGTH);
@@ -396,7 +402,7 @@ namespace Server {
 
         // Verifica che la lettera non sia bloccata per i primi tre turni
         if (current_attempt < blocked_attempts) {
-            for (int i = 0; i < strlen(start_blocked_letters); i++) {
+            for (size_t i = 0; i < strlen(start_blocked_letters); i++) {
                 if (start_blocked_letters[i] == packet.letter) {
                     _send_action(player, Action::LETTER_REJECTED);
                     return -1;

@@ -121,7 +121,7 @@ namespace Server {
         /// Lista dei client connessi
         std::vector<Player> players;
         /// Rappresenta il numero di giocatori connessi
-        int players_connected{};
+        unsigned int players_connected{};
         /// Rappresenta il giocatore corrente
         Player *current_player{};
         /// Contiene tutte le possibili frasi da indovinare
