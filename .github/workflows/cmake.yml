@@ -38,14 +38,6 @@ jobs:
         uses: actions/upload-artifact@v3.1.1
         with:
           # Artifact name
-          name: Server-${{matrix.os}}
+          name: hangman-${{matrix.os}}
           # A file, directory or wildcard pattern that describes what to upload
-          path: ${{github.workspace}}/server/bin/
-
-      - name: Upload Client Artifact
-        uses: actions/upload-artifact@v3.1.1
-        with:
-          # Artifact name
-          name: Client-${{matrix.os}}
-          # A file, directory or wildcard pattern that describes what to upload
-          path: ${{github.workspace}}/client/bin/
+          path: ${{github.workspace}}/bin/
