@@ -16,7 +16,7 @@ void gotoxy(int x, int y) {
     COORD c = { static_cast<short>(x), static_cast<short>(y) };
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE) , c);
 #else
-    printf("%c[%d;%df",0x1B,y,x);
+    printf("%c[%d;%df", 0x1B, y, x);
 #endif
 }
 
@@ -60,10 +60,10 @@ inline TerminalSize get_terminal_size() {
     size.height = rows;
 #else
     struct winsize w;
-        ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
 
-        size.width = w.ws_col;
-        size.height = w.ws_row;
+    size.width = w.ws_col;
+    size.height = w.ws_row;
 #endif
 
     return size;
@@ -73,7 +73,7 @@ inline TerminalSize get_terminal_size() {
 /**
  * Cancella un certo numero di caratteri dal terminale a partire dalla posizione del cursore
  */
-inline void clear_chars(int chars, int x=-1, int y=-1) {
+inline void clear_chars(int chars, int x = -1, int y = -1) {
     if (x != -1 && y != -1)
         gotoxy(x, y);
 

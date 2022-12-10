@@ -1,19 +1,23 @@
 #ifndef SERVER_H
 #define SERVER_H
 
-#include <iterator>
-#include <algorithm>
 #include <vector>
-#include <unistd.h>
 #include <fcntl.h>
-#include <cctype>
+#include <iostream>
 #include <fstream>
+
+#ifdef _WIN32
+#include <unistd.h>
+#endif
 
 #include "protocol.h"
 #include "string_utils.h"
 
 
 #define MAX_CLIENTS 3
+
+
+using std::string;
 
 
 namespace Server {
@@ -80,11 +84,14 @@ namespace Server {
          * @tparam TypeMessage Un tipo di messaggio di 128 bytes
          * @param player Il giocatore a cui inviare il messaggio
          * @param message Il messaggio da inviare
+         * @return true se l'invio è andato a buon fine, false altrimenti
+         * @retval true L'invio è andato a buon fine
+         * @retval false L'invio non è andato a buon fine
          *
          * @note Se l'invio fallisce, il giocatore viene disconnesso
          */
         template<typename TypeMessage>
-        void _send(Player *player, TypeMessage &message);
+        bool _send(Player *player, TypeMessage &message);
 
         /**
          * Permette di leggere un messaggio da un certo giocatore
@@ -98,7 +105,8 @@ namespace Server {
          * @return Se la lettura è andata a buon fine
          */
         template<class TypeMessage>
-        bool _read(Player *player, TypeMessage &message, Client::Action action = Client::Action::GENERIC, int timeout=5);
+        bool
+        _read(Player *player, TypeMessage &message, Client::Action action = Client::Action::GENERIC, int timeout = 5);
 
     protected:
         /**
@@ -150,8 +158,11 @@ namespace Server {
          * Permette di inviare un'azione ad un certo giocatore
          * @param player Il giocatore a cui inviare l'azione
          * @param action L'azione da inviare
+         * @return true se l'invio è andato a buon fine, false altrimenti
+         * @retval true L'invio è andato a buon fine
+         * @retval false L'invio non è andato a buon fine
          */
-        inline void _send_action(Player *player, Server::Action action);
+        inline bool _send_action(Player *player, Server::Action action);
 
         /**
          * Permette di eliminare un giocatore dalla lista dei giocatori
@@ -165,7 +176,7 @@ namespace Server {
          * @retval true se la parola o la frase è stata indovinata
          * @retval false se la parola o la frase non è stata indovinata
          */
-        bool _is_short_phrase_guessed();
+        inline bool _is_short_phrase_guessed();
 
         /**
          * Permette di ricevere da un player un tentativo contenente una lettera
@@ -191,6 +202,11 @@ namespace Server {
         int _get_short_phrase_from_player(Player *player, int timeout = 10);
 
         /**
+         * Permette di verificare se uno dei giocatori connessi si è disconnesso
+         */
+        void _check_disconnected_players();
+
+        /**
          * Permette di verificare se ci sono nuovi client che vogliono connettersi e di accettarli
          */
         void accept();
@@ -214,7 +230,7 @@ namespace Server {
          * @param _port La porta del server
          * @throws std::runtime_error Se non è possibile creare il socket
          */
-        explicit HangmanServer(const string &_ip = "0.0.0.0", uint16_t _port = 9090);
+        HangmanServer(const string &_ip = "0.0.0.0", uint16_t _port = 9090);
 
         /**
          * Distruttore della classe HangmanServer
@@ -227,11 +243,11 @@ namespace Server {
          * @param _max_errors Il numero massimo di errori prima che la partita sia persa
          * @param _start_blocked_letters Le lettere che non si possono indovinare all'inizio
          * @param _blocked_attempts Il numero di tentativi che devono essere fatti prima di poter usare le lettere bloccate
-         * @param filename Il nome del file da cui caricare le frasi
+         * @param _filename Il nome del file da cui caricare le frasi
          * @throws std::runtime_error Se il server non è stato avviato
          */
         void start(uint8_t _max_errors = 10, const string &_start_blocked_letters = "AEIOU",
-                   uint8_t _blocked_attempts = 3, const string &filename = "data/data.txt");
+                   uint8_t _blocked_attempts = 3, const string &_filename = "data/data.txt");
 
         /**
          * Esegue tutte le funzioni del server

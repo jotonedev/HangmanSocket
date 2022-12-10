@@ -11,15 +11,16 @@ set(HANGMAN_LIB ${INCLUDE_DIR}/Hangman)
 
 if (MINGW)
     set(CMAKE_CXX_STANDARD_LIBRARIES "-static-libgcc -static-libstdc++ ${CMAKE_CXX_STANDARD_LIBRARIES}")
-endif()
+endif ()
 
 
 include_directories(${INCLUDE_DIR})
-set(HANGMAN_BASE ${HANGMAN_LIB}/protocol.h ${HANGMAN_LIB}/string_utils.h ${HANGMAN_LIB}/terminal_utils.h)
-set(HANGMAN_CLIENT ${HANGMAN_LIB}/client.h ${HANGMAN_LIB}/client.cpp)
-set(HANGMAN_SERVER ${HANGMAN_LIB}/server.h ${HANGMAN_LIB}/server.cpp)
-set(HANGMAN ${HANGMAN_BASE} ${HANGMAN_CLIENT} ${HANGMAN_SERVER})
-add_library(hangman OBJECT ${HANGMAN})
+
+set(HANGMAN_CLIENT ${HANGMAN_LIB}/protocol.h ${HANGMAN_LIB}/client.h ${HANGMAN_LIB}/client.cpp ${HANGMAN_LIB}/terminal_utils.h)
+set(HANGMAN_SERVER ${HANGMAN_LIB}/protocol.h ${HANGMAN_LIB}/server.h ${HANGMAN_LIB}/server.cpp ${HANGMAN_LIB}/string_utils.h)
+
+add_library(hangman_client OBJECT ${HANGMAN_BASE} ${HANGMAN_CLIENT})
+add_library(hangman_server OBJECT ${HANGMAN_BASE} ${HANGMAN_SERVER})
 
 
 add_subdirectory(client)

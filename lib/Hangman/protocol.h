@@ -6,7 +6,7 @@
 #include <Ws2tcpip.h>
 
 #define bzero(b, len) (memset((b), '\0', (len)), (void) 0)
-#define inet_aton(addr, in) ((*(in)).s_addr = inet_addr(addr))
+#define inet_aton(cp, buf) inet_pton(AF_INET, cp, buf)
 
 #define SHUT_RDWR SD_BOTH
 #define MSG_NOSIGNAL 0
@@ -14,25 +14,19 @@
 #define socklen_t int
 #define ssize_t int
 #else
+
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <sys/ioctl.h>
+#include <unistd.h>
 #include <poll.h>
+
+#define closesocket close
+#define sleep(t) usleep(t * 1000)
 #endif
 
-#include <locale>
-#include <stdint.h>
-#include <cstring>
-#include <iostream>
 #include <sys/types.h>
-
-
-using std::string;
-using std::cin;
-using std::cout;
-using std::cerr;
-using std::endl;
 
 
 #define SHORTPHRASE_LENGTH 123
@@ -51,6 +45,8 @@ namespace Client {
         LETTER,
         // Azione d'invio della frase
         SHORT_PHRASE,
+
+        HEARTBEAT,
 
         // Valore da sostituire
         GENERIC = GENERIC_ACTION,
@@ -128,6 +124,8 @@ namespace Server {
         SEND_LETTER,
         // Segnalazione di invio della frase
         SEND_SHORT_PHRASE,
+
+        HEARTBEAT,
 
         // Risposte che il server può inviare al client
         // Risposta di conferma della lettera
