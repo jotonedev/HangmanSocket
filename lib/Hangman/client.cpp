@@ -345,6 +345,80 @@ namespace Client {
 
         clear_chars(30, 2, 3);
         std::cout << "Errori fatti fin'ora: " << (int) message->errors << "/" << (int) message->max_errors;
+
+        _printHangman(message->errors);
+    }
+
+    void HangmanClient::_printHangman(int mistakes){
+        TerminalSize size = get_terminal_size();
+        int x = (size.width / 2)+3;
+        int y = (size.height / 2)-2;
+
+        switch (mistakes){
+            case 1: {
+                gotoxy(x, y);
+                std::cout << "----------";
+                
+                for(int i=1; i<9; i++) {
+                    gotoxy(x+1, y-i);
+                    std::cout << "|";
+                }
+                break;
+            }
+            case 2: {
+                gotoxy(x, y-9);
+                std::cout << "------";
+                break;
+            }
+            case 3: {
+                gotoxy(x+6,y-8);
+                std::cout << "|";
+                break;
+            }
+            case 4: {
+                gotoxy(x+6,y-7);
+                std::cout << "O";
+                break;
+            }
+            case 5: {
+                gotoxy(x+5,y-6);
+                std::cout << "-+-";
+                break;
+            }
+            case 6: {
+                gotoxy(x+4,y-5);
+                std::cout << "/";
+                break;
+            }
+            case 7: {
+                gotoxy(x+8,y-5);
+                std::cout << "\\";
+                break;
+            }
+            case 8: {
+                gotoxy(x+6,y-5);
+                std::cout << "|";
+                break;
+            }
+            case 9: {
+                gotoxy(x+6,y-4);
+                std::cout << "|";
+                for(int i=3;i>1;i--){
+                    gotoxy(x+5,y-i);
+                    std::cout << "|";
+                }
+                break;
+            }
+            case 10: {
+                for(int i=3;i>1;i--){
+                    gotoxy(x+7,y-i);
+                    std::cout << "|";
+                }
+                break;
+            }  
+            default:
+            break;
+        }
     }
 
     void HangmanClient::_printWin() {

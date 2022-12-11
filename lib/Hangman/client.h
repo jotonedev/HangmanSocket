@@ -125,6 +125,12 @@ namespace Client {
         void _printAttempts(Server::UpdateAttemptsMessage *message);
 
         /**
+         * Questa funzione si occupa di stampare a video lo stato attuale dell'Hangman
+         * @param mistakes Mostra a video l'Hangman
+         */
+        void _printHangman(int mistakes);
+
+        /**
          * Questa funzione si occupa di stampare a video che il gioco è finito e i giocatori hanno vinto
          */
         void _printWin();
