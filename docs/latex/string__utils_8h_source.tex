@@ -1,0 +1,44 @@
+\hypertarget{string__utils_8h_source}{}\doxysubsection{string\+\_\+utils.\+h}
+\label{string__utils_8h_source}\index{B:/Cpp/prj-\/socket/lib/Hangman/string\_utils.h@{B:/Cpp/prj-\/socket/lib/Hangman/string\_utils.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{preprocessor}{\#ifndef STRING\_UTILS\_H}}
+\DoxyCodeLine{2 \textcolor{preprocessor}{\#define STRING\_UTILS\_H}}
+\DoxyCodeLine{3 }
+\DoxyCodeLine{4 \textcolor{preprocessor}{\#include <algorithm>}}
+\DoxyCodeLine{5 \textcolor{preprocessor}{\#include <cctype>}}
+\DoxyCodeLine{6 \textcolor{preprocessor}{\#include <cstring>}}
+\DoxyCodeLine{7 \textcolor{preprocessor}{\#include <string>}}
+\DoxyCodeLine{8 }
+\DoxyCodeLine{9 }
+\DoxyCodeLine{10 \textcolor{comment}{// trim from start (in place)}}
+\DoxyCodeLine{11 \textcolor{keyword}{static} \textcolor{keyword}{inline} \textcolor{keywordtype}{void} ltrim(std::string \&s) \{}
+\DoxyCodeLine{12     s.erase(s.begin(), std::find\_if(s.begin(), s.end(), [](\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} ch) \{}
+\DoxyCodeLine{13         return !std::isspace(ch);}
+\DoxyCodeLine{14     \}));}
+\DoxyCodeLine{15 \}}
+\DoxyCodeLine{16 }
+\DoxyCodeLine{17 \textcolor{comment}{// trim from end (in place)}}
+\DoxyCodeLine{18 \textcolor{keyword}{static} \textcolor{keyword}{inline} \textcolor{keywordtype}{void} rtrim(std::string \&s) \{}
+\DoxyCodeLine{19     s.erase(std::find\_if(s.rbegin(), s.rend(), [](\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char} ch) \{}
+\DoxyCodeLine{20         return !std::isspace(ch);}
+\DoxyCodeLine{21     \}).base(), s.end());}
+\DoxyCodeLine{22 \}}
+\DoxyCodeLine{23 }
+\DoxyCodeLine{28 \textcolor{keyword}{inline} \textcolor{keywordtype}{void} trim(std::string \&s) \{}
+\DoxyCodeLine{29     rtrim(s);}
+\DoxyCodeLine{30     ltrim(s);}
+\DoxyCodeLine{31 \}}
+\DoxyCodeLine{32 }
+\DoxyCodeLine{33 }
+\DoxyCodeLine{38 \textcolor{keyword}{inline} \textcolor{keywordtype}{void} str\_to\_upper(\textcolor{keywordtype}{char} *str) \{}
+\DoxyCodeLine{39     std::transform(str, str + strlen(str), str, ::toupper);}
+\DoxyCodeLine{40 \}}
+\DoxyCodeLine{41 }
+\DoxyCodeLine{46 \textcolor{keyword}{inline} \textcolor{keywordtype}{void} str\_to\_upper(std::string \&str) \{}
+\DoxyCodeLine{47     std::transform(str.begin(), str.end(), str.begin(), ::toupper);}
+\DoxyCodeLine{48 \}}
+\DoxyCodeLine{49 }
+\DoxyCodeLine{50 \textcolor{preprocessor}{\#endif  }\textcolor{comment}{// STRING\_UTILS\_H}}
+
+\end{DoxyCode}

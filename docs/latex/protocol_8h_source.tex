@@ -1,0 +1,221 @@
+\hypertarget{protocol_8h_source}{}\doxysubsection{protocol.\+h}
+\label{protocol_8h_source}\index{B:/Cpp/prj-\/socket/lib/Hangman/protocol.h@{B:/Cpp/prj-\/socket/lib/Hangman/protocol.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{preprocessor}{\#ifndef PROTOCOL\_H}}
+\DoxyCodeLine{2 \textcolor{preprocessor}{\#define PROTOCOL\_H}}
+\DoxyCodeLine{3 }
+\DoxyCodeLine{4 \textcolor{preprocessor}{\#ifdef \_WIN32}}
+\DoxyCodeLine{5 \textcolor{preprocessor}{\#include <winsock2.h>}}
+\DoxyCodeLine{6 \textcolor{preprocessor}{\#include <Ws2tcpip.h>}}
+\DoxyCodeLine{7 }
+\DoxyCodeLine{8 \textcolor{preprocessor}{\#define bzero(b, len) (memset((b), '\(\backslash\)0', (len)), (void) 0)}}
+\DoxyCodeLine{9 \textcolor{preprocessor}{\#define inet\_aton(cp, buf) inet\_pton(AF\_INET, cp, buf)}}
+\DoxyCodeLine{10 }
+\DoxyCodeLine{11 \textcolor{preprocessor}{\#define SHUT\_RDWR SD\_BOTH}}
+\DoxyCodeLine{12 \textcolor{preprocessor}{\#define MSG\_NOSIGNAL 0}}
+\DoxyCodeLine{13 }
+\DoxyCodeLine{14 \textcolor{preprocessor}{\#define socklen\_t int}}
+\DoxyCodeLine{15 \textcolor{preprocessor}{\#define ssize\_t int}}
+\DoxyCodeLine{16 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{17 }
+\DoxyCodeLine{18 \textcolor{preprocessor}{\#include <sys/socket.h>}}
+\DoxyCodeLine{19 \textcolor{preprocessor}{\#include <netinet/in.h>}}
+\DoxyCodeLine{20 \textcolor{preprocessor}{\#include <arpa/inet.h>}}
+\DoxyCodeLine{21 \textcolor{preprocessor}{\#include <sys/ioctl.h>}}
+\DoxyCodeLine{22 \textcolor{preprocessor}{\#include <unistd.h>}}
+\DoxyCodeLine{23 \textcolor{preprocessor}{\#include <poll.h>}}
+\DoxyCodeLine{24 }
+\DoxyCodeLine{25 \textcolor{preprocessor}{\#define closesocket close}}
+\DoxyCodeLine{26 \textcolor{preprocessor}{\#define sleep(t) usleep(t * 1000)}}
+\DoxyCodeLine{27 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{28 }
+\DoxyCodeLine{29 \textcolor{preprocessor}{\#include <sys/types.h>}}
+\DoxyCodeLine{30 }
+\DoxyCodeLine{31 }
+\DoxyCodeLine{32 \textcolor{preprocessor}{\#define SHORTPHRASE\_LENGTH 123}}
+\DoxyCodeLine{33 \textcolor{preprocessor}{\#define USERNAME\_LENGTH 32}}
+\DoxyCodeLine{34 \textcolor{preprocessor}{\#define GENERIC\_ACTION 0xFF}}
+\DoxyCodeLine{35 }
+\DoxyCodeLine{36 }
+\DoxyCodeLine{37 \textcolor{comment}{// Il protocollo per il gioco dell'impiccato si basa su sistema di azione (Action) e risposta (Response)}}
+\DoxyCodeLine{38 \textcolor{keyword}{namespace }Client \{}
+\DoxyCodeLine{39     \textcolor{comment}{// Le azioni che il client può inviare al server o le risposte che il server può inviare al client}}
+\DoxyCodeLine{40     \textcolor{keyword}{enum} Action \{}
+\DoxyCodeLine{41         \textcolor{comment}{// Azioni che il client può inviare al server}}
+\DoxyCodeLine{42         \textcolor{comment}{// Azione d'ingresso nella partita}}
+\DoxyCodeLine{43         JOIN\_GAME,}
+\DoxyCodeLine{44         \textcolor{comment}{// Azione d'invio di una nuova lettera}}
+\DoxyCodeLine{45         LETTER,}
+\DoxyCodeLine{46         \textcolor{comment}{// Azione d'invio della frase}}
+\DoxyCodeLine{47         SHORT\_PHRASE,}
+\DoxyCodeLine{48 }
+\DoxyCodeLine{49         HEARTBEAT,}
+\DoxyCodeLine{50 }
+\DoxyCodeLine{51         \textcolor{comment}{// Valore da sostituire}}
+\DoxyCodeLine{52         GENERIC = GENERIC\_ACTION,}
+\DoxyCodeLine{53     \};}
+\DoxyCodeLine{54 }
+\DoxyCodeLine{55     \textcolor{comment}{// Struttura che rappresenta un messaggio base}}
+\DoxyCodeLine{56     \textcolor{keyword}{struct }Message \{}
+\DoxyCodeLine{57         \textcolor{comment}{// Azione da inviare}}
+\DoxyCodeLine{58         Action action = GENERIC;}
+\DoxyCodeLine{59 }
+\DoxyCodeLine{60         \textcolor{comment}{// Messaggio da inviare}}
+\DoxyCodeLine{61         \textcolor{keywordtype}{char} data[124]\{\};}
+\DoxyCodeLine{62     \} \textcolor{keyword}{typedef} Message;}
+\DoxyCodeLine{63 }
+\DoxyCodeLine{64     \textcolor{comment}{// Struttura che rappresenta un messaggio di ingresso nella partita}}
+\DoxyCodeLine{65     \textcolor{keyword}{struct }JoinMessage \{}
+\DoxyCodeLine{66         \textcolor{comment}{// Azione da inviare}}
+\DoxyCodeLine{67         Action action = JOIN\_GAME;}
+\DoxyCodeLine{68 }
+\DoxyCodeLine{69         \textcolor{comment}{// Nome del giocatore}}
+\DoxyCodeLine{70         \textcolor{keywordtype}{char} username[USERNAME\_LENGTH]\{\};}
+\DoxyCodeLine{71 }
+\DoxyCodeLine{72         uint8\_t pad[124 -\/ USERNAME\_LENGTH]\{\};}
+\DoxyCodeLine{73     \} \textcolor{keyword}{typedef} JoinMessage;}
+\DoxyCodeLine{74 }
+\DoxyCodeLine{75     \textcolor{comment}{// Struttura che rappresenta un messaggio di invio di una nuova lettera}}
+\DoxyCodeLine{76     \textcolor{keyword}{struct }LetterMessage \{}
+\DoxyCodeLine{77         Action action = LETTER;}
+\DoxyCodeLine{78 }
+\DoxyCodeLine{79         \textcolor{comment}{// Nuova lettera}}
+\DoxyCodeLine{80         \textcolor{keywordtype}{char} letter\{\};}
+\DoxyCodeLine{81 }
+\DoxyCodeLine{82         uint8\_t pad[123]\{\};}
+\DoxyCodeLine{83     \} \textcolor{keyword}{typedef} LetterMessage;}
+\DoxyCodeLine{84 }
+\DoxyCodeLine{85     \textcolor{comment}{// Struttura che rappresenta un messaggio di invio della frase}}
+\DoxyCodeLine{86     \textcolor{keyword}{struct }ShortPhraseMessage \{}
+\DoxyCodeLine{87         Action action = SHORT\_PHRASE;}
+\DoxyCodeLine{88 }
+\DoxyCodeLine{89         \textcolor{comment}{// Frase proposta}}
+\DoxyCodeLine{90         \textcolor{keywordtype}{char} short\_phrase[SHORTPHRASE\_LENGTH]\{\};}
+\DoxyCodeLine{91         \textcolor{comment}{// Bytes in eccesso}}
+\DoxyCodeLine{92         uint8\_t pad[1]\{\};}
+\DoxyCodeLine{93     \} \textcolor{keyword}{typedef} ShortPhraseMessage;}
+\DoxyCodeLine{94 }
+\DoxyCodeLine{95 }
+\DoxyCodeLine{96     \textcolor{comment}{// Verifica che le struct siano di dimensione corretta}}
+\DoxyCodeLine{97     \textcolor{keyword}{static\_assert}(\textcolor{keyword}{sizeof}(Message) == \textcolor{keyword}{sizeof}(JoinMessage), \textcolor{stringliteral}{"{}sizes must match"{}});}
+\DoxyCodeLine{98     \textcolor{keyword}{static\_assert}(\textcolor{keyword}{sizeof}(Message) == \textcolor{keyword}{sizeof}(LetterMessage), \textcolor{stringliteral}{"{}sizes must match"{}});}
+\DoxyCodeLine{99     \textcolor{keyword}{static\_assert}(\textcolor{keyword}{sizeof}(Message) == \textcolor{keyword}{sizeof}(ShortPhraseMessage), \textcolor{stringliteral}{"{}sizes must match"{}});}
+\DoxyCodeLine{100 \}}
+\DoxyCodeLine{101 }
+\DoxyCodeLine{102 }
+\DoxyCodeLine{103 \textcolor{keyword}{namespace }Server \{}
+\DoxyCodeLine{104     \textcolor{comment}{// Azioni che il server può inviare al client}}
+\DoxyCodeLine{105     \textcolor{comment}{// Per nessuna di queste azioni il server si aspetta una risposta dal client}}
+\DoxyCodeLine{106     \textcolor{keyword}{enum} Action \{}
+\DoxyCodeLine{107         \textcolor{comment}{// Segnalazione di un update dello stato di gioco}}
+\DoxyCodeLine{108         UPDATE\_SHORTPHRASE,}
+\DoxyCodeLine{109         \textcolor{comment}{// Segnalazione dell'aggiornamento della lista dei giocatori}}
+\DoxyCodeLine{110         UPDATE\_USER,}
+\DoxyCodeLine{111         \textcolor{comment}{// Segnalazione dell'aggiornamento della lista dei tentativi}}
+\DoxyCodeLine{112         UPDATE\_ATTEMPTS,}
+\DoxyCodeLine{113         \textcolor{comment}{// Segnalazione di vittoria}}
+\DoxyCodeLine{114         WIN,}
+\DoxyCodeLine{115         \textcolor{comment}{// Segnalazione di sconfitta}}
+\DoxyCodeLine{116         LOSE,}
+\DoxyCodeLine{117         \textcolor{comment}{// Segnalazione del turno del giocatore}}
+\DoxyCodeLine{118         YOUR\_TURN,}
+\DoxyCodeLine{119         \textcolor{comment}{// Segnalazione di un turno di un altro giocatore}}
+\DoxyCodeLine{120         OTHER\_TURN,}
+\DoxyCodeLine{121         \textcolor{comment}{// Segnalazione di avvio di una nuova partita}}
+\DoxyCodeLine{122         NEW\_GAME,}
+\DoxyCodeLine{123         \textcolor{comment}{// Segnalazione di invio di una nuova lettera}}
+\DoxyCodeLine{124         SEND\_LETTER,}
+\DoxyCodeLine{125         \textcolor{comment}{// Segnalazione di invio della frase}}
+\DoxyCodeLine{126         SEND\_SHORT\_PHRASE,}
+\DoxyCodeLine{127 }
+\DoxyCodeLine{128         HEARTBEAT,}
+\DoxyCodeLine{129 }
+\DoxyCodeLine{130         \textcolor{comment}{// Risposte che il server può inviare al client}}
+\DoxyCodeLine{131         \textcolor{comment}{// Risposta di conferma della lettera}}
+\DoxyCodeLine{132         LETTER\_ACCEPTED,}
+\DoxyCodeLine{133         \textcolor{comment}{// Risposta di errore della lettera}}
+\DoxyCodeLine{134         LETTER\_REJECTED,}
+\DoxyCodeLine{135         \textcolor{comment}{// Risposta di conferma della frase}}
+\DoxyCodeLine{136         SHORT\_PHRASE\_ACCEPTED,}
+\DoxyCodeLine{137         \textcolor{comment}{// Risposta di errore della frase}}
+\DoxyCodeLine{138         SHORT\_PHRASE\_REJECTED,}
+\DoxyCodeLine{139 }
+\DoxyCodeLine{140         \textcolor{comment}{// Valore da sostituire}}
+\DoxyCodeLine{141         GENERIC = GENERIC\_ACTION,}
+\DoxyCodeLine{142     \};}
+\DoxyCodeLine{143 }
+\DoxyCodeLine{144     \textcolor{comment}{// Struttura che rappresenta un messaggio base}}
+\DoxyCodeLine{145     \textcolor{keyword}{struct }Message \{}
+\DoxyCodeLine{146         Action action = GENERIC;}
+\DoxyCodeLine{147 }
+\DoxyCodeLine{148         \textcolor{comment}{// Dati aggiuntivi}}
+\DoxyCodeLine{149         uint8\_t data[124]\{\};}
+\DoxyCodeLine{150     \} \textcolor{keyword}{typedef} Message;}
+\DoxyCodeLine{151 }
+\DoxyCodeLine{152     \textcolor{comment}{// Struttura che rappresenta un messaggio di segnalazione di un update dello stato di gioco}}
+\DoxyCodeLine{153     \textcolor{keyword}{struct }UpdateUserMessage \{}
+\DoxyCodeLine{154         Action action = UPDATE\_USER;}
+\DoxyCodeLine{155 }
+\DoxyCodeLine{156         uint8\_t user\_count\{\};}
+\DoxyCodeLine{157         \textcolor{keywordtype}{char} usernames[3][USERNAME\_LENGTH]\{\};}
+\DoxyCodeLine{158 }
+\DoxyCodeLine{159         \textcolor{comment}{// Bytes in eccesso}}
+\DoxyCodeLine{160         uint8\_t pad[124 -\/ 1 -\/ 3 * USERNAME\_LENGTH]\{\};}
+\DoxyCodeLine{161     \} \textcolor{keyword}{typedef} UpdateUserMessage;}
+\DoxyCodeLine{162 }
+\DoxyCodeLine{163     \textcolor{comment}{// Struttura che rappresenta un messaggio di segnalazione dell'aggiornamento della lista dei giocatori}}
+\DoxyCodeLine{164     \textcolor{keyword}{struct }UpdateShortPhraseMessage \{}
+\DoxyCodeLine{165         Action action = UPDATE\_SHORTPHRASE;}
+\DoxyCodeLine{166 }
+\DoxyCodeLine{167         \textcolor{comment}{// Numero di errori fatti fino in quel momento}}
+\DoxyCodeLine{168         uint8\_t errors\{\};}
+\DoxyCodeLine{169         \textcolor{comment}{// Parola o frase da indovinare}}
+\DoxyCodeLine{170         \textcolor{keywordtype}{char} short\_phrase[SHORTPHRASE\_LENGTH]\{\};}
+\DoxyCodeLine{171     \} \textcolor{keyword}{typedef} UpdateWordMessage;}
+\DoxyCodeLine{172 }
+\DoxyCodeLine{173     \textcolor{comment}{// Struttura che rappresenta un messaggio di segnalazione dell'aggiornamento della lista dei tentativi}}
+\DoxyCodeLine{174     \textcolor{keyword}{struct }UpdateAttemptsMessage \{}
+\DoxyCodeLine{175         Action action = UPDATE\_ATTEMPTS;}
+\DoxyCodeLine{176 }
+\DoxyCodeLine{177         \textcolor{comment}{// Numero di tentativi rimasti}}
+\DoxyCodeLine{178         uint8\_t attempts\{\};}
+\DoxyCodeLine{179         \textcolor{comment}{// Numero degli errori fatti}}
+\DoxyCodeLine{180         uint8\_t errors\{\};}
+\DoxyCodeLine{181         \textcolor{comment}{// Numero degli errori massimi}}
+\DoxyCodeLine{182         uint8\_t max\_errors\{\};}
+\DoxyCodeLine{183         \textcolor{comment}{// Lista dei tentativi fatti}}
+\DoxyCodeLine{184         \textcolor{keywordtype}{char} attempts\_list[26]\{\};}
+\DoxyCodeLine{185 }
+\DoxyCodeLine{186         \textcolor{comment}{// Bytes in eccesso}}
+\DoxyCodeLine{187         uint8\_t pad[124 -\/ 1 -\/ 1 -\/ 1 -\/ 26]\{\};}
+\DoxyCodeLine{188     \} \textcolor{keyword}{typedef} UpdateAttemptsMessage;}
+\DoxyCodeLine{189 }
+\DoxyCodeLine{190     \textcolor{comment}{// Struttura che rappresenta un messaggio di cambio turno}}
+\DoxyCodeLine{191     \textcolor{keyword}{struct }OtherOneTurnMessage \{}
+\DoxyCodeLine{192         Action action = OTHER\_TURN;}
+\DoxyCodeLine{193 }
+\DoxyCodeLine{194         \textcolor{comment}{// Nome del giocatore che deve svolgere il turno}}
+\DoxyCodeLine{195         \textcolor{keywordtype}{char} player\_name[USERNAME\_LENGTH]\{\};}
+\DoxyCodeLine{196 }
+\DoxyCodeLine{197         \textcolor{comment}{// Byte in eccesso}}
+\DoxyCodeLine{198         uint8\_t pad[124 -\/ USERNAME\_LENGTH]\{\};}
+\DoxyCodeLine{199     \} \textcolor{keyword}{typedef} OtherOneTurnMessage;}
+\DoxyCodeLine{200 }
+\DoxyCodeLine{201 }
+\DoxyCodeLine{202     \textcolor{comment}{// Verifica che le struct siano di dimensione corretta}}
+\DoxyCodeLine{203     \textcolor{keyword}{static\_assert}(\textcolor{keyword}{sizeof}(Message) == \textcolor{keyword}{sizeof}(UpdateUserMessage), \textcolor{stringliteral}{"{}sizes must match"{}});}
+\DoxyCodeLine{204     \textcolor{keyword}{static\_assert}(\textcolor{keyword}{sizeof}(Message) == \textcolor{keyword}{sizeof}(UpdateWordMessage), \textcolor{stringliteral}{"{}sizes must match"{}});}
+\DoxyCodeLine{205     \textcolor{keyword}{static\_assert}(\textcolor{keyword}{sizeof}(Message) == \textcolor{keyword}{sizeof}(OtherOneTurnMessage), \textcolor{stringliteral}{"{}sizes must match"{}});}
+\DoxyCodeLine{206     \textcolor{keyword}{static\_assert}(\textcolor{keyword}{sizeof}(Message) == \textcolor{keyword}{sizeof}(UpdateAttemptsMessage), \textcolor{stringliteral}{"{}sizes must match"{}});}
+\DoxyCodeLine{207 \}}
+\DoxyCodeLine{208 }
+\DoxyCodeLine{209 \textcolor{comment}{// Verifica che le struct siano di dimensione corretta}}
+\DoxyCodeLine{210 \textcolor{keyword}{static\_assert}(\textcolor{keyword}{sizeof}(Client::Message) == \textcolor{keyword}{sizeof}(Server::Message), \textcolor{stringliteral}{"{}sizes must match"{}});}
+\DoxyCodeLine{211 }
+\DoxyCodeLine{212 \textcolor{preprocessor}{\#define MessageSize sizeof(Client::Message)}}
+\DoxyCodeLine{213 }
+\DoxyCodeLine{214 }
+\DoxyCodeLine{215 \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

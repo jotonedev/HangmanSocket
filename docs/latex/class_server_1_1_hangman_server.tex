@@ -1,0 +1,458 @@
+\hypertarget{class_server_1_1_hangman_server}{}\doxysubsection{Riferimenti per la classe Server\+::Hangman\+Server}
+\label{class_server_1_1_hangman_server}\index{Server::HangmanServer@{Server::HangmanServer}}
+\doxysubsubsection*{Composti}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{struct_server_1_1_hangman_server_1_1address}{address}}
+\begin{DoxyCompactList}\small\item\em Contiene l\textquotesingle{}indirizzo IP e la porta del server. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Membri pubblici}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_server_1_1_hangman_server_ac7ae49ff707b88bb38a3d0fd5a9c1ce5}{Hangman\+Server}} (const string \&\+\_\+ip=\char`\"{}0.\+0.\+0.\+0\char`\"{}, uint16\+\_\+t \+\_\+port=9090)
+\item 
+\mbox{\hyperlink{class_server_1_1_hangman_server_a2f6145537993466557691407306de2f1}{$\sim$\+Hangman\+Server}} ()
+\begin{DoxyCompactList}\small\item\em Chiude il socket del server e con i giocatori connessi. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_server_1_1_hangman_server_a17d9ec28198f24a6ba7d2f0b16a063fd}{start}} (uint8\+\_\+t \+\_\+max\+\_\+errors=10, const string \+\_\+start\+\_\+blocked\+\_\+letters=\char`\"{}AEIOU\char`\"{}, uint8\+\_\+t \+\_\+blocked\+\_\+attempts=3, const string \&\+\_\+filename=\char`\"{}data/data.\+txt\char`\"{})
+\item 
+void \mbox{\hyperlink{class_server_1_1_hangman_server_a443b59c31b5087ba0faad4020e81edd7}{run}} (const bool verbose=true)
+\begin{DoxyCompactList}\small\item\em Permette di lasciare la gestione del server alla classe stessa, che si occuperà di avviare il server e gestire il loop di gioco. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Membri protetti}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_server_1_1_hangman_server_a5f506ee1a8d0686fb61ef02e6f705dcd}{\+\_\+load\+\_\+short\+\_\+phrases}} (const string \&filename=\char`\"{}data/data.\+txt\char`\"{})
+\item 
+void \mbox{\hyperlink{class_server_1_1_hangman_server_a9f353699bc30bb5e21aa2494ef0129cb}{\+\_\+generate\+\_\+short\+\_\+phrase}} ()
+\item 
+void \mbox{\hyperlink{class_server_1_1_hangman_server_ae629e809dae766ef9f9c618ce8a71f4f}{\+\_\+next\+\_\+turn}} ()
+\item 
+void \mbox{\hyperlink{class_server_1_1_hangman_server_aa8c018d45634b75a76b917e6bfdd9013}{\+\_\+broadcast\+\_\+action}} (Server\+::\+Action action)
+\item 
+void \mbox{\hyperlink{class_server_1_1_hangman_server_afbf8e5445a8d39b6f662cdda1ca0a00b}{\+\_\+send\+\_\+update\+\_\+short\+\_\+phrase}} (\mbox{\hyperlink{struct_server_1_1_player}{Player}} \&player)
+\item 
+void \mbox{\hyperlink{class_server_1_1_hangman_server_af6684a76a2e15a514403ae32e2dfdf16}{\+\_\+send\+\_\+update\+\_\+attempts}} (\mbox{\hyperlink{struct_server_1_1_player}{Player}} \&player)
+\item 
+void \mbox{\hyperlink{class_server_1_1_hangman_server_a7c0cd35b3347505a1a2f66663b5c93a3}{\+\_\+send\+\_\+update\+\_\+players}} (\mbox{\hyperlink{struct_server_1_1_player}{Player}} \&player)
+\item 
+bool \mbox{\hyperlink{class_server_1_1_hangman_server_a56a4331d2284ceb1496c3be10d606f59}{\+\_\+send\+\_\+action}} (\mbox{\hyperlink{struct_server_1_1_player}{Player}} $\ast$player, Server\+::\+Action action)
+\item 
+void \mbox{\hyperlink{class_server_1_1_hangman_server_ad891f09de87c7081c006672b37e4f980}{\+\_\+remove\+\_\+player}} (\mbox{\hyperlink{struct_server_1_1_player}{Player}} $\ast$player)
+\item 
+bool \mbox{\hyperlink{class_server_1_1_hangman_server_aa1ac5e0cb7874de4a5cc3e719ef1b489}{\+\_\+is\+\_\+short\+\_\+phrase\+\_\+guessed}} ()
+\item 
+int \mbox{\hyperlink{class_server_1_1_hangman_server_a06525bdb0be8e5b4afa2291e2e46d5ac}{\+\_\+get\+\_\+letter\+\_\+from\+\_\+player}} (\mbox{\hyperlink{struct_server_1_1_player}{Player}} $\ast$player, int timeout=5)
+\item 
+int \mbox{\hyperlink{class_server_1_1_hangman_server_a2e1fc99cf91e2e24c249b7a6e520bd3e}{\+\_\+get\+\_\+short\+\_\+phrase\+\_\+from\+\_\+player}} (\mbox{\hyperlink{struct_server_1_1_player}{Player}} $\ast$player, int timeout=10)
+\item 
+void \mbox{\hyperlink{class_server_1_1_hangman_server_a0b0f073d7648e497d9da9a2bd2ef6b6a}{\+\_\+check\+\_\+disconnected\+\_\+players}} ()
+\item 
+void \mbox{\hyperlink{class_server_1_1_hangman_server_ae7087500008252865498fe107c3fc377}{accept}} ()
+\item 
+void \mbox{\hyperlink{class_server_1_1_hangman_server_a7540506f671ecea9479a2c146c5c54ac}{loop}} ()
+\begin{DoxyCompactList}\small\item\em Si occupa di gestire le connessioni e le richieste dei client, quindi di eseguire il gioco. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_server_1_1_hangman_server_ac2fc587eeb1553140d993af160ee4bda}{new\+\_\+round}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Membri privati}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Type\+Message $>$ }\\bool \mbox{\hyperlink{class_server_1_1_hangman_server_a9ccb877a37e97c1a909478501b5ccca6}{\+\_\+send}} (\mbox{\hyperlink{struct_server_1_1_player}{Player}} $\ast$player, Type\+Message \&message)
+\item 
+{\footnotesize template$<$class Type\+Message $>$ }\\bool \mbox{\hyperlink{class_server_1_1_hangman_server_aba17c488179d6588ce37abb72e0500b4}{\+\_\+read}} (\mbox{\hyperlink{struct_server_1_1_player}{Player}} $\ast$player, Type\+Message \&message, Client\+::\+Action action=Client\+::\+Action\+::\+GENERIC, int timeout=5)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Attributi privati}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_server_1_1_hangman_server_a3a3303dd08a0e39a75b2ab030113d5ea}\label{class_server_1_1_hangman_server_a3a3303dd08a0e39a75b2ab030113d5ea}} 
+int {\bfseries sockfd}
+\begin{DoxyCompactList}\small\item\em Descrittore del socket del server. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_server_1_1_hangman_server_a677615fe18779c87409bc62bfd9a0f1a}\label{class_server_1_1_hangman_server_a677615fe18779c87409bc62bfd9a0f1a}} 
+unsigned int {\bfseries max\+\_\+errors} \{\}
+\begin{DoxyCompactList}\small\item\em Rappresenta il numero di errori massimo che i giocatori possono commettere. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_server_1_1_hangman_server_a8c5c524b4051cbb18018761d26ece720}\label{class_server_1_1_hangman_server_a8c5c524b4051cbb18018761d26ece720}} 
+unsigned int {\bfseries current\+\_\+errors} \{\}
+\begin{DoxyCompactList}\small\item\em Rappresenta il numero di errori commessi dai giocatori. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_server_1_1_hangman_server_a789f5767526419e803345234c0392080}\label{class_server_1_1_hangman_server_a789f5767526419e803345234c0392080}} 
+std\+::vector$<$ char $>$ {\bfseries attempts}
+\begin{DoxyCompactList}\small\item\em Rappresenta i tentativi fatti fin\textquotesingle{}ora. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_server_1_1_hangman_server_a0ae7420436912128775dc65c0215d6d0}\label{class_server_1_1_hangman_server_a0ae7420436912128775dc65c0215d6d0}} 
+unsigned int {\bfseries current\+\_\+attempt} \{\}
+\begin{DoxyCompactList}\small\item\em Rappresenta quanti tentativi sono stati fatti. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_server_1_1_hangman_server_af41cd8471a643348e0f39081ca830eee}\label{class_server_1_1_hangman_server_af41cd8471a643348e0f39081ca830eee}} 
+char {\bfseries short\+\_\+phrase} \mbox{[}SHORTPHRASE\+\_\+\+LENGTH\mbox{]} \{\}
+\begin{DoxyCompactList}\small\item\em Rappresenta la parola o frase da indovinare. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_server_1_1_hangman_server_a0f18fb61185d0ba4f1e32254f21c1a26}\label{class_server_1_1_hangman_server_a0f18fb61185d0ba4f1e32254f21c1a26}} 
+char {\bfseries short\+\_\+phrase\+\_\+masked} \mbox{[}SHORTPHRASE\+\_\+\+LENGTH\mbox{]} \{\}
+\begin{DoxyCompactList}\small\item\em Rappresenta la parola o frase da indovinare con i caratteri non ancora indovinati sostituiti da \+\_\+. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_server_1_1_hangman_server_a56c7f9a16861f501e2c0e7c8a50731bd}\label{class_server_1_1_hangman_server_a56c7f9a16861f501e2c0e7c8a50731bd}} 
+char {\bfseries start\+\_\+blocked\+\_\+letters} \mbox{[}26\mbox{]} \{\}
+\begin{DoxyCompactList}\small\item\em Rappresenta le lettere che non si possono indovinare all\textquotesingle{}inizio. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_server_1_1_hangman_server_a8cf53a18411978d7a2647ff57942d07d}\label{class_server_1_1_hangman_server_a8cf53a18411978d7a2647ff57942d07d}} 
+unsigned int {\bfseries blocked\+\_\+attempts} \{\}
+\begin{DoxyCompactList}\small\item\em Rappresenta il numero di tentativi che devono essere fatti prima di poter usare le lettere bloccate. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_server_1_1_hangman_server_ac047183fe30ad115fef1333ddc1a04d2}\label{class_server_1_1_hangman_server_ac047183fe30ad115fef1333ddc1a04d2}} 
+std\+::vector$<$ \mbox{\hyperlink{struct_server_1_1_player}{Player}} $>$ {\bfseries players}
+\begin{DoxyCompactList}\small\item\em Lista dei client connessi. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_server_1_1_hangman_server_a03e594cecd3eead0728240026d3b9d60}\label{class_server_1_1_hangman_server_a03e594cecd3eead0728240026d3b9d60}} 
+unsigned int {\bfseries players\+\_\+connected} \{\}
+\begin{DoxyCompactList}\small\item\em Rappresenta il numero di giocatori connessi. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_server_1_1_hangman_server_a525b7c86eea1ac81c1788d70e121419d}\label{class_server_1_1_hangman_server_a525b7c86eea1ac81c1788d70e121419d}} 
+\mbox{\hyperlink{struct_server_1_1_player}{Player}} $\ast$ {\bfseries current\+\_\+player} \{\}
+\begin{DoxyCompactList}\small\item\em Rappresenta il giocatore corrente. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_server_1_1_hangman_server_ab8535a1ab1a8bcbc0ffd3cee7afb7683}\label{class_server_1_1_hangman_server_ab8535a1ab1a8bcbc0ffd3cee7afb7683}} 
+std\+::vector$<$ string $>$ {\bfseries all\+\_\+phrases}
+\begin{DoxyCompactList}\small\item\em Contiene tutte le possibili frasi da indovinare. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsubsection{Descrizione dettagliata}
+Questa classe rappresenta l\textquotesingle{}intero server del gioco dell\textquotesingle{}impiccato
+
+Provvede a dare una funzione per eseguire il gioco direttamente e a dare le funzioni per crearsi il proprio loop di gioco nel caso fosse necessario. \begin{DoxyNote}{Nota}
+Questa classe non è thread-\/safe 
+\end{DoxyNote}
+\begin{DoxyWarning}{Avvertimento}
+Se un client non rispetta il protocollo, questo viene disconnesso
+\end{DoxyWarning}
+\begin{DoxyAuthor}{Autore}
+John Toniutti 
+\end{DoxyAuthor}
+
+
+\doxysubsubsection{Documentazione dei costruttori e dei distruttori}
+\mbox{\Hypertarget{class_server_1_1_hangman_server_ac7ae49ff707b88bb38a3d0fd5a9c1ce5}\label{class_server_1_1_hangman_server_ac7ae49ff707b88bb38a3d0fd5a9c1ce5}} 
+\index{Server::HangmanServer@{Server::HangmanServer}!HangmanServer@{HangmanServer}}
+\index{HangmanServer@{HangmanServer}!Server::HangmanServer@{Server::HangmanServer}}
+\doxyparagraph{\texorpdfstring{HangmanServer()}{HangmanServer()}}
+{\footnotesize\ttfamily Server\+::\+Hangman\+Server\+::\+Hangman\+Server (\begin{DoxyParamCaption}\item[{const string \&}]{\+\_\+ip = {\ttfamily \char`\"{}0.0.0.0\char`\"{}},  }\item[{uint16\+\_\+t}]{\+\_\+port = {\ttfamily 9090} }\end{DoxyParamCaption})}
+
+Costruttore della classe \mbox{\hyperlink{class_server_1_1_hangman_server}{Hangman\+Server}} 
+\begin{DoxyParams}{Parametri}
+{\em \+\_\+ip} & L\textquotesingle{}indirizzo IP del server (se lasciato come default usa tutte le interfacce disponibili) \\
+\hline
+{\em \+\_\+port} & La porta del server \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyExceptions}{Eccezioni}
+{\em std\+::runtime\+\_\+error} & Se non è possibile creare il socket \\
+\hline
+\end{DoxyExceptions}
+\mbox{\Hypertarget{class_server_1_1_hangman_server_a2f6145537993466557691407306de2f1}\label{class_server_1_1_hangman_server_a2f6145537993466557691407306de2f1}} 
+\index{Server::HangmanServer@{Server::HangmanServer}!````~HangmanServer@{$\sim$HangmanServer}}
+\index{````~HangmanServer@{$\sim$HangmanServer}!Server::HangmanServer@{Server::HangmanServer}}
+\doxyparagraph{\texorpdfstring{$\sim$HangmanServer()}{~HangmanServer()}}
+{\footnotesize\ttfamily Server\+::\+Hangman\+Server\+::$\sim$\+Hangman\+Server (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Chiude il socket del server e con i giocatori connessi. 
+
+Distruttore della classe \mbox{\hyperlink{class_server_1_1_hangman_server}{Hangman\+Server}} 
+
+\doxysubsubsection{Documentazione delle funzioni membro}
+\mbox{\Hypertarget{class_server_1_1_hangman_server_aa8c018d45634b75a76b917e6bfdd9013}\label{class_server_1_1_hangman_server_aa8c018d45634b75a76b917e6bfdd9013}} 
+\index{Server::HangmanServer@{Server::HangmanServer}!\_broadcast\_action@{\_broadcast\_action}}
+\index{\_broadcast\_action@{\_broadcast\_action}!Server::HangmanServer@{Server::HangmanServer}}
+\doxyparagraph{\texorpdfstring{\_broadcast\_action()}{\_broadcast\_action()}}
+{\footnotesize\ttfamily void Server\+::\+Hangman\+Server\+::\+\_\+broadcast\+\_\+action (\begin{DoxyParamCaption}\item[{Server\+::\+Action}]{action }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [protected]}}
+
+Permette di inviare a tutti i giocatori un\textquotesingle{}azione 
+\begin{DoxyParams}{Parametri}
+{\em action} & L\textquotesingle{}azione da inviare \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_server_1_1_hangman_server_a0b0f073d7648e497d9da9a2bd2ef6b6a}\label{class_server_1_1_hangman_server_a0b0f073d7648e497d9da9a2bd2ef6b6a}} 
+\index{Server::HangmanServer@{Server::HangmanServer}!\_check\_disconnected\_players@{\_check\_disconnected\_players}}
+\index{\_check\_disconnected\_players@{\_check\_disconnected\_players}!Server::HangmanServer@{Server::HangmanServer}}
+\doxyparagraph{\texorpdfstring{\_check\_disconnected\_players()}{\_check\_disconnected\_players()}}
+{\footnotesize\ttfamily void Server\+::\+Hangman\+Server\+::\+\_\+check\+\_\+disconnected\+\_\+players (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+Permette di verificare se uno dei giocatori connessi si è disconnesso \mbox{\Hypertarget{class_server_1_1_hangman_server_a9f353699bc30bb5e21aa2494ef0129cb}\label{class_server_1_1_hangman_server_a9f353699bc30bb5e21aa2494ef0129cb}} 
+\index{Server::HangmanServer@{Server::HangmanServer}!\_generate\_short\_phrase@{\_generate\_short\_phrase}}
+\index{\_generate\_short\_phrase@{\_generate\_short\_phrase}!Server::HangmanServer@{Server::HangmanServer}}
+\doxyparagraph{\texorpdfstring{\_generate\_short\_phrase()}{\_generate\_short\_phrase()}}
+{\footnotesize\ttfamily void Server\+::\+Hangman\+Server\+::\+\_\+generate\+\_\+short\+\_\+phrase (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+Permette di generare una nuova frase da indovinare \mbox{\Hypertarget{class_server_1_1_hangman_server_a06525bdb0be8e5b4afa2291e2e46d5ac}\label{class_server_1_1_hangman_server_a06525bdb0be8e5b4afa2291e2e46d5ac}} 
+\index{Server::HangmanServer@{Server::HangmanServer}!\_get\_letter\_from\_player@{\_get\_letter\_from\_player}}
+\index{\_get\_letter\_from\_player@{\_get\_letter\_from\_player}!Server::HangmanServer@{Server::HangmanServer}}
+\doxyparagraph{\texorpdfstring{\_get\_letter\_from\_player()}{\_get\_letter\_from\_player()}}
+{\footnotesize\ttfamily int Server\+::\+Hangman\+Server\+::\+\_\+get\+\_\+letter\+\_\+from\+\_\+player (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_server_1_1_player}{Player}} $\ast$}]{player,  }\item[{int}]{timeout = {\ttfamily 5} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+Permette di ricevere da un player un tentativo contenente una lettera 
+\begin{DoxyParams}{Parametri}
+{\em player} & Il player che deve fare il tentativo \\
+\hline
+{\em timeout} & Il tempo massimo da aspettare in secondi \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Restituisce}
+Un numero che rappresenta il risultato della funzione 
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Valori di ritorno}
+{\em 1} & Se il tentativo è andato a buon fine e ha indovinato \\
+\hline
+{\em 0} & Se il tentativo è andato a buon fine e non ha indovinato \\
+\hline
+{\em -\/1} & Se la lettera è bloccata o se è già stata usata \\
+\hline
+{\em -\/2} & Se ha mandato un pacchetto sbagliato (in questo caso il client viene disconnesso) \\
+\hline
+\end{DoxyRetVals}
+\mbox{\Hypertarget{class_server_1_1_hangman_server_a2e1fc99cf91e2e24c249b7a6e520bd3e}\label{class_server_1_1_hangman_server_a2e1fc99cf91e2e24c249b7a6e520bd3e}} 
+\index{Server::HangmanServer@{Server::HangmanServer}!\_get\_short\_phrase\_from\_player@{\_get\_short\_phrase\_from\_player}}
+\index{\_get\_short\_phrase\_from\_player@{\_get\_short\_phrase\_from\_player}!Server::HangmanServer@{Server::HangmanServer}}
+\doxyparagraph{\texorpdfstring{\_get\_short\_phrase\_from\_player()}{\_get\_short\_phrase\_from\_player()}}
+{\footnotesize\ttfamily int Server\+::\+Hangman\+Server\+::\+\_\+get\+\_\+short\+\_\+phrase\+\_\+from\+\_\+player (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_server_1_1_player}{Player}} $\ast$}]{player,  }\item[{int}]{timeout = {\ttfamily 10} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+Permette di ricevere da un player un tentativo sulla frase da indovinare 
+\begin{DoxyParams}{Parametri}
+{\em player} & Il player che deve fare il tentativo \\
+\hline
+{\em timeout} & Il tempo massimo da aspettare in secondi \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Restituisce}
+Un numero che rappresenta il risultato della funzione 
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Valori di ritorno}
+{\em 1} & Se il tentativo è andato a buon fine e ha indovinato \\
+\hline
+{\em 0} & Se il tentativo è andato a buon fine e non ha indovinato \\
+\hline
+{\em -\/2} & Se ha mandato un pacchetto sbagliato (in questo caso il client viene disconnesso) \\
+\hline
+\end{DoxyRetVals}
+\mbox{\Hypertarget{class_server_1_1_hangman_server_aa1ac5e0cb7874de4a5cc3e719ef1b489}\label{class_server_1_1_hangman_server_aa1ac5e0cb7874de4a5cc3e719ef1b489}} 
+\index{Server::HangmanServer@{Server::HangmanServer}!\_is\_short\_phrase\_guessed@{\_is\_short\_phrase\_guessed}}
+\index{\_is\_short\_phrase\_guessed@{\_is\_short\_phrase\_guessed}!Server::HangmanServer@{Server::HangmanServer}}
+\doxyparagraph{\texorpdfstring{\_is\_short\_phrase\_guessed()}{\_is\_short\_phrase\_guessed()}}
+{\footnotesize\ttfamily bool Server\+::\+Hangman\+Server\+::\+\_\+is\+\_\+short\+\_\+phrase\+\_\+guessed (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [protected]}}
+
+Permette di verificare se la parola o frase è stata indovinata \begin{DoxyReturn}{Restituisce}
+se la parola o frase è stata indovinata 
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Valori di ritorno}
+{\em true} & se la parola o la frase è stata indovinata \\
+\hline
+{\em false} & se la parola o la frase non è stata indovinata \\
+\hline
+\end{DoxyRetVals}
+\mbox{\Hypertarget{class_server_1_1_hangman_server_a5f506ee1a8d0686fb61ef02e6f705dcd}\label{class_server_1_1_hangman_server_a5f506ee1a8d0686fb61ef02e6f705dcd}} 
+\index{Server::HangmanServer@{Server::HangmanServer}!\_load\_short\_phrases@{\_load\_short\_phrases}}
+\index{\_load\_short\_phrases@{\_load\_short\_phrases}!Server::HangmanServer@{Server::HangmanServer}}
+\doxyparagraph{\texorpdfstring{\_load\_short\_phrases()}{\_load\_short\_phrases()}}
+{\footnotesize\ttfamily void Server\+::\+Hangman\+Server\+::\+\_\+load\+\_\+short\+\_\+phrases (\begin{DoxyParamCaption}\item[{const string \&}]{filename = {\ttfamily \char`\"{}data/data.txt\char`\"{}} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+Carica le frasi da un file
+
+
+\begin{DoxyParams}{Parametri}
+{\em filename} & il nome del file da cui caricare le frasi \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyExceptions}{Eccezioni}
+{\em std\+::runtime\+\_\+error} & se il file non esiste \\
+\hline
+\end{DoxyExceptions}
+\mbox{\Hypertarget{class_server_1_1_hangman_server_ae629e809dae766ef9f9c618ce8a71f4f}\label{class_server_1_1_hangman_server_ae629e809dae766ef9f9c618ce8a71f4f}} 
+\index{Server::HangmanServer@{Server::HangmanServer}!\_next\_turn@{\_next\_turn}}
+\index{\_next\_turn@{\_next\_turn}!Server::HangmanServer@{Server::HangmanServer}}
+\doxyparagraph{\texorpdfstring{\_next\_turn()}{\_next\_turn()}}
+{\footnotesize\ttfamily void Server\+::\+Hangman\+Server\+::\+\_\+next\+\_\+turn (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+Permette di passare il turno al giocatore successivo \mbox{\Hypertarget{class_server_1_1_hangman_server_aba17c488179d6588ce37abb72e0500b4}\label{class_server_1_1_hangman_server_aba17c488179d6588ce37abb72e0500b4}} 
+\index{Server::HangmanServer@{Server::HangmanServer}!\_read@{\_read}}
+\index{\_read@{\_read}!Server::HangmanServer@{Server::HangmanServer}}
+\doxyparagraph{\texorpdfstring{\_read()}{\_read()}}
+{\footnotesize\ttfamily template$<$class Type\+Message $>$ \\
+bool Server\+::\+Hangman\+Server\+::\+\_\+read (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_server_1_1_player}{Player}} $\ast$}]{player,  }\item[{Type\+Message \&}]{message,  }\item[{Client\+::\+Action}]{action = {\ttfamily Client\+:\+:Action\+:\+:GENERIC},  }\item[{int}]{timeout = {\ttfamily 5} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+Permette di leggere un messaggio da un certo giocatore 
+\begin{DoxyTemplParams}{Parametri dei template}
+{\em Type\+Message} & Un tipo di messaggio di 128 bytes \\
+\hline
+{\em Type\+Action} & L\textquotesingle{}azione che ci si aspetta di ricevere\\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parametri}
+{\em player} & Il giocatore da cui aspettarsi il messaggio \\
+\hline
+{\em message} & Dove salvare il messaggio \\
+\hline
+{\em timeout} & Il tempo massimo di attesa per il messaggio (in secondi)\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Restituisce}
+Se la lettura è andata a buon fine 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_server_1_1_hangman_server_ad891f09de87c7081c006672b37e4f980}\label{class_server_1_1_hangman_server_ad891f09de87c7081c006672b37e4f980}} 
+\index{Server::HangmanServer@{Server::HangmanServer}!\_remove\_player@{\_remove\_player}}
+\index{\_remove\_player@{\_remove\_player}!Server::HangmanServer@{Server::HangmanServer}}
+\doxyparagraph{\texorpdfstring{\_remove\_player()}{\_remove\_player()}}
+{\footnotesize\ttfamily void Server\+::\+Hangman\+Server\+::\+\_\+remove\+\_\+player (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_server_1_1_player}{Player}} $\ast$}]{player }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+Permette di eliminare un giocatore dalla lista dei giocatori 
+\begin{DoxyParams}{Parametri}
+{\em player} & Il \mbox{\hyperlink{struct_server_1_1_player}{Player}} da eliminare \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_server_1_1_hangman_server_a9ccb877a37e97c1a909478501b5ccca6}\label{class_server_1_1_hangman_server_a9ccb877a37e97c1a909478501b5ccca6}} 
+\index{Server::HangmanServer@{Server::HangmanServer}!\_send@{\_send}}
+\index{\_send@{\_send}!Server::HangmanServer@{Server::HangmanServer}}
+\doxyparagraph{\texorpdfstring{\_send()}{\_send()}}
+{\footnotesize\ttfamily template$<$typename Type\+Message $>$ \\
+bool Server\+::\+Hangman\+Server\+::\+\_\+send (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_server_1_1_player}{Player}} $\ast$}]{player,  }\item[{Type\+Message \&}]{message }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+Permette di inviare un messaggio ad un certo giocatore 
+\begin{DoxyTemplParams}{Parametri dei template}
+{\em Type\+Message} & Un tipo di messaggio di 128 bytes \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parametri}
+{\em player} & Il giocatore a cui inviare il messaggio \\
+\hline
+{\em message} & Il messaggio da inviare \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Restituisce}
+true se l\textquotesingle{}invio è andato a buon fine, false altrimenti 
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Valori di ritorno}
+{\em true} & L\textquotesingle{}invio è andato a buon fine \\
+\hline
+{\em false} & L\textquotesingle{}invio non è andato a buon fine\\
+\hline
+\end{DoxyRetVals}
+\begin{DoxyNote}{Nota}
+Se l\textquotesingle{}invio fallisce, il giocatore viene disconnesso 
+\end{DoxyNote}
+\mbox{\Hypertarget{class_server_1_1_hangman_server_a56a4331d2284ceb1496c3be10d606f59}\label{class_server_1_1_hangman_server_a56a4331d2284ceb1496c3be10d606f59}} 
+\index{Server::HangmanServer@{Server::HangmanServer}!\_send\_action@{\_send\_action}}
+\index{\_send\_action@{\_send\_action}!Server::HangmanServer@{Server::HangmanServer}}
+\doxyparagraph{\texorpdfstring{\_send\_action()}{\_send\_action()}}
+{\footnotesize\ttfamily bool Server\+::\+Hangman\+Server\+::\+\_\+send\+\_\+action (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_server_1_1_player}{Player}} $\ast$}]{player,  }\item[{Server\+::\+Action}]{action }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [protected]}}
+
+Permette di inviare un\textquotesingle{}azione ad un certo giocatore 
+\begin{DoxyParams}{Parametri}
+{\em player} & Il giocatore a cui inviare l\textquotesingle{}azione \\
+\hline
+{\em action} & L\textquotesingle{}azione da inviare \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Restituisce}
+true se l\textquotesingle{}invio è andato a buon fine, false altrimenti 
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Valori di ritorno}
+{\em true} & L\textquotesingle{}invio è andato a buon fine \\
+\hline
+{\em false} & L\textquotesingle{}invio non è andato a buon fine \\
+\hline
+\end{DoxyRetVals}
+\mbox{\Hypertarget{class_server_1_1_hangman_server_af6684a76a2e15a514403ae32e2dfdf16}\label{class_server_1_1_hangman_server_af6684a76a2e15a514403ae32e2dfdf16}} 
+\index{Server::HangmanServer@{Server::HangmanServer}!\_send\_update\_attempts@{\_send\_update\_attempts}}
+\index{\_send\_update\_attempts@{\_send\_update\_attempts}!Server::HangmanServer@{Server::HangmanServer}}
+\doxyparagraph{\texorpdfstring{\_send\_update\_attempts()}{\_send\_update\_attempts()}}
+{\footnotesize\ttfamily void Server\+::\+Hangman\+Server\+::\+\_\+send\+\_\+update\+\_\+attempts (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_server_1_1_player}{Player}} \&}]{player }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [protected]}}
+
+Permette di inviare a un giocatore un aggiornamento sul numero di errori commessi
+
+
+\begin{DoxyParams}{Parametri}
+{\em player} & Il giocatore a cui inviare l\textquotesingle{}aggiornamento \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_server_1_1_hangman_server_a7c0cd35b3347505a1a2f66663b5c93a3}\label{class_server_1_1_hangman_server_a7c0cd35b3347505a1a2f66663b5c93a3}} 
+\index{Server::HangmanServer@{Server::HangmanServer}!\_send\_update\_players@{\_send\_update\_players}}
+\index{\_send\_update\_players@{\_send\_update\_players}!Server::HangmanServer@{Server::HangmanServer}}
+\doxyparagraph{\texorpdfstring{\_send\_update\_players()}{\_send\_update\_players()}}
+{\footnotesize\ttfamily void Server\+::\+Hangman\+Server\+::\+\_\+send\+\_\+update\+\_\+players (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_server_1_1_player}{Server\+::\+Player}} \&}]{player }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [protected]}}
+
+Permette di inviare a un giocatore un aggiornamento sulla lista dei giocatori
+
+
+\begin{DoxyParams}{Parametri}
+{\em player} & Il giocatore a cui inviare l\textquotesingle{}aggiornamento \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_server_1_1_hangman_server_afbf8e5445a8d39b6f662cdda1ca0a00b}\label{class_server_1_1_hangman_server_afbf8e5445a8d39b6f662cdda1ca0a00b}} 
+\index{Server::HangmanServer@{Server::HangmanServer}!\_send\_update\_short\_phrase@{\_send\_update\_short\_phrase}}
+\index{\_send\_update\_short\_phrase@{\_send\_update\_short\_phrase}!Server::HangmanServer@{Server::HangmanServer}}
+\doxyparagraph{\texorpdfstring{\_send\_update\_short\_phrase()}{\_send\_update\_short\_phrase()}}
+{\footnotesize\ttfamily void Server\+::\+Hangman\+Server\+::\+\_\+send\+\_\+update\+\_\+short\+\_\+phrase (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_server_1_1_player}{Server\+::\+Player}} \&}]{player }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [protected]}}
+
+Permette di inviare a un giocatore un aggiornamento sullo stato del gioco
+
+
+\begin{DoxyParams}{Parametri}
+{\em player} & Il giocatore a cui inviare l\textquotesingle{}aggiornamento \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_server_1_1_hangman_server_ae7087500008252865498fe107c3fc377}\label{class_server_1_1_hangman_server_ae7087500008252865498fe107c3fc377}} 
+\index{Server::HangmanServer@{Server::HangmanServer}!accept@{accept}}
+\index{accept@{accept}!Server::HangmanServer@{Server::HangmanServer}}
+\doxyparagraph{\texorpdfstring{accept()}{accept()}}
+{\footnotesize\ttfamily void Server\+::\+Hangman\+Server\+::accept (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+Permette di verificare se ci sono nuovi client che vogliono connettersi e di accettarli \mbox{\Hypertarget{class_server_1_1_hangman_server_a7540506f671ecea9479a2c146c5c54ac}\label{class_server_1_1_hangman_server_a7540506f671ecea9479a2c146c5c54ac}} 
+\index{Server::HangmanServer@{Server::HangmanServer}!loop@{loop}}
+\index{loop@{loop}!Server::HangmanServer@{Server::HangmanServer}}
+\doxyparagraph{\texorpdfstring{loop()}{loop()}}
+{\footnotesize\ttfamily void Server\+::\+Hangman\+Server\+::loop (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+Si occupa di gestire le connessioni e le richieste dei client, quindi di eseguire il gioco. 
+
+Loop del server \begin{DoxyNote}{Nota}
+Deve trovarsi all\textquotesingle{}interno di un while loop 
+\end{DoxyNote}
+\mbox{\Hypertarget{class_server_1_1_hangman_server_ac2fc587eeb1553140d993af160ee4bda}\label{class_server_1_1_hangman_server_ac2fc587eeb1553140d993af160ee4bda}} 
+\index{Server::HangmanServer@{Server::HangmanServer}!new\_round@{new\_round}}
+\index{new\_round@{new\_round}!Server::HangmanServer@{Server::HangmanServer}}
+\doxyparagraph{\texorpdfstring{new\_round()}{new\_round()}}
+{\footnotesize\ttfamily void Server\+::\+Hangman\+Server\+::new\+\_\+round (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+Permette di avviare un nuovo round \mbox{\Hypertarget{class_server_1_1_hangman_server_a443b59c31b5087ba0faad4020e81edd7}\label{class_server_1_1_hangman_server_a443b59c31b5087ba0faad4020e81edd7}} 
+\index{Server::HangmanServer@{Server::HangmanServer}!run@{run}}
+\index{run@{run}!Server::HangmanServer@{Server::HangmanServer}}
+\doxyparagraph{\texorpdfstring{run()}{run()}}
+{\footnotesize\ttfamily void Server\+::\+Hangman\+Server\+::run (\begin{DoxyParamCaption}\item[{const bool}]{verbose = {\ttfamily true} }\end{DoxyParamCaption})}
+
+
+
+Permette di lasciare la gestione del server alla classe stessa, che si occuperà di avviare il server e gestire il loop di gioco. 
+
+Esegue tutte le funzioni del server 
+\begin{DoxyParams}{Parametri}
+{\em verbose} & Se deve stampare un resoconto dello stato del server ad ogni loop \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_server_1_1_hangman_server_a17d9ec28198f24a6ba7d2f0b16a063fd}\label{class_server_1_1_hangman_server_a17d9ec28198f24a6ba7d2f0b16a063fd}} 
+\index{Server::HangmanServer@{Server::HangmanServer}!start@{start}}
+\index{start@{start}!Server::HangmanServer@{Server::HangmanServer}}
+\doxyparagraph{\texorpdfstring{start()}{start()}}
+{\footnotesize\ttfamily void Server\+::\+Hangman\+Server\+::start (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{\+\_\+max\+\_\+errors = {\ttfamily 10},  }\item[{const string}]{\+\_\+start\+\_\+blocked\+\_\+letters = {\ttfamily \char`\"{}AEIOU\char`\"{}},  }\item[{uint8\+\_\+t}]{\+\_\+blocked\+\_\+attempts = {\ttfamily 3},  }\item[{const string \&}]{\+\_\+filename = {\ttfamily \char`\"{}data/data.txt\char`\"{}} }\end{DoxyParamCaption})}
+
+Avvia il server 
+\begin{DoxyParams}{Parametri}
+{\em \+\_\+max\+\_\+errors} & Il numero massimo di errori prima che la partita sia persa \\
+\hline
+{\em \+\_\+start\+\_\+blocked\+\_\+letters} & Le lettere che non si possono indovinare all\textquotesingle{}inizio \\
+\hline
+{\em \+\_\+blocked\+\_\+attempts} & Il numero di tentativi che devono essere fatti prima di poter usare le lettere bloccate \\
+\hline
+{\em \+\_\+filename} & Il nome del file da cui caricare le frasi \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyExceptions}{Eccezioni}
+{\em std\+::runtime\+\_\+error} & Se il server non è stato avviato \\
+\hline
+\end{DoxyExceptions}

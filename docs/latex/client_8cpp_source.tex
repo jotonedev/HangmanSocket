@@ -1,0 +1,451 @@
+\hypertarget{client_8cpp_source}{}\doxysection{client.\+cpp}
+\label{client_8cpp_source}\index{B:/Cpp/prj-\/socket/lib/Hangman/client.cpp@{B:/Cpp/prj-\/socket/lib/Hangman/client.cpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00001}00001 \textcolor{preprocessor}{\#include "{}client.h"{}}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00002}00002 \textcolor{preprocessor}{\#include "{}terminal\_utils.h"{}}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00003}00003 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00004}00004 \textcolor{keyword}{namespace }Client \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00005}\mbox{\hyperlink{class_client_1_1_hangman_client_ab2d2eab7cf4d7e8c2e7611d1fa21661b}{00005}}     \mbox{\hyperlink{class_client_1_1_hangman_client_ab2d2eab7cf4d7e8c2e7611d1fa21661b}{HangmanClient::HangmanClient}}(\textcolor{keyword}{const} \textcolor{keywordtype}{char} address[], \textcolor{keyword}{const} \textcolor{keywordtype}{char} port[]) \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00006}00006         \textcolor{comment}{// Creazione del socket}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00007}00007 \textcolor{preprocessor}{\#ifdef \_WIN32}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00008}00008         WSADATA wsa\_data;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00009}00009         WSAStartup(MAKEWORD(1, 1), \&wsa\_data);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00010}00010 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00011}00011         sockfd = socket(AF\_INET, SOCK\_STREAM, 0);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00012}00012         \textcolor{keywordflow}{if} (sockfd < 0) \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00013}00013             \textcolor{keywordflow}{throw} std::runtime\_error(\textcolor{stringliteral}{"{}Errore nell'inizializzazione della socket"{}});}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00014}00014         \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00015}00015 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00016}00016         \textcolor{comment}{// Creazione dell'indirizzo del server}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00017}00017         server\_address.sin\_family = AF\_INET;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00018}00018         server\_address.sin\_port = htons(strtol(port, \textcolor{keyword}{nullptr}, 10));}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00019}00019         server\_address.sin\_addr.s\_addr = inet\_addr(address);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00020}00020     \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00021}00021 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00022}\mbox{\hyperlink{class_client_1_1_hangman_client_ac6b52ac387af4e64296bb3cc4797e0e8}{00022}}     \mbox{\hyperlink{class_client_1_1_hangman_client_ac6b52ac387af4e64296bb3cc4797e0e8}{HangmanClient::\string~HangmanClient}}() \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00023}00023         \textcolor{comment}{// Chiusura della sockfd}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00024}00024         shutdown(sockfd, SHUT\_RDWR);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00025}00025 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00026}00026 \textcolor{preprocessor}{\#ifdef \_WIN32}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00027}00027         closesocket(sockfd);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00028}00028         WSACleanup();}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00029}00029 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00030}00030         \mbox{\hyperlink{class_client_1_1_hangman_client_adc3bc08fc98ac6f5de11ef12f3bfad79}{::close}}(sockfd);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00031}00031 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00032}00032     \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00033}00033 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00034}\mbox{\hyperlink{class_client_1_1_hangman_client_a33c051ee88314fb677f96175b1187c72}{00034}}     \textcolor{keywordtype}{void} \mbox{\hyperlink{class_client_1_1_hangman_client_a33c051ee88314fb677f96175b1187c72}{HangmanClient::join}}(\textcolor{keyword}{const} \textcolor{keywordtype}{char} username[]) \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00035}00035         \textcolor{comment}{// Connessione al server}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00036}00036         \textcolor{keywordflow}{if} (connect(sockfd, (\textcolor{keyword}{struct} sockaddr *) \&server\_address, \textcolor{keyword}{sizeof}(server\_address)) < 0) \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00037}00037             \textcolor{keywordflow}{throw} std::runtime\_error(\textcolor{stringliteral}{"{}Errore nella connessione al server"{}});}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00038}00038         \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00039}00039 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00040}00040         \textcolor{comment}{// Invio username}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00041}00041         \mbox{\hyperlink{struct_client_1_1_join_message}{JoinMessage}} message;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00042}00042         strncat(message.username, username, USERNAME\_LENGTH -\/ 1);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00043}00043         \_send(message);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00044}00044     \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00045}00045 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00046}\mbox{\hyperlink{class_client_1_1_hangman_client_a194a99f123601de73ab9598d513beafd}{00046}}     \textcolor{keywordtype}{void} \mbox{\hyperlink{class_client_1_1_hangman_client_a194a99f123601de73ab9598d513beafd}{HangmanClient::loop}}() \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00047}00047         \textcolor{comment}{// Aspetta per un messaggio dal server}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00048}00048         \mbox{\hyperlink{class_client_1_1_hangman_client_ae56830347f7aaf1cfce97eac4ec1c7ae}{\_waitAction}}();}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00049}00049 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00050}00050         \textcolor{comment}{// Riceve il messaggio dal server}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00051}00051         \mbox{\hyperlink{struct_server_1_1_message}{Server::Message}} raw\_msg;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00052}00052         \_receive(raw\_msg);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00053}00053 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00054}00054         \textcolor{comment}{// Converte il messaggio in un messaggio di tipo union}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00055}00055         \mbox{\hyperlink{union_client_1_1_server_message_union}{ServerMessageUnion}} message = \{raw\_msg\};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00056}00056 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00057}00057         \textcolor{keywordflow}{if} (game\_over) \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00058}00058             clear\_screen();}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00059}00059             game\_over = \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00060}00060         \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00061}00061 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00062}00062         \textcolor{comment}{// Esegue l'azione corrispondente al messaggio ricevuto}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00063}00063         \textcolor{keywordflow}{switch} (raw\_msg.action) \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00064}00064             \textcolor{keywordflow}{case} Server::Action::UPDATE\_USER: \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00065}00065                 players\_count = message.update\_user\_message.user\_count;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00066}00066                 \mbox{\hyperlink{class_client_1_1_hangman_client_a05d9183948f45cc6e1d103f5d4cf9844}{\_printPlayerList}}(\&message.update\_user\_message);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00067}00067                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00068}00068             \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00069}00069             \textcolor{keywordflow}{case} Server::Action::UPDATE\_SHORTPHRASE: \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00070}00070                 \mbox{\hyperlink{class_client_1_1_hangman_client_a86563e9b95f66d57560ac971e5baca50}{\_printShortPhrase}}(\&message.update\_short\_phrase\_message);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00071}00071                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00072}00072             \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00073}00073             \textcolor{keywordflow}{case} Server::Action::UPDATE\_ATTEMPTS: \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00074}00074                 \mbox{\hyperlink{class_client_1_1_hangman_client_a7bf599880317f37e2a493db44ff1161d}{\_printAttempts}}(\&message.update\_attempts\_message);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00075}00075                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00076}00076             \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00077}00077             \textcolor{keywordflow}{case} Server::Action::YOUR\_TURN: \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00078}00078                 \mbox{\hyperlink{class_client_1_1_hangman_client_adadcd60f40b5aeb8e050587754a6e361}{\_printYourTurn}}();}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00079}00079                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00080}00080             \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00081}00081             \textcolor{keywordflow}{case} Server::Action::OTHER\_TURN: \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00082}00082                 \mbox{\hyperlink{class_client_1_1_hangman_client_aa91f4bf3380f97f116a59f9cf4ef027f}{\_printOtherTurn}}(\&message.other\_one\_turn\_message);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00083}00083                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00084}00084             \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00085}00085             \textcolor{keywordflow}{case} Server::Action::WIN: \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00086}00086                 \mbox{\hyperlink{class_client_1_1_hangman_client_a2f1429c4f54ca6ef30e1d631eb80e4a8}{\_printWin}}();}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00087}00087                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00088}00088             \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00089}00089             \textcolor{keywordflow}{case} Server::Action::LOSE: \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00090}00090                 \mbox{\hyperlink{class_client_1_1_hangman_client_ae25cb48c645654fade08b81f5b2894ba}{\_printLose}}();}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00091}00091                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00092}00092             \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00093}00093             \textcolor{keywordflow}{case} Server::Action::NEW\_GAME: \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00094}00094                 clear\_screen();}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00095}00095                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00096}00096             \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00097}00097             \textcolor{keywordflow}{case} Server::Action::SEND\_LETTER: \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00098}00098                 \mbox{\hyperlink{class_client_1_1_hangman_client_a7c784c7e4dcd4c3f631ca1302729a9ed}{\_getLetter}}();}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00099}00099                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00100}00100             \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00101}00101             \textcolor{keywordflow}{case} Server::Action::SEND\_SHORT\_PHRASE: \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00102}00102                 \mbox{\hyperlink{class_client_1_1_hangman_client_a6c4de01163d810965eb859b5e7dd77ed}{\_getShortPhrase}}();}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00103}00103                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00104}00104             \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00105}00105             \textcolor{keywordflow}{case} Server::Action::HEARTBEAT: \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00106}00106                 \mbox{\hyperlink{struct_client_1_1_message}{Message}} heartbeat;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00107}00107                 heartbeat.action = Action::HEARTBEAT;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00108}00108                 \_send(heartbeat);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00109}00109                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00110}00110             \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00111}00111 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00112}00112             \textcolor{keywordflow}{default}: \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00113}00113                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00114}00114             \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00115}00115         \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00116}00116     \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00117}00117 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00118}\mbox{\hyperlink{class_client_1_1_hangman_client_a70639f6d05d18c3359e85f7ae6be2309}{00118}}     \textcolor{keywordtype}{void} \mbox{\hyperlink{class_client_1_1_hangman_client_a70639f6d05d18c3359e85f7ae6be2309}{HangmanClient::run}}(\textcolor{keywordtype}{bool} verbose) \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00119}00119         \textcolor{keywordtype}{char} username[USERNAME\_LENGTH];}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00120}00120         std::cout << \textcolor{stringliteral}{"{}Inserisci lo username: "{}};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00121}00121         std::cin >> username;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00122}00122         std::cin.clear();}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00123}00123         std::cin.ignore(10000, \textcolor{charliteral}{'\(\backslash\)n'});}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00124}00124         clear\_screen();}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00125}00125 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00126}00126         \textcolor{keywordflow}{try} \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00127}00127             \mbox{\hyperlink{class_client_1_1_hangman_client_a33c051ee88314fb677f96175b1187c72}{join}}(username);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00128}00128         \} \textcolor{keywordflow}{catch} (\textcolor{keyword}{const} std::exception \&e) \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00129}00129             \textcolor{keywordflow}{if} (verbose)}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00130}00130                 std::cerr << e.what() << std::endl;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00131}00131             exit(EXIT\_FAILURE);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00132}00132         \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00133}00133 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00134}00134         clear\_screen();}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00135}00135 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00136}00136         \textcolor{comment}{// Loop principale del client}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00137}00137         \textcolor{keywordflow}{while} (\textcolor{keyword}{true}) \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00138}00138             \textcolor{keywordflow}{try} \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00139}00139                 \mbox{\hyperlink{class_client_1_1_hangman_client_a194a99f123601de73ab9598d513beafd}{loop}}();}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00140}00140             \} \textcolor{keywordflow}{catch} (std::exception \&e) \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00141}00141                 \textcolor{keywordflow}{if} (verbose)}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00142}00142                     std::cerr << e.what() << std::endl;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00143}00143                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00144}00144             \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00145}00145         \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00146}00146     \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00147}00147 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00148}\mbox{\hyperlink{class_client_1_1_hangman_client_adc3bc08fc98ac6f5de11ef12f3bfad79}{00148}}     \textcolor{keywordtype}{void} \mbox{\hyperlink{class_client_1_1_hangman_client_adc3bc08fc98ac6f5de11ef12f3bfad79}{HangmanClient::close}}() \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00149}00149         shutdown(sockfd, SHUT\_RDWR);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00150}00150     \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00151}00151 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00152}00152     \textcolor{keyword}{template}<\textcolor{keyword}{typename} TypeMessage>}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00153}00153     \textcolor{keywordtype}{bool} HangmanClient::\_send(TypeMessage \&message) \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00154}00154         \textcolor{keywordflow}{return} send(sockfd, (\textcolor{keywordtype}{char} *) (\&message), MessageSize, 0);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00155}00155     \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00156}00156 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00157}00157     \textcolor{keyword}{template}<\textcolor{keyword}{typename} TypeMessage>}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00158}00158     \textcolor{keywordtype}{bool} HangmanClient::\_receive(TypeMessage \&message) \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00159}00159         \textcolor{keywordflow}{return} recv(sockfd, (\textcolor{keywordtype}{char} *) (\&message), MessageSize, MSG\_WAITALL);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00160}00160     \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00161}00161 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00162}\mbox{\hyperlink{class_client_1_1_hangman_client_a7c784c7e4dcd4c3f631ca1302729a9ed}{00162}}     \textcolor{keywordtype}{bool} \mbox{\hyperlink{class_client_1_1_hangman_client_a7c784c7e4dcd4c3f631ca1302729a9ed}{HangmanClient::\_getLetter}}() \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00163}00163         \mbox{\hyperlink{struct_terminal_size}{TerminalSize}} size = get\_terminal\_size();}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00164}00164 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00165}00165         \textcolor{keywordtype}{int} x = 2;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00166}00166         \textcolor{keywordtype}{int} y = size.height -\/ 2;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00167}00167 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00168}00168         clear\_chars(SHORTPHRASE\_LENGTH, x, y);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00169}00169 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00170}00170         std::cout << \textcolor{stringliteral}{"{}+"{}} << std::flush;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00171}00171         \textcolor{keywordtype}{char} letter;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00172}00172 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00173}00173         \textcolor{comment}{// Aspetta che l'utente inserisca una lettera per 5 secondi}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00174}00174 \textcolor{preprocessor}{\#ifndef \_WIN32}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00175}00175         fd\_set set;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00176}00176         FD\_ZERO(\&set);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00177}00177         FD\_SET(STDIN\_FILENO, \&set);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00178}00178         \textcolor{keyword}{struct }timeval timeout;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00179}00179         timeout.tv\_sec = 5;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00180}00180         timeout.tv\_usec = 0;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00181}00181         \textcolor{keywordtype}{int} rv = select(STDIN\_FILENO + 1, \&set, NULL, NULL, \&timeout);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00182}00182 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00183}00183         \textcolor{keywordflow}{if} (rv == -\/1) \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00184}00184             clear\_chars(SHORTPHRASE\_LENGTH, x, y);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00185}00185             std::cerr << \textcolor{stringliteral}{"{}Errore nella lettura della lettera"{}} << std::endl;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00186}00186             \textcolor{keywordflow}{return} \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00187}00187         \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (rv == 0) \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00188}00188             clear\_chars(SHORTPHRASE\_LENGTH, x, y);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00189}00189             \textcolor{keywordflow}{if} (players\_count > 1)}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00190}00190                 std::cout << \textcolor{stringliteral}{"{}Tempo scaduto"{}} << std::endl;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00191}00191             \textcolor{keywordflow}{return} \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00192}00192         \} \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00193}00193             std::cin >> letter;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00194}00194             clear\_chars(SHORTPHRASE\_LENGTH, x, y);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00195}00195         \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00196}00196 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00197}00197         \textcolor{comment}{// Per implementare il timeout correttamente su windows serve l'uso dei thread}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00198}00198         std::cin >> letter;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00199}00199         clear\_chars(SHORTPHRASE\_LENGTH, x, y);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00200}00200 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00201}00201         \textcolor{comment}{// Pulisce il buffer di input}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00202}00202         std::cin.clear();}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00203}00203         std::cin.ignore(10000, \textcolor{charliteral}{'\(\backslash\)n'});}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00204}00204 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00205}00205         \textcolor{comment}{// Invia la lettera al server}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00206}00206         \mbox{\hyperlink{struct_client_1_1_letter_message}{LetterMessage}} letterMessage;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00207}00207         letterMessage.letter = letter;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00208}00208 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00209}00209         \textcolor{keywordtype}{bool} res = \_send(letterMessage);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00210}00210         \textcolor{keywordflow}{if} (!res)}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00211}00211             \textcolor{keywordflow}{return} \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00212}00212 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00213}00213         \textcolor{comment}{// Aspetta la risposta dal server}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00214}00214         \mbox{\hyperlink{struct_server_1_1_message}{Server::Message}} response;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00215}00215         \_receive(response);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00216}00216 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00217}00217         \textcolor{keywordflow}{if} (response.action == Server::LETTER\_ACCEPTED)}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00218}00218             \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00219}00219         \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00220}00220             \textcolor{keywordflow}{return} \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00221}00221     \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00222}00222 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00223}\mbox{\hyperlink{class_client_1_1_hangman_client_a6c4de01163d810965eb859b5e7dd77ed}{00223}}     \textcolor{keywordtype}{bool} \mbox{\hyperlink{class_client_1_1_hangman_client_a6c4de01163d810965eb859b5e7dd77ed}{HangmanClient::\_getShortPhrase}}() \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00224}00224         \mbox{\hyperlink{struct_terminal_size}{TerminalSize}} size = get\_terminal\_size();}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00225}00225 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00226}00226         \textcolor{keywordtype}{int} x = 2;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00227}00227         \textcolor{keywordtype}{int} y = size.height -\/ 2;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00228}00228 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00229}00229         clear\_chars(SHORTPHRASE\_LENGTH, x, y);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00230}00230 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00231}00231         std::cout << \textcolor{stringliteral}{"{}> "{}} << std::flush;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00232}00232         std::string phrase;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00233}00233 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00234}00234 \textcolor{preprocessor}{\#ifndef \_WIN32}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00235}00235         fd\_set set;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00236}00236         FD\_ZERO(\&set);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00237}00237         FD\_SET(STDIN\_FILENO, \&set);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00238}00238         \textcolor{keyword}{struct }timeval timeout;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00239}00239         timeout.tv\_sec = 10;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00240}00240         timeout.tv\_usec = 0;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00241}00241         \textcolor{keywordtype}{int} rv = select(STDIN\_FILENO + 1, \&set, NULL, NULL, \&timeout);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00242}00242 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00243}00243         \textcolor{keywordflow}{if} (rv == -\/1) \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00244}00244             clear\_chars(SHORTPHRASE\_LENGTH, x, y);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00245}00245             std::cerr << \textcolor{stringliteral}{"{}Errore nella lettura della lettera"{}} << std::endl;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00246}00246             \textcolor{keywordflow}{return} \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00247}00247         \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (rv == 0) \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00248}00248             clear\_chars(SHORTPHRASE\_LENGTH, x, y);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00249}00249             std::cout << \textcolor{stringliteral}{"{}Tempo scaduto"{}} << std::endl;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00250}00250             \textcolor{keywordflow}{return} \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00251}00251         \} \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00252}00252             std::getline(std::cin, phrase);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00253}00253             clear\_chars(SHORTPHRASE\_LENGTH, x, y);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00254}00254         \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00255}00255 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00256}00256         \textcolor{comment}{// Per implementare il timeout correttamente su windows serve l'uso dei thread}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00257}00257         \textcolor{keywordflow}{do} \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00258}00258             std::getline(std::cin, phrase);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00259}00259         \} \textcolor{keywordflow}{while} (phrase.length() == 0);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00260}00260 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00261}00261         \mbox{\hyperlink{struct_client_1_1_short_phrase_message}{ShortPhraseMessage}} shortPhraseMessage;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00262}00262         strncat(shortPhraseMessage.short\_phrase, phrase.c\_str(), SHORTPHRASE\_LENGTH -\/ 1);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00263}00263 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00264}00264         \textcolor{keywordtype}{bool} res = \_send(shortPhraseMessage);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00265}00265 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00266}00266         \textcolor{keywordflow}{if} (!res)}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00267}00267             \textcolor{keywordflow}{return} \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00268}00268 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00269}00269         \mbox{\hyperlink{struct_server_1_1_message}{Server::Message}} response;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00270}00270         \_receive(response);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00271}00271 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00272}00272         \textcolor{keywordflow}{if} (response.action == Server::LETTER\_ACCEPTED)}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00273}00273             \textcolor{keywordflow}{return} \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00274}00274         \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00275}00275             \textcolor{keywordflow}{return} \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00276}00276     \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00277}00277 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00278}\mbox{\hyperlink{class_client_1_1_hangman_client_ae56830347f7aaf1cfce97eac4ec1c7ae}{00278}}     \textcolor{keywordtype}{void} \mbox{\hyperlink{class_client_1_1_hangman_client_ae56830347f7aaf1cfce97eac4ec1c7ae}{HangmanClient::\_waitAction}}() \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00279}00279         \textcolor{comment}{// Aspetta che ci siano dati disponibili da leggere sul socket della dimensione di un messaggio}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00280}00280         fd\_set set;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00281}00281         FD\_ZERO(\&set);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00282}00282         FD\_SET(sockfd, \&set);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00283}00283         select(sockfd + 1, \&set, NULL, NULL, NULL);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00284}00284     \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00285}00285 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00286}\mbox{\hyperlink{class_client_1_1_hangman_client_adadcd60f40b5aeb8e050587754a6e361}{00286}}     \textcolor{keywordtype}{void} \mbox{\hyperlink{class_client_1_1_hangman_client_adadcd60f40b5aeb8e050587754a6e361}{HangmanClient::\_printYourTurn}}() \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00287}00287         \mbox{\hyperlink{struct_terminal_size}{TerminalSize}} size = get\_terminal\_size();}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00288}00288 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00289}00289         \textcolor{keywordtype}{int} x = size.width -\/ ((USERNAME\_LENGTH -\/ 4) \% (size.width / 2));}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00290}00290         \textcolor{keywordtype}{int} y = (size.height / 8) + 3;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00291}00291 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00292}00292         clear\_chars(USERNAME\_LENGTH + 14, x, y);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00293}00293         std::cout << \textcolor{stringliteral}{"{}E' il tuo turno"{}};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00294}00294     \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00295}00295 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00296}\mbox{\hyperlink{class_client_1_1_hangman_client_aa91f4bf3380f97f116a59f9cf4ef027f}{00296}}     \textcolor{keywordtype}{void} \mbox{\hyperlink{class_client_1_1_hangman_client_aa91f4bf3380f97f116a59f9cf4ef027f}{HangmanClient::\_printOtherTurn}}(\mbox{\hyperlink{struct_server_1_1_other_one_turn_message}{Server::OtherOneTurnMessage}} *message) \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00297}00297         \mbox{\hyperlink{struct_terminal_size}{TerminalSize}} size = get\_terminal\_size();}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00298}00298 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00299}00299         \textcolor{keywordtype}{int} x = size.width -\/ ((USERNAME\_LENGTH -\/ 4) \% (size.width / 2));}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00300}00300         \textcolor{keywordtype}{int} y = (size.height / 8) + 3;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00301}00301 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00302}00302         \textcolor{comment}{// Pulisce il buffer perchè quando compilato con Cygwin questa funzione non funziona}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00303}00303         setbuf(stdout, NULL);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00304}00304 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00305}00305         clear\_chars(USERNAME\_LENGTH + 14, x, y);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00306}00306         std::cout << message-\/>player\_name << \textcolor{stringliteral}{"{} sta giocando"{}};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00307}00307 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00308}00308         y = size.height -\/ 2;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00309}00309         clear\_chars(SHORTPHRASE\_LENGTH, 2, y);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00310}00310     \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00311}00311 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00312}\mbox{\hyperlink{class_client_1_1_hangman_client_a05d9183948f45cc6e1d103f5d4cf9844}{00312}}     \textcolor{keywordtype}{void} \mbox{\hyperlink{class_client_1_1_hangman_client_a05d9183948f45cc6e1d103f5d4cf9844}{HangmanClient::\_printPlayerList}}(\mbox{\hyperlink{struct_server_1_1_update_user_message}{Server::UpdateUserMessage}} *message) \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00313}00313         \textcolor{comment}{// Scrive a metà schermo sulla destra con un certo margine la lista dei giocatori}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00314}00314         \mbox{\hyperlink{struct_terminal_size}{TerminalSize}} size = get\_terminal\_size();}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00315}00315         \textcolor{keywordtype}{int} x = size.width -\/ ((USERNAME\_LENGTH -\/ 4) \% (size.width / 2));}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00316}00316         \textcolor{keywordtype}{int} y = (size.height / 8);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00317}00317 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00318}00318         clear\_chars(USERNAME\_LENGTH, x, y -\/ 2);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00319}00319         std::cout << \textcolor{stringliteral}{"{}Players"{}};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00320}00320 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00321}00321         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < 3; i++) \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00322}00322             clear\_chars(USERNAME\_LENGTH, x, y + i);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00323}00323         \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00324}00324 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00325}00325         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < message-\/>user\_count; i++) \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00326}00326             gotoxy(x, y + i);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00327}00327             std::cout << message-\/>usernames[i];}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00328}00328         \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00329}00329     \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00330}00330 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00331}\mbox{\hyperlink{class_client_1_1_hangman_client_a86563e9b95f66d57560ac971e5baca50}{00331}}     \textcolor{keywordtype}{void} \mbox{\hyperlink{class_client_1_1_hangman_client_a86563e9b95f66d57560ac971e5baca50}{HangmanClient::\_printShortPhrase}}(Server::UpdateShortPhraseMessage *message) \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00332}00332         \textcolor{comment}{// Scrive a metà schermo sulla sinistra con un certo margine la shortphrase}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00333}00333         \mbox{\hyperlink{struct_terminal_size}{TerminalSize}} size = get\_terminal\_size();}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00334}00334         \textcolor{keywordtype}{int} x = 2;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00335}00335         \textcolor{keywordtype}{int} y = size.height / 2;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00336}00336 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00337}00337         clear\_chars(SHORTPHRASE\_LENGTH, x, y);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00338}00338         std::cout << message-\/>short\_phrase;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00339}00339     \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00340}00340 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00341}\mbox{\hyperlink{class_client_1_1_hangman_client_a7bf599880317f37e2a493db44ff1161d}{00341}}     \textcolor{keywordtype}{void} \mbox{\hyperlink{class_client_1_1_hangman_client_a7bf599880317f37e2a493db44ff1161d}{HangmanClient::\_printAttempts}}(\mbox{\hyperlink{struct_server_1_1_update_attempts_message}{Server::UpdateAttemptsMessage}} *message) \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00342}00342         clear\_chars(60, 2, 2);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00343}00343 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00344}00344         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < message-\/>attempts; i++) \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00345}00345             \textcolor{keywordtype}{char} atp = message-\/>attempts\_list[i];}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00346}00346             \textcolor{keywordflow}{if} (atp != \textcolor{charliteral}{'\(\backslash\)0'})}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00347}00347                 std::cout << atp << \textcolor{stringliteral}{"{} "{}};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00348}00348         \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00349}00349 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00350}00350         clear\_chars(30, 2, 3);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00351}00351         std::cout << \textcolor{stringliteral}{"{}Errori fatti fin'ora: "{}} << (int) message-\/>errors << \textcolor{stringliteral}{"{}/"{}} << (\textcolor{keywordtype}{int}) message-\/>max\_errors;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00352}00352 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00353}00353         \mbox{\hyperlink{class_client_1_1_hangman_client_ac12c651046eb9cc86d27bb8f0d8b0272}{\_printHangman}}(message-\/>errors);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00354}00354     \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00355}00355 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00356}\mbox{\hyperlink{class_client_1_1_hangman_client_ac12c651046eb9cc86d27bb8f0d8b0272}{00356}}     \textcolor{keywordtype}{void} \mbox{\hyperlink{class_client_1_1_hangman_client_ac12c651046eb9cc86d27bb8f0d8b0272}{HangmanClient::\_printHangman}}(\textcolor{keywordtype}{int} mistakes)\{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00357}00357         \mbox{\hyperlink{struct_terminal_size}{TerminalSize}} size = get\_terminal\_size();}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00358}00358         \textcolor{keywordtype}{int} x = (size.width / 2)+3;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00359}00359         \textcolor{keywordtype}{int} y = (size.height / 2)-\/2;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00360}00360 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00361}00361         \textcolor{keywordflow}{switch} (mistakes)\{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00362}00362             \textcolor{keywordflow}{case} 1: \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00363}00363                 gotoxy(x, y);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00364}00364                 std::cout << \textcolor{stringliteral}{"{}-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/"{}};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00365}00365                 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00366}00366                 \textcolor{keywordflow}{for}(\textcolor{keywordtype}{int} i=1; i<9; i++) \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00367}00367                     gotoxy(x+1, y-\/i);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00368}00368                     std::cout << \textcolor{stringliteral}{"{}|"{}};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00369}00369                 \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00370}00370                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00371}00371             \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00372}00372             \textcolor{keywordflow}{case} 2: \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00373}00373                 gotoxy(x, y-\/9);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00374}00374                 std::cout << \textcolor{stringliteral}{"{}-\/-\/-\/-\/-\/-\/"{}};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00375}00375                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00376}00376             \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00377}00377             \textcolor{keywordflow}{case} 3: \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00378}00378                 gotoxy(x+6,y-\/8);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00379}00379                 std::cout << \textcolor{stringliteral}{"{}|"{}};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00380}00380                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00381}00381             \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00382}00382             \textcolor{keywordflow}{case} 4: \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00383}00383                 gotoxy(x+6,y-\/7);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00384}00384                 std::cout << \textcolor{stringliteral}{"{}O"{}};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00385}00385                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00386}00386             \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00387}00387             \textcolor{keywordflow}{case} 5: \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00388}00388                 gotoxy(x+5,y-\/6);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00389}00389                 std::cout << \textcolor{stringliteral}{"{}-\/+-\/"{}};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00390}00390                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00391}00391             \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00392}00392             \textcolor{keywordflow}{case} 6: \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00393}00393                 gotoxy(x+4,y-\/5);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00394}00394                 std::cout << \textcolor{stringliteral}{"{}/"{}};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00395}00395                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00396}00396             \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00397}00397             \textcolor{keywordflow}{case} 7: \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00398}00398                 gotoxy(x+8,y-\/5);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00399}00399                 std::cout << \textcolor{stringliteral}{"{}\(\backslash\)\(\backslash\)"{}};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00400}00400                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00401}00401             \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00402}00402             \textcolor{keywordflow}{case} 8: \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00403}00403                 gotoxy(x+6,y-\/5);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00404}00404                 std::cout << \textcolor{stringliteral}{"{}|"{}};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00405}00405                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00406}00406             \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00407}00407             \textcolor{keywordflow}{case} 9: \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00408}00408                 gotoxy(x+6,y-\/4);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00409}00409                 std::cout << \textcolor{stringliteral}{"{}|"{}};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00410}00410                 \textcolor{keywordflow}{for}(\textcolor{keywordtype}{int} i=3;i>1;i-\/-\/)\{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00411}00411                     gotoxy(x+5,y-\/i);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00412}00412                     std::cout << \textcolor{stringliteral}{"{}|"{}};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00413}00413                 \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00414}00414                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00415}00415             \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00416}00416             \textcolor{keywordflow}{case} 10: \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00417}00417                 \textcolor{keywordflow}{for}(\textcolor{keywordtype}{int} i=3;i>1;i-\/-\/)\{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00418}00418                     gotoxy(x+7,y-\/i);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00419}00419                     std::cout << \textcolor{stringliteral}{"{}|"{}};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00420}00420                 \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00421}00421                 \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00422}00422             \}  }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00423}00423             \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00424}00424             \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00425}00425         \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00426}00426     \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00427}00427 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00428}\mbox{\hyperlink{class_client_1_1_hangman_client_a2f1429c4f54ca6ef30e1d631eb80e4a8}{00428}}     \textcolor{keywordtype}{void} \mbox{\hyperlink{class_client_1_1_hangman_client_a2f1429c4f54ca6ef30e1d631eb80e4a8}{HangmanClient::\_printWin}}() \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00429}00429         \mbox{\hyperlink{struct_terminal_size}{TerminalSize}} size = get\_terminal\_size();}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00430}00430 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00431}00431         \textcolor{keywordtype}{int} y = size.height -\/ 2;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00432}00432         game\_over = \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00433}00433         gotoxy(2, y);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00434}00434         std::cout << \textcolor{stringliteral}{"{}You Win!"{}} << std::flush;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00435}00435     \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00436}00436 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00437}\mbox{\hyperlink{class_client_1_1_hangman_client_ae25cb48c645654fade08b81f5b2894ba}{00437}}     \textcolor{keywordtype}{void} \mbox{\hyperlink{class_client_1_1_hangman_client_ae25cb48c645654fade08b81f5b2894ba}{HangmanClient::\_printLose}}() \{}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00438}00438         \mbox{\hyperlink{struct_terminal_size}{TerminalSize}} size = get\_terminal\_size();}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00439}00439 }
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00440}00440         \textcolor{keywordtype}{int} y = size.height -\/ 2;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00441}00441         game\_over = \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00442}00442         gotoxy(2, y);}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00443}00443         std::cout << \textcolor{stringliteral}{"{}You Lose."{}} << std::flush;}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00444}00444     \}}
+\DoxyCodeLine{\Hypertarget{client_8cpp_source_l00445}00445 \}}
+
+\end{DoxyCode}

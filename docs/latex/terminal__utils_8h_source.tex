@@ -1,0 +1,81 @@
+\hypertarget{terminal__utils_8h_source}{}\doxysubsection{terminal\+\_\+utils.\+h}
+\label{terminal__utils_8h_source}\index{B:/Cpp/prj-\/socket/lib/Hangman/terminal\_utils.h@{B:/Cpp/prj-\/socket/lib/Hangman/terminal\_utils.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{preprocessor}{\#ifndef TERMINAL\_UTILS\_H}}
+\DoxyCodeLine{2 \textcolor{preprocessor}{\#define TERMINAL\_UTILS\_H}}
+\DoxyCodeLine{3 }
+\DoxyCodeLine{4 \textcolor{preprocessor}{\#include <iostream>}}
+\DoxyCodeLine{5 \textcolor{preprocessor}{\#include <unistd.h>}}
+\DoxyCodeLine{6 }
+\DoxyCodeLine{7 \textcolor{preprocessor}{\#ifdef \_WIN32}}
+\DoxyCodeLine{8 \textcolor{preprocessor}{\#include <windows.h>}}
+\DoxyCodeLine{9 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{10 }
+\DoxyCodeLine{14 \textcolor{keywordtype}{void} gotoxy(\textcolor{keywordtype}{int} x, \textcolor{keywordtype}{int} y) \{}
+\DoxyCodeLine{15 \textcolor{preprocessor}{\#ifdef \_WIN32}}
+\DoxyCodeLine{16     COORD c = \{ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{short}\textcolor{keyword}{>}(x), \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{short}\textcolor{keyword}{>}(y) \};}
+\DoxyCodeLine{17     SetConsoleCursorPosition(GetStdHandle(STD\_OUTPUT\_HANDLE) , c);}
+\DoxyCodeLine{18 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{19     printf(\textcolor{stringliteral}{"{}\%c[\%d;\%df"{}}, 0x1B, y, x);}
+\DoxyCodeLine{20 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{21 \}}
+\DoxyCodeLine{22 }
+\DoxyCodeLine{26 \textcolor{keywordtype}{void} clear\_screen() \{}
+\DoxyCodeLine{27 \textcolor{preprocessor}{\#ifdef \_WIN32}}
+\DoxyCodeLine{28     system(\textcolor{stringliteral}{"{}cls"{}});}
+\DoxyCodeLine{29 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{30     system(\textcolor{stringliteral}{"{}clear"{}});}
+\DoxyCodeLine{31 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{32 \}}
+\DoxyCodeLine{33 }
+\DoxyCodeLine{37 \textcolor{keyword}{struct }\mbox{\hyperlink{struct_terminal_size}{TerminalSize}} \{}
+\DoxyCodeLine{38     \textcolor{keywordtype}{int} width;}
+\DoxyCodeLine{39     \textcolor{keywordtype}{int} height;}
+\DoxyCodeLine{40 \} \textcolor{keyword}{typedef} \mbox{\hyperlink{struct_terminal_size}{TerminalSize}};}
+\DoxyCodeLine{41 }
+\DoxyCodeLine{46 \textcolor{keyword}{inline} \mbox{\hyperlink{struct_terminal_size}{TerminalSize}} get\_terminal\_size() \{}
+\DoxyCodeLine{47     \mbox{\hyperlink{struct_terminal_size}{TerminalSize}} size;}
+\DoxyCodeLine{48     size.width = 0;}
+\DoxyCodeLine{49     size.height = 0;}
+\DoxyCodeLine{50 }
+\DoxyCodeLine{51 \textcolor{preprocessor}{\#ifdef \_WIN32}}
+\DoxyCodeLine{52     CONSOLE\_SCREEN\_BUFFER\_INFO csbi;}
+\DoxyCodeLine{53     \textcolor{keywordtype}{int} columns, rows;}
+\DoxyCodeLine{54 }
+\DoxyCodeLine{55     GetConsoleScreenBufferInfo(GetStdHandle(STD\_OUTPUT\_HANDLE), \&csbi);}
+\DoxyCodeLine{56     columns = csbi.srWindow.Right -\/ csbi.srWindow.Left + 1;}
+\DoxyCodeLine{57     rows = csbi.srWindow.Bottom -\/ csbi.srWindow.Top + 1;}
+\DoxyCodeLine{58 }
+\DoxyCodeLine{59     size.width = columns;}
+\DoxyCodeLine{60     size.height = rows;}
+\DoxyCodeLine{61 \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{62     \textcolor{keyword}{struct }winsize w;}
+\DoxyCodeLine{63     ioctl(STDOUT\_FILENO, TIOCGWINSZ, \&w);}
+\DoxyCodeLine{64 }
+\DoxyCodeLine{65     size.width = w.ws\_col;}
+\DoxyCodeLine{66     size.height = w.ws\_row;}
+\DoxyCodeLine{67 \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{68 }
+\DoxyCodeLine{69     \textcolor{keywordflow}{return} size;}
+\DoxyCodeLine{70 \}}
+\DoxyCodeLine{71 }
+\DoxyCodeLine{72 }
+\DoxyCodeLine{76 \textcolor{keyword}{inline} \textcolor{keywordtype}{void} clear\_chars(\textcolor{keywordtype}{int} chars, \textcolor{keywordtype}{int} x = -\/1, \textcolor{keywordtype}{int} y = -\/1) \{}
+\DoxyCodeLine{77     \textcolor{keywordflow}{if} (x != -\/1 \&\& y != -\/1)}
+\DoxyCodeLine{78         gotoxy(x, y);}
+\DoxyCodeLine{79 }
+\DoxyCodeLine{80     \textcolor{comment}{// Sostituisce con degli spazi}}
+\DoxyCodeLine{81     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < chars; i++) \{}
+\DoxyCodeLine{82         printf(\textcolor{stringliteral}{"{} "{}});}
+\DoxyCodeLine{83     \}}
+\DoxyCodeLine{84 }
+\DoxyCodeLine{85     \textcolor{comment}{// Torna indietro}}
+\DoxyCodeLine{86     \textcolor{keywordflow}{if} (x != -\/1 \&\& y != -\/1)}
+\DoxyCodeLine{87         gotoxy(x, y);}
+\DoxyCodeLine{88 \}}
+\DoxyCodeLine{89 }
+\DoxyCodeLine{90 }
+\DoxyCodeLine{91 \textcolor{preprocessor}{\#endif  }\textcolor{comment}{// TERMINAL\_UTILS\_H}}
+
+\end{DoxyCode}

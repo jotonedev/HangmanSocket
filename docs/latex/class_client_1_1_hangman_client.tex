@@ -1,0 +1,354 @@
+\hypertarget{class_client_1_1_hangman_client}{}\doxysubsection{Riferimenti per la classe Client\+::Hangman\+Client}
+\label{class_client_1_1_hangman_client}\index{Client::HangmanClient@{Client::HangmanClient}}
+\doxysubsubsection*{Composti}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{struct_client_1_1_hangman_client_1_1server__address}{server\+\_\+address}}
+\begin{DoxyCompactList}\small\item\em Struttura contenente le informazioni del server. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Membri pubblici}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_client_1_1_hangman_client_ab2d2eab7cf4d7e8c2e7611d1fa21661b}{Hangman\+Client}} (const char address\mbox{[}$\,$\mbox{]}, const char port\mbox{[}$\,$\mbox{]})
+\item 
+\mbox{\hyperlink{class_client_1_1_hangman_client_ac6a9040d2a393feed47326c8f29ceb21}{Hangman\+Client}} (const std\+::string \&address, int port)
+\item 
+\mbox{\hyperlink{class_client_1_1_hangman_client_a4deb227e75b49e017ef7d909a0e27d10}{Hangman\+Client}} (const std\+::string \&address, const std\+::string \&port)
+\item 
+\mbox{\hyperlink{class_client_1_1_hangman_client_ac6b52ac387af4e64296bb3cc4797e0e8}{$\sim$\+Hangman\+Client}} ()
+\item 
+void \mbox{\hyperlink{class_client_1_1_hangman_client_a33c051ee88314fb677f96175b1187c72}{join}} (const char username\mbox{[}$\,$\mbox{]})
+\item 
+void \mbox{\hyperlink{class_client_1_1_hangman_client_a194a99f123601de73ab9598d513beafd}{loop}} ()
+\item 
+void \mbox{\hyperlink{class_client_1_1_hangman_client_a70639f6d05d18c3359e85f7ae6be2309}{run}} (bool verbose=true)
+\item 
+void \mbox{\hyperlink{class_client_1_1_hangman_client_adc3bc08fc98ac6f5de11ef12f3bfad79}{close}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Membri protetti}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{class_client_1_1_hangman_client_a7c784c7e4dcd4c3f631ca1302729a9ed}{\+\_\+get\+Letter}} ()
+\item 
+bool \mbox{\hyperlink{class_client_1_1_hangman_client_a6c4de01163d810965eb859b5e7dd77ed}{\+\_\+get\+Short\+Phrase}} ()
+\item 
+void \mbox{\hyperlink{class_client_1_1_hangman_client_ae56830347f7aaf1cfce97eac4ec1c7ae}{\+\_\+wait\+Action}} ()
+\item 
+void \mbox{\hyperlink{class_client_1_1_hangman_client_adadcd60f40b5aeb8e050587754a6e361}{\+\_\+print\+Your\+Turn}} ()
+\item 
+void \mbox{\hyperlink{class_client_1_1_hangman_client_aa91f4bf3380f97f116a59f9cf4ef027f}{\+\_\+print\+Other\+Turn}} (Server\+::\+Other\+One\+Turn\+Message $\ast$message)
+\item 
+void \mbox{\hyperlink{class_client_1_1_hangman_client_a05d9183948f45cc6e1d103f5d4cf9844}{\+\_\+print\+Player\+List}} (Server\+::\+Update\+User\+Message $\ast$message)
+\item 
+void \mbox{\hyperlink{class_client_1_1_hangman_client_a86563e9b95f66d57560ac971e5baca50}{\+\_\+print\+Short\+Phrase}} (Server\+::\+Update\+Short\+Phrase\+Message $\ast$message)
+\item 
+void \mbox{\hyperlink{class_client_1_1_hangman_client_a7bf599880317f37e2a493db44ff1161d}{\+\_\+print\+Attempts}} (Server\+::\+Update\+Attempts\+Message $\ast$message)
+\item 
+void \mbox{\hyperlink{class_client_1_1_hangman_client_ac12c651046eb9cc86d27bb8f0d8b0272}{\+\_\+print\+Hangman}} (int mistakes)
+\item 
+void \mbox{\hyperlink{class_client_1_1_hangman_client_a2f1429c4f54ca6ef30e1d631eb80e4a8}{\+\_\+print\+Win}} ()
+\item 
+void \mbox{\hyperlink{class_client_1_1_hangman_client_ae25cb48c645654fade08b81f5b2894ba}{\+\_\+print\+Lose}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Membri privati}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename Type\+Message $>$ }\\bool \mbox{\hyperlink{class_client_1_1_hangman_client_a2e5418a5e8f5adc92042bc1d8265a450}{\+\_\+send}} (Type\+Message \&message)
+\item 
+{\footnotesize template$<$typename Type\+Message $>$ }\\bool \mbox{\hyperlink{class_client_1_1_hangman_client_a77558cc71ab7159d6da09dce2421b4cf}{\+\_\+receive}} (Type\+Message \&message)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Attributi privati}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_client_1_1_hangman_client_a63a7e5e4f8da57470ce8190f532f768c}\label{class_client_1_1_hangman_client_a63a7e5e4f8da57470ce8190f532f768c}} 
+int {\bfseries sockfd}
+\begin{DoxyCompactList}\small\item\em Descrittore del socket del server. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_client_1_1_hangman_client_accc8370228a0959420bcdcdbd259fa8f}\label{class_client_1_1_hangman_client_accc8370228a0959420bcdcdbd259fa8f}} 
+char {\bfseries attempts} \mbox{[}26\mbox{]} \{\}
+\begin{DoxyCompactList}\small\item\em Rappresenta i tentativi fatti fino al momento di accessi durante la partita. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_client_1_1_hangman_client_a3d18fc196caf55f2e2edb1c0268198cf}\label{class_client_1_1_hangman_client_a3d18fc196caf55f2e2edb1c0268198cf}} 
+int {\bfseries attempts\+\_\+count} \{\}
+\begin{DoxyCompactList}\small\item\em Rappresenta la lunghezza dell\textquotesingle{}array attempts. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_client_1_1_hangman_client_ae6a12f4571c1cf58e447982262236a73}\label{class_client_1_1_hangman_client_ae6a12f4571c1cf58e447982262236a73}} 
+char {\bfseries short\+\_\+phrase} \mbox{[}SHORTPHRASE\+\_\+\+LENGTH\mbox{]} \{\}
+\begin{DoxyCompactList}\small\item\em Rappresenta la frase da indovinare. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_client_1_1_hangman_client_a0995040905ebd44e848dc842c3e99ca5}\label{class_client_1_1_hangman_client_a0995040905ebd44e848dc842c3e99ca5}} 
+char {\bfseries blocked\+\_\+letters} \mbox{[}6\mbox{]} = \char`\"{}AEIOU\char`\"{}
+\begin{DoxyCompactList}\small\item\em Rappresenta le lettere che non si possono usare all\textquotesingle{}inizio. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_client_1_1_hangman_client_a156b7b755c7feecf54bb4fb3c9112472}\label{class_client_1_1_hangman_client_a156b7b755c7feecf54bb4fb3c9112472}} 
+uint8\+\_\+t {\bfseries blocked\+\_\+letters\+\_\+round} = 3
+\begin{DoxyCompactList}\small\item\em Rappresenta il numero di turni dopo i quali si possono usare le lettere bloccate. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_client_1_1_hangman_client_aa1f21ec37a8b2f4c932575e30415bd4f}\label{class_client_1_1_hangman_client_aa1f21ec37a8b2f4c932575e30415bd4f}} 
+uint8\+\_\+t {\bfseries players\+\_\+count} = 0
+\begin{DoxyCompactList}\small\item\em Contiene il numero di giocatori connessi al server. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_client_1_1_hangman_client_ac18e4937e5fe8fe26ecf43195165aa2e}\label{class_client_1_1_hangman_client_ac18e4937e5fe8fe26ecf43195165aa2e}} 
+bool {\bfseries game\+\_\+over} = true
+\begin{DoxyCompactList}\small\item\em Contiene se la partita è finita. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsubsection{Descrizione dettagliata}
+Questa classe rappresenta il client del gioco dell\textquotesingle{}impiccato.
+
+Il client si occupa di connettersi al server e inviare le richieste di gioco rispettando il protocollo.
+
+\begin{DoxyNote}{Nota}
+Questa classe non è thread-\/safe
+\end{DoxyNote}
+\begin{DoxyAuthor}{Autori}
+Genero Albis Federico, Amato Davide, Toniutti John 
+\end{DoxyAuthor}
+
+
+\doxysubsubsection{Documentazione dei costruttori e dei distruttori}
+\mbox{\Hypertarget{class_client_1_1_hangman_client_ab2d2eab7cf4d7e8c2e7611d1fa21661b}\label{class_client_1_1_hangman_client_ab2d2eab7cf4d7e8c2e7611d1fa21661b}} 
+\index{Client::HangmanClient@{Client::HangmanClient}!HangmanClient@{HangmanClient}}
+\index{HangmanClient@{HangmanClient}!Client::HangmanClient@{Client::HangmanClient}}
+\doxyparagraph{\texorpdfstring{HangmanClient()}{HangmanClient()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily Client\+::\+Hangman\+Client\+::\+Hangman\+Client (\begin{DoxyParamCaption}\item[{const char}]{address\mbox{[}$\,$\mbox{]},  }\item[{const char}]{port\mbox{[}$\,$\mbox{]} }\end{DoxyParamCaption})}
+
+Costruttore della classe 
+\begin{DoxyParams}{Parametri}
+{\em address} & L\textquotesingle{}indirizzo ip del server \\
+\hline
+{\em port} & La porta del server \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_client_1_1_hangman_client_ac6a9040d2a393feed47326c8f29ceb21}\label{class_client_1_1_hangman_client_ac6a9040d2a393feed47326c8f29ceb21}} 
+\index{Client::HangmanClient@{Client::HangmanClient}!HangmanClient@{HangmanClient}}
+\index{HangmanClient@{HangmanClient}!Client::HangmanClient@{Client::HangmanClient}}
+\doxyparagraph{\texorpdfstring{HangmanClient()}{HangmanClient()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily Client\+::\+Hangman\+Client\+::\+Hangman\+Client (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{address,  }\item[{int}]{port }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Costruttore della classe 
+\begin{DoxyParams}{Parametri}
+{\em address} & L\textquotesingle{}indirizzo ip del server \\
+\hline
+{\em port} & La porta del server \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_client_1_1_hangman_client_a4deb227e75b49e017ef7d909a0e27d10}\label{class_client_1_1_hangman_client_a4deb227e75b49e017ef7d909a0e27d10}} 
+\index{Client::HangmanClient@{Client::HangmanClient}!HangmanClient@{HangmanClient}}
+\index{HangmanClient@{HangmanClient}!Client::HangmanClient@{Client::HangmanClient}}
+\doxyparagraph{\texorpdfstring{HangmanClient()}{HangmanClient()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily Client\+::\+Hangman\+Client\+::\+Hangman\+Client (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{address,  }\item[{const std\+::string \&}]{port }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Costruttore della classe 
+\begin{DoxyParams}{Parametri}
+{\em address} & L\textquotesingle{}indirizzo ip del server \\
+\hline
+{\em port} & La porta del server \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_client_1_1_hangman_client_ac6b52ac387af4e64296bb3cc4797e0e8}\label{class_client_1_1_hangman_client_ac6b52ac387af4e64296bb3cc4797e0e8}} 
+\index{Client::HangmanClient@{Client::HangmanClient}!````~HangmanClient@{$\sim$HangmanClient}}
+\index{````~HangmanClient@{$\sim$HangmanClient}!Client::HangmanClient@{Client::HangmanClient}}
+\doxyparagraph{\texorpdfstring{$\sim$HangmanClient()}{~HangmanClient()}}
+{\footnotesize\ttfamily Client\+::\+Hangman\+Client\+::$\sim$\+Hangman\+Client (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Chiude e libera il socket 
+
+\doxysubsubsection{Documentazione delle funzioni membro}
+\mbox{\Hypertarget{class_client_1_1_hangman_client_a7c784c7e4dcd4c3f631ca1302729a9ed}\label{class_client_1_1_hangman_client_a7c784c7e4dcd4c3f631ca1302729a9ed}} 
+\index{Client::HangmanClient@{Client::HangmanClient}!\_getLetter@{\_getLetter}}
+\index{\_getLetter@{\_getLetter}!Client::HangmanClient@{Client::HangmanClient}}
+\doxyparagraph{\texorpdfstring{\_getLetter()}{\_getLetter()}}
+{\footnotesize\ttfamily bool Client\+::\+Hangman\+Client\+::\+\_\+get\+Letter (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+Questa funzione si occupa di ricevere una lettere in input da tastiera e di inviarla al server \begin{DoxyReturn}{Restituisce}
+True se è andato tutto a buon fine, false altrimenti 
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Valori di ritorno}
+{\em True} & se è andato tutto a buon fine \\
+\hline
+{\em False} & se si ha raggiunto il timeout \\
+\hline
+\end{DoxyRetVals}
+\mbox{\Hypertarget{class_client_1_1_hangman_client_a6c4de01163d810965eb859b5e7dd77ed}\label{class_client_1_1_hangman_client_a6c4de01163d810965eb859b5e7dd77ed}} 
+\index{Client::HangmanClient@{Client::HangmanClient}!\_getShortPhrase@{\_getShortPhrase}}
+\index{\_getShortPhrase@{\_getShortPhrase}!Client::HangmanClient@{Client::HangmanClient}}
+\doxyparagraph{\texorpdfstring{\_getShortPhrase()}{\_getShortPhrase()}}
+{\footnotesize\ttfamily bool Client\+::\+Hangman\+Client\+::\+\_\+get\+Short\+Phrase (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+Questa funzione si occupa di ricevere una frase in input da tastiera e di inviarla al server \begin{DoxyReturn}{Restituisce}
+True se è andato tutto a buon fine, false altrimenti 
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Valori di ritorno}
+{\em True} & se è andato tutto a buon fine \\
+\hline
+{\em False} & se si ha raggiunto il timeout \\
+\hline
+\end{DoxyRetVals}
+\mbox{\Hypertarget{class_client_1_1_hangman_client_a7bf599880317f37e2a493db44ff1161d}\label{class_client_1_1_hangman_client_a7bf599880317f37e2a493db44ff1161d}} 
+\index{Client::HangmanClient@{Client::HangmanClient}!\_printAttempts@{\_printAttempts}}
+\index{\_printAttempts@{\_printAttempts}!Client::HangmanClient@{Client::HangmanClient}}
+\doxyparagraph{\texorpdfstring{\_printAttempts()}{\_printAttempts()}}
+{\footnotesize\ttfamily void Client\+::\+Hangman\+Client\+::\+\_\+print\+Attempts (\begin{DoxyParamCaption}\item[{Server\+::\+Update\+Attempts\+Message $\ast$}]{message }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+Questa funzione si occupa di stampare a video i tentativi fatti 
+\begin{DoxyParams}{Parametri}
+{\em message} & Il messaggio ricevuto dal server \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_client_1_1_hangman_client_ac12c651046eb9cc86d27bb8f0d8b0272}\label{class_client_1_1_hangman_client_ac12c651046eb9cc86d27bb8f0d8b0272}} 
+\index{Client::HangmanClient@{Client::HangmanClient}!\_printHangman@{\_printHangman}}
+\index{\_printHangman@{\_printHangman}!Client::HangmanClient@{Client::HangmanClient}}
+\doxyparagraph{\texorpdfstring{\_printHangman()}{\_printHangman()}}
+{\footnotesize\ttfamily void Client\+::\+Hangman\+Client\+::\+\_\+print\+Hangman (\begin{DoxyParamCaption}\item[{int}]{mistakes }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+Questa funzione si occupa di stampare a video lo stato attuale dell\textquotesingle{}Hangman 
+\begin{DoxyParams}{Parametri}
+{\em mistakes} & Mostra a video l\textquotesingle{}Hangman \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_client_1_1_hangman_client_ae25cb48c645654fade08b81f5b2894ba}\label{class_client_1_1_hangman_client_ae25cb48c645654fade08b81f5b2894ba}} 
+\index{Client::HangmanClient@{Client::HangmanClient}!\_printLose@{\_printLose}}
+\index{\_printLose@{\_printLose}!Client::HangmanClient@{Client::HangmanClient}}
+\doxyparagraph{\texorpdfstring{\_printLose()}{\_printLose()}}
+{\footnotesize\ttfamily void Client\+::\+Hangman\+Client\+::\+\_\+print\+Lose (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+Questa funzione si occupa di stampare a video che il gioco è finito e i giocatori hanno perso \mbox{\Hypertarget{class_client_1_1_hangman_client_aa91f4bf3380f97f116a59f9cf4ef027f}\label{class_client_1_1_hangman_client_aa91f4bf3380f97f116a59f9cf4ef027f}} 
+\index{Client::HangmanClient@{Client::HangmanClient}!\_printOtherTurn@{\_printOtherTurn}}
+\index{\_printOtherTurn@{\_printOtherTurn}!Client::HangmanClient@{Client::HangmanClient}}
+\doxyparagraph{\texorpdfstring{\_printOtherTurn()}{\_printOtherTurn()}}
+{\footnotesize\ttfamily void Client\+::\+Hangman\+Client\+::\+\_\+print\+Other\+Turn (\begin{DoxyParamCaption}\item[{Server\+::\+Other\+One\+Turn\+Message $\ast$}]{message }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+Questa funzione si occupa di stampare a video che è il turno di un altro giocatore 
+\begin{DoxyParams}{Parametri}
+{\em message} & Il messaggio ricevuto dal server \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_client_1_1_hangman_client_a05d9183948f45cc6e1d103f5d4cf9844}\label{class_client_1_1_hangman_client_a05d9183948f45cc6e1d103f5d4cf9844}} 
+\index{Client::HangmanClient@{Client::HangmanClient}!\_printPlayerList@{\_printPlayerList}}
+\index{\_printPlayerList@{\_printPlayerList}!Client::HangmanClient@{Client::HangmanClient}}
+\doxyparagraph{\texorpdfstring{\_printPlayerList()}{\_printPlayerList()}}
+{\footnotesize\ttfamily void Client\+::\+Hangman\+Client\+::\+\_\+print\+Player\+List (\begin{DoxyParamCaption}\item[{Server\+::\+Update\+User\+Message $\ast$}]{message }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+Questa funzione si occupa di stampare a video i giocatori connessi 
+\begin{DoxyParams}{Parametri}
+{\em message} & Il messaggio ricevuto dal server \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_client_1_1_hangman_client_a86563e9b95f66d57560ac971e5baca50}\label{class_client_1_1_hangman_client_a86563e9b95f66d57560ac971e5baca50}} 
+\index{Client::HangmanClient@{Client::HangmanClient}!\_printShortPhrase@{\_printShortPhrase}}
+\index{\_printShortPhrase@{\_printShortPhrase}!Client::HangmanClient@{Client::HangmanClient}}
+\doxyparagraph{\texorpdfstring{\_printShortPhrase()}{\_printShortPhrase()}}
+{\footnotesize\ttfamily void Client\+::\+Hangman\+Client\+::\+\_\+print\+Short\+Phrase (\begin{DoxyParamCaption}\item[{Server\+::\+Update\+Short\+Phrase\+Message $\ast$}]{message }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+Questa funzione si occupa di stampare a video la frase da indovinare 
+\begin{DoxyParams}{Parametri}
+{\em message} & Il messaggio ricevuto dal server \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_client_1_1_hangman_client_a2f1429c4f54ca6ef30e1d631eb80e4a8}\label{class_client_1_1_hangman_client_a2f1429c4f54ca6ef30e1d631eb80e4a8}} 
+\index{Client::HangmanClient@{Client::HangmanClient}!\_printWin@{\_printWin}}
+\index{\_printWin@{\_printWin}!Client::HangmanClient@{Client::HangmanClient}}
+\doxyparagraph{\texorpdfstring{\_printWin()}{\_printWin()}}
+{\footnotesize\ttfamily void Client\+::\+Hangman\+Client\+::\+\_\+print\+Win (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+Questa funzione si occupa di stampare a video che il gioco è finito e i giocatori hanno vinto \mbox{\Hypertarget{class_client_1_1_hangman_client_adadcd60f40b5aeb8e050587754a6e361}\label{class_client_1_1_hangman_client_adadcd60f40b5aeb8e050587754a6e361}} 
+\index{Client::HangmanClient@{Client::HangmanClient}!\_printYourTurn@{\_printYourTurn}}
+\index{\_printYourTurn@{\_printYourTurn}!Client::HangmanClient@{Client::HangmanClient}}
+\doxyparagraph{\texorpdfstring{\_printYourTurn()}{\_printYourTurn()}}
+{\footnotesize\ttfamily void Client\+::\+Hangman\+Client\+::\+\_\+print\+Your\+Turn (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+Questa funzione si occupa di stampare a video che è il tuo turno \mbox{\Hypertarget{class_client_1_1_hangman_client_a77558cc71ab7159d6da09dce2421b4cf}\label{class_client_1_1_hangman_client_a77558cc71ab7159d6da09dce2421b4cf}} 
+\index{Client::HangmanClient@{Client::HangmanClient}!\_receive@{\_receive}}
+\index{\_receive@{\_receive}!Client::HangmanClient@{Client::HangmanClient}}
+\doxyparagraph{\texorpdfstring{\_receive()}{\_receive()}}
+{\footnotesize\ttfamily template$<$typename Type\+Message $>$ \\
+bool Client\+::\+Hangman\+Client\+::\+\_\+receive (\begin{DoxyParamCaption}\item[{Type\+Message \&}]{message }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+Questa funzione si occupa di ricevere un messaggio dal server 
+\begin{DoxyTemplParams}{Parametri dei template}
+{\em Type\+Message} & Il tipo del messaggio da ricevere \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parametri}
+{\em message} & Dove salvare il messaggio ricevuto \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Restituisce}
+True se la ricezione è andata a buon fine, false altrimenti 
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Valori di ritorno}
+{\em True} & se la ricezione è andata a buon fine \\
+\hline
+{\em False} & se la ricezione è fallita\\
+\hline
+\end{DoxyRetVals}
+\begin{DoxyNote}{Nota}
+Il messaggio viene inviato in maniera bloccante 
+\end{DoxyNote}
+\mbox{\Hypertarget{class_client_1_1_hangman_client_a2e5418a5e8f5adc92042bc1d8265a450}\label{class_client_1_1_hangman_client_a2e5418a5e8f5adc92042bc1d8265a450}} 
+\index{Client::HangmanClient@{Client::HangmanClient}!\_send@{\_send}}
+\index{\_send@{\_send}!Client::HangmanClient@{Client::HangmanClient}}
+\doxyparagraph{\texorpdfstring{\_send()}{\_send()}}
+{\footnotesize\ttfamily template$<$typename Type\+Message $>$ \\
+bool Client\+::\+Hangman\+Client\+::\+\_\+send (\begin{DoxyParamCaption}\item[{Type\+Message \&}]{message }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+Questa funzione si occupa di inviare un messaggio al server 
+\begin{DoxyTemplParams}{Parametri dei template}
+{\em Type\+Message} & Il tipo del messaggio da inviare \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parametri}
+{\em message} & Il messaggio da inviare \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Restituisce}
+True se l\textquotesingle{}invio è andato a buon fine, false altrimenti 
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Valori di ritorno}
+{\em True} & se l\textquotesingle{}invio è andato a buon fine \\
+\hline
+{\em False} & se l\textquotesingle{}invio è fallito\\
+\hline
+\end{DoxyRetVals}
+\begin{DoxyNote}{Nota}
+Il messaggio viene inviato in maniera bloccante 
+\end{DoxyNote}
+\mbox{\Hypertarget{class_client_1_1_hangman_client_ae56830347f7aaf1cfce97eac4ec1c7ae}\label{class_client_1_1_hangman_client_ae56830347f7aaf1cfce97eac4ec1c7ae}} 
+\index{Client::HangmanClient@{Client::HangmanClient}!\_waitAction@{\_waitAction}}
+\index{\_waitAction@{\_waitAction}!Client::HangmanClient@{Client::HangmanClient}}
+\doxyparagraph{\texorpdfstring{\_waitAction()}{\_waitAction()}}
+{\footnotesize\ttfamily void Client\+::\+Hangman\+Client\+::\+\_\+wait\+Action (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+Questa funzione permette di bloccare l\textquotesingle{}esecuzione fino a quando non viene ricevuto un messaggio dal server \mbox{\Hypertarget{class_client_1_1_hangman_client_adc3bc08fc98ac6f5de11ef12f3bfad79}\label{class_client_1_1_hangman_client_adc3bc08fc98ac6f5de11ef12f3bfad79}} 
+\index{Client::HangmanClient@{Client::HangmanClient}!close@{close}}
+\index{close@{close}!Client::HangmanClient@{Client::HangmanClient}}
+\doxyparagraph{\texorpdfstring{close()}{close()}}
+{\footnotesize\ttfamily void Client\+::\+Hangman\+Client\+::close (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Questa funzione si occupa di chiudere la connessione col server \mbox{\Hypertarget{class_client_1_1_hangman_client_a33c051ee88314fb677f96175b1187c72}\label{class_client_1_1_hangman_client_a33c051ee88314fb677f96175b1187c72}} 
+\index{Client::HangmanClient@{Client::HangmanClient}!join@{join}}
+\index{join@{join}!Client::HangmanClient@{Client::HangmanClient}}
+\doxyparagraph{\texorpdfstring{join()}{join()}}
+{\footnotesize\ttfamily void Client\+::\+Hangman\+Client\+::join (\begin{DoxyParamCaption}\item[{const char}]{username\mbox{[}$\,$\mbox{]} }\end{DoxyParamCaption})}
+
+Questa funzione si occupa di connettersi al server 
+\begin{DoxyParams}{Parametri}
+{\em username} & Lo username dell\textquotesingle{}utente \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_client_1_1_hangman_client_a194a99f123601de73ab9598d513beafd}\label{class_client_1_1_hangman_client_a194a99f123601de73ab9598d513beafd}} 
+\index{Client::HangmanClient@{Client::HangmanClient}!loop@{loop}}
+\index{loop@{loop}!Client::HangmanClient@{Client::HangmanClient}}
+\doxyparagraph{\texorpdfstring{loop()}{loop()}}
+{\footnotesize\ttfamily void Client\+::\+Hangman\+Client\+::loop (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Questa funzione si occupa di gestire la partita per il client \mbox{\Hypertarget{class_client_1_1_hangman_client_a70639f6d05d18c3359e85f7ae6be2309}\label{class_client_1_1_hangman_client_a70639f6d05d18c3359e85f7ae6be2309}} 
+\index{Client::HangmanClient@{Client::HangmanClient}!run@{run}}
+\index{run@{run}!Client::HangmanClient@{Client::HangmanClient}}
+\doxyparagraph{\texorpdfstring{run()}{run()}}
+{\footnotesize\ttfamily void Client\+::\+Hangman\+Client\+::run (\begin{DoxyParamCaption}\item[{bool}]{verbose = {\ttfamily true} }\end{DoxyParamCaption})}
+
+Questa funzione si occupa di gestire l\textquotesingle{}ingresso del client nel gioco e di gestire la partita 
+\begin{DoxyParams}{Parametri}
+{\em verbose} & Se true, verranno stampati i messaggi di errore \\
+\hline
+\end{DoxyParams}

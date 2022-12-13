@@ -1,0 +1,91 @@
+\hypertarget{client_8h_source}{}\doxysubsection{client.\+h}
+\label{client_8h_source}\index{B:/Cpp/prj-\/socket/lib/Hangman/client.h@{B:/Cpp/prj-\/socket/lib/Hangman/client.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{preprocessor}{\#ifndef CLIENT\_H}}
+\DoxyCodeLine{2 \textcolor{preprocessor}{\#define CLIENT\_H}}
+\DoxyCodeLine{3 }
+\DoxyCodeLine{4 \textcolor{preprocessor}{\#include <iostream>}}
+\DoxyCodeLine{5 \textcolor{preprocessor}{\#include <cstring>}}
+\DoxyCodeLine{6 \textcolor{preprocessor}{\#include "{}protocol.h"{}}}
+\DoxyCodeLine{7 }
+\DoxyCodeLine{8 }
+\DoxyCodeLine{9 \textcolor{keyword}{namespace }Client \{}
+\DoxyCodeLine{10     \textcolor{keyword}{typedef} \textcolor{keyword}{union }\{}
+\DoxyCodeLine{11         Server::Message message;}
+\DoxyCodeLine{12         Server::UpdateUserMessage update\_user\_message;}
+\DoxyCodeLine{13         Server::UpdateShortPhraseMessage update\_short\_phrase\_message;}
+\DoxyCodeLine{14         Server::UpdateAttemptsMessage update\_attempts\_message;}
+\DoxyCodeLine{15         Server::OtherOneTurnMessage other\_one\_turn\_message;}
+\DoxyCodeLine{16     \} ServerMessageUnion;}
+\DoxyCodeLine{17 }
+\DoxyCodeLine{18 }
+\DoxyCodeLine{28     \textcolor{keyword}{class }\mbox{\hyperlink{class_client_1_1_hangman_client}{HangmanClient}} \{}
+\DoxyCodeLine{29     \textcolor{keyword}{private}:}
+\DoxyCodeLine{31         \textcolor{keywordtype}{int} \mbox{\hyperlink{class_client_1_1_hangman_client_a63a7e5e4f8da57470ce8190f532f768c}{sockfd}};}
+\DoxyCodeLine{32 }
+\DoxyCodeLine{34         \textcolor{keyword}{struct }sockaddr\_in \mbox{\hyperlink{struct_client_1_1_hangman_client_1_1server__address}{server\_address}}\{\};}
+\DoxyCodeLine{35 }
+\DoxyCodeLine{37         \textcolor{keywordtype}{char} \mbox{\hyperlink{class_client_1_1_hangman_client_accc8370228a0959420bcdcdbd259fa8f}{attempts}}[26]\{\};}
+\DoxyCodeLine{39         \textcolor{keywordtype}{int} \mbox{\hyperlink{class_client_1_1_hangman_client_a3d18fc196caf55f2e2edb1c0268198cf}{attempts\_count}}\{\};}
+\DoxyCodeLine{40 }
+\DoxyCodeLine{42         \textcolor{keywordtype}{char} \mbox{\hyperlink{class_client_1_1_hangman_client_ae6a12f4571c1cf58e447982262236a73}{short\_phrase}}[SHORTPHRASE\_LENGTH]\{\};}
+\DoxyCodeLine{44         \textcolor{keywordtype}{char} \mbox{\hyperlink{class_client_1_1_hangman_client_a0995040905ebd44e848dc842c3e99ca5}{blocked\_letters}}[6] = \textcolor{stringliteral}{"{}AEIOU"{}};}
+\DoxyCodeLine{46         uint8\_t \mbox{\hyperlink{class_client_1_1_hangman_client_a156b7b755c7feecf54bb4fb3c9112472}{blocked\_letters\_round}} = 3;}
+\DoxyCodeLine{48         uint8\_t \mbox{\hyperlink{class_client_1_1_hangman_client_aa1f21ec37a8b2f4c932575e30415bd4f}{players\_count}} = 0;}
+\DoxyCodeLine{50         \textcolor{keywordtype}{bool} \mbox{\hyperlink{class_client_1_1_hangman_client_ac18e4937e5fe8fe26ecf43195165aa2e}{game\_over}} = \textcolor{keyword}{true};}
+\DoxyCodeLine{51 }
+\DoxyCodeLine{62         \textcolor{keyword}{template}<\textcolor{keyword}{typename} TypeMessage>}
+\DoxyCodeLine{63         \textcolor{keywordtype}{bool} \mbox{\hyperlink{class_client_1_1_hangman_client_a2e5418a5e8f5adc92042bc1d8265a450}{\_send}}(TypeMessage \&message);}
+\DoxyCodeLine{64 }
+\DoxyCodeLine{75         \textcolor{keyword}{template}<\textcolor{keyword}{typename} TypeMessage>}
+\DoxyCodeLine{76         \textcolor{keywordtype}{bool} \mbox{\hyperlink{class_client_1_1_hangman_client_a77558cc71ab7159d6da09dce2421b4cf}{\_receive}}(TypeMessage \&message);}
+\DoxyCodeLine{77 }
+\DoxyCodeLine{78     \textcolor{keyword}{protected}:}
+\DoxyCodeLine{85         \textcolor{keywordtype}{bool} \mbox{\hyperlink{class_client_1_1_hangman_client_a7c784c7e4dcd4c3f631ca1302729a9ed}{\_getLetter}}();}
+\DoxyCodeLine{86 }
+\DoxyCodeLine{93         \textcolor{keywordtype}{bool} \mbox{\hyperlink{class_client_1_1_hangman_client_a6c4de01163d810965eb859b5e7dd77ed}{\_getShortPhrase}}();}
+\DoxyCodeLine{94 }
+\DoxyCodeLine{98         \textcolor{keywordtype}{void} \mbox{\hyperlink{class_client_1_1_hangman_client_ae56830347f7aaf1cfce97eac4ec1c7ae}{\_waitAction}}();}
+\DoxyCodeLine{99 }
+\DoxyCodeLine{103         \textcolor{keywordtype}{void} \mbox{\hyperlink{class_client_1_1_hangman_client_adadcd60f40b5aeb8e050587754a6e361}{\_printYourTurn}}();}
+\DoxyCodeLine{104 }
+\DoxyCodeLine{109         \textcolor{keywordtype}{void} \mbox{\hyperlink{class_client_1_1_hangman_client_aa91f4bf3380f97f116a59f9cf4ef027f}{\_printOtherTurn}}(Server::OtherOneTurnMessage *message);}
+\DoxyCodeLine{110 }
+\DoxyCodeLine{115         \textcolor{keywordtype}{void} \mbox{\hyperlink{class_client_1_1_hangman_client_a05d9183948f45cc6e1d103f5d4cf9844}{\_printPlayerList}}(Server::UpdateUserMessage *message);}
+\DoxyCodeLine{116 }
+\DoxyCodeLine{121         \textcolor{keywordtype}{void} \mbox{\hyperlink{class_client_1_1_hangman_client_a86563e9b95f66d57560ac971e5baca50}{\_printShortPhrase}}(Server::UpdateShortPhraseMessage *message);}
+\DoxyCodeLine{122 }
+\DoxyCodeLine{127         \textcolor{keywordtype}{void} \mbox{\hyperlink{class_client_1_1_hangman_client_a7bf599880317f37e2a493db44ff1161d}{\_printAttempts}}(Server::UpdateAttemptsMessage *message);}
+\DoxyCodeLine{128 }
+\DoxyCodeLine{133         \textcolor{keywordtype}{void} \mbox{\hyperlink{class_client_1_1_hangman_client_ac12c651046eb9cc86d27bb8f0d8b0272}{\_printHangman}}(\textcolor{keywordtype}{int} mistakes);}
+\DoxyCodeLine{134 }
+\DoxyCodeLine{138         \textcolor{keywordtype}{void} \mbox{\hyperlink{class_client_1_1_hangman_client_a2f1429c4f54ca6ef30e1d631eb80e4a8}{\_printWin}}();}
+\DoxyCodeLine{139 }
+\DoxyCodeLine{143         \textcolor{keywordtype}{void} \mbox{\hyperlink{class_client_1_1_hangman_client_ae25cb48c645654fade08b81f5b2894ba}{\_printLose}}();}
+\DoxyCodeLine{144 }
+\DoxyCodeLine{145     \textcolor{keyword}{public}:}
+\DoxyCodeLine{151         \mbox{\hyperlink{class_client_1_1_hangman_client}{HangmanClient}}(\textcolor{keyword}{const} \textcolor{keywordtype}{char} address[], \textcolor{keyword}{const} \textcolor{keywordtype}{char} port[]);}
+\DoxyCodeLine{152 }
+\DoxyCodeLine{158         \mbox{\hyperlink{class_client_1_1_hangman_client_ac6a9040d2a393feed47326c8f29ceb21}{HangmanClient}}(\textcolor{keyword}{const} std::string \&address, \textcolor{keywordtype}{int} port) : \mbox{\hyperlink{class_client_1_1_hangman_client}{HangmanClient}}(address.c\_str(),}
+\DoxyCodeLine{159                                                                             std::to\_string(port).c\_str()) \{\};}
+\DoxyCodeLine{160 }
+\DoxyCodeLine{166         \mbox{\hyperlink{class_client_1_1_hangman_client_a4deb227e75b49e017ef7d909a0e27d10}{HangmanClient}}(\textcolor{keyword}{const} std::string \&address, \textcolor{keyword}{const} std::string \&port) : \mbox{\hyperlink{class_client_1_1_hangman_client}{HangmanClient}}(address.c\_str(),}
+\DoxyCodeLine{167                                                                                            port.c\_str()) \{\};}
+\DoxyCodeLine{168 }
+\DoxyCodeLine{172         \mbox{\hyperlink{class_client_1_1_hangman_client_ac6b52ac387af4e64296bb3cc4797e0e8}{\string~HangmanClient}}();}
+\DoxyCodeLine{173 }
+\DoxyCodeLine{178         \textcolor{keywordtype}{void} \mbox{\hyperlink{class_client_1_1_hangman_client_a33c051ee88314fb677f96175b1187c72}{join}}(\textcolor{keyword}{const} \textcolor{keywordtype}{char} username[]);}
+\DoxyCodeLine{179 }
+\DoxyCodeLine{183         \textcolor{keywordtype}{void} \mbox{\hyperlink{class_client_1_1_hangman_client_a194a99f123601de73ab9598d513beafd}{loop}}();}
+\DoxyCodeLine{184 }
+\DoxyCodeLine{189         \textcolor{keywordtype}{void} \mbox{\hyperlink{class_client_1_1_hangman_client_a70639f6d05d18c3359e85f7ae6be2309}{run}}(\textcolor{keywordtype}{bool} verbose = \textcolor{keyword}{true});}
+\DoxyCodeLine{190 }
+\DoxyCodeLine{194         \textcolor{keywordtype}{void} \mbox{\hyperlink{class_client_1_1_hangman_client_adc3bc08fc98ac6f5de11ef12f3bfad79}{close}}();}
+\DoxyCodeLine{195     \};}
+\DoxyCodeLine{196 \}}
+\DoxyCodeLine{197 }
+\DoxyCodeLine{198 }
+\DoxyCodeLine{199 \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

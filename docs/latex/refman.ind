@@ -1,0 +1,157 @@
+\begin{theindex}
+
+  \item {\_broadcast\_action}
+    \subitem {Server::HangmanServer}, \hyperpage{10}
+  \item {\_check\_disconnected\_players}
+    \subitem {Server::HangmanServer}, \hyperpage{11}
+  \item {\_generate\_short\_phrase}
+    \subitem {Server::HangmanServer}, \hyperpage{11}
+  \item {\_getLetter}
+    \subitem {Client::HangmanClient}, \hyperpage{4}
+  \item {\_getShortPhrase}
+    \subitem {Client::HangmanClient}, \hyperpage{5}
+  \item {\_get\_letter\_from\_player}
+    \subitem {Server::HangmanServer}, \hyperpage{11}
+  \item {\_get\_short\_phrase\_from\_player}
+    \subitem {Server::HangmanServer}, \hyperpage{11}
+  \item {\_is\_short\_phrase\_guessed}
+    \subitem {Server::HangmanServer}, \hyperpage{12}
+  \item {\_load\_short\_phrases}
+    \subitem {Server::HangmanServer}, \hyperpage{12}
+  \item {\_next\_turn}
+    \subitem {Server::HangmanServer}, \hyperpage{13}
+  \item {\_printAttempts}
+    \subitem {Client::HangmanClient}, \hyperpage{5}
+  \item {\_printHangman}
+    \subitem {Client::HangmanClient}, \hyperpage{5}
+  \item {\_printLose}
+    \subitem {Client::HangmanClient}, \hyperpage{5}
+  \item {\_printOtherTurn}
+    \subitem {Client::HangmanClient}, \hyperpage{5}
+  \item {\_printPlayerList}
+    \subitem {Client::HangmanClient}, \hyperpage{6}
+  \item {\_printShortPhrase}
+    \subitem {Client::HangmanClient}, \hyperpage{6}
+  \item {\_printWin}
+    \subitem {Client::HangmanClient}, \hyperpage{6}
+  \item {\_printYourTurn}
+    \subitem {Client::HangmanClient}, \hyperpage{6}
+  \item {\_read}
+    \subitem {Server::HangmanServer}, \hyperpage{13}
+  \item {\_receive}
+    \subitem {Client::HangmanClient}, \hyperpage{6}
+  \item {\_remove\_player}
+    \subitem {Server::HangmanServer}, \hyperpage{13}
+  \item {\_send}
+    \subitem {Client::HangmanClient}, \hyperpage{7}
+    \subitem {Server::HangmanServer}, \hyperpage{13}
+  \item {\_send\_action}
+    \subitem {Server::HangmanServer}, \hyperpage{14}
+  \item {\_send\_update\_attempts}
+    \subitem {Server::HangmanServer}, \hyperpage{14}
+  \item {\_send\_update\_players}
+    \subitem {Server::HangmanServer}, \hyperpage{15}
+  \item {\_send\_update\_short\_phrase}
+    \subitem {Server::HangmanServer}, \hyperpage{15}
+  \item {\_waitAction}
+    \subitem {Client::HangmanClient}, \hyperpage{7}
+  \item {$\sim$HangmanClient}
+    \subitem {Client::HangmanClient}, \hyperpage{4}
+  \item {$\sim$HangmanServer}
+    \subitem {Server::HangmanServer}, \hyperpage{10}
+
+  \indexspace
+
+  \item {accept}
+    \subitem {Server::HangmanServer}, \hyperpage{15}
+
+  \indexspace
+
+  \item {Client::HangmanClient}, \hyperpage{2}
+    \subitem {\_getLetter}, \hyperpage{4}
+    \subitem {\_getShortPhrase}, \hyperpage{5}
+    \subitem {\_printAttempts}, \hyperpage{5}
+    \subitem {\_printHangman}, \hyperpage{5}
+    \subitem {\_printLose}, \hyperpage{5}
+    \subitem {\_printOtherTurn}, \hyperpage{5}
+    \subitem {\_printPlayerList}, \hyperpage{6}
+    \subitem {\_printShortPhrase}, \hyperpage{6}
+    \subitem {\_printWin}, \hyperpage{6}
+    \subitem {\_printYourTurn}, \hyperpage{6}
+    \subitem {\_receive}, \hyperpage{6}
+    \subitem {\_send}, \hyperpage{7}
+    \subitem {\_waitAction}, \hyperpage{7}
+    \subitem {$\sim$HangmanClient}, \hyperpage{4}
+    \subitem {close}, \hyperpage{8}
+    \subitem {HangmanClient}, \hyperpage{3, 4}
+    \subitem {join}, \hyperpage{8}
+    \subitem {loop}, \hyperpage{8}
+    \subitem {run}, \hyperpage{8}
+  \item {Client::HangmanClient::server\_address}, \hyperpage{17}
+  \item {close}
+    \subitem {Client::HangmanClient}, \hyperpage{8}
+
+  \indexspace
+
+  \item {HangmanClient}
+    \subitem {Client::HangmanClient}, \hyperpage{3, 4}
+  \item {HangmanServer}
+    \subitem {Server::HangmanServer}, \hyperpage{10}
+
+  \indexspace
+
+  \item {join}
+    \subitem {Client::HangmanClient}, \hyperpage{8}
+
+  \indexspace
+
+  \item {loop}
+    \subitem {Client::HangmanClient}, \hyperpage{8}
+    \subitem {Server::HangmanServer}, \hyperpage{15}
+
+  \indexspace
+
+  \item {new\_round}
+    \subitem {Server::HangmanServer}, \hyperpage{15}
+
+  \indexspace
+
+  \item {run}
+    \subitem {Client::HangmanClient}, \hyperpage{8}
+    \subitem {Server::HangmanServer}, \hyperpage{16}
+
+  \indexspace
+
+  \item {Server::HangmanServer}, \hyperpage{8}
+    \subitem {\_broadcast\_action}, \hyperpage{10}
+    \subitem {\_check\_disconnected\_players}, \hyperpage{11}
+    \subitem {\_generate\_short\_phrase}, \hyperpage{11}
+    \subitem {\_get\_letter\_from\_player}, \hyperpage{11}
+    \subitem {\_get\_short\_phrase\_from\_player}, \hyperpage{11}
+    \subitem {\_is\_short\_phrase\_guessed}, \hyperpage{12}
+    \subitem {\_load\_short\_phrases}, \hyperpage{12}
+    \subitem {\_next\_turn}, \hyperpage{13}
+    \subitem {\_read}, \hyperpage{13}
+    \subitem {\_remove\_player}, \hyperpage{13}
+    \subitem {\_send}, \hyperpage{13}
+    \subitem {\_send\_action}, \hyperpage{14}
+    \subitem {\_send\_update\_attempts}, \hyperpage{14}
+    \subitem {\_send\_update\_players}, \hyperpage{15}
+    \subitem {\_send\_update\_short\_phrase}, \hyperpage{15}
+    \subitem {$\sim$HangmanServer}, \hyperpage{10}
+    \subitem {accept}, \hyperpage{15}
+    \subitem {HangmanServer}, \hyperpage{10}
+    \subitem {loop}, \hyperpage{15}
+    \subitem {new\_round}, \hyperpage{15}
+    \subitem {run}, \hyperpage{16}
+    \subitem {start}, \hyperpage{16}
+  \item {Server::HangmanServer::address}, \hyperpage{1}
+  \item {Server::Player}, \hyperpage{16}
+  \item {start}
+    \subitem {Server::HangmanServer}, \hyperpage{16}
+
+  \indexspace
+
+  \item {TerminalSize}, \hyperpage{17}
+
+\end{theindex}
