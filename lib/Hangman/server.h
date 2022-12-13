@@ -67,7 +67,7 @@ namespace Server {
         /// Rappresenta la parola o frase da indovinare con i caratteri non ancora indovinati sostituiti da _
         char short_phrase_masked[SHORTPHRASE_LENGTH]{};
         /// Rappresenta le lettere che non si possono indovinare all'inizio
-        const char *start_blocked_letters{};
+        char start_blocked_letters[26]{};
         /// Rappresenta il numero di tentativi che devono essere fatti prima di poter usare le lettere bloccate
         unsigned int blocked_attempts{};
         /// Lista dei client connessi
@@ -246,7 +246,7 @@ namespace Server {
          * @param _filename Il nome del file da cui caricare le frasi
          * @throws std::runtime_error Se il server non è stato avviato
          */
-        void start(uint8_t _max_errors = 10, const string &_start_blocked_letters = "AEIOU",
+        void start(uint8_t _max_errors = 10, const string _start_blocked_letters = "AEIOU",
                    uint8_t _blocked_attempts = 3, const string &_filename = "data/data.txt");
 
         /**

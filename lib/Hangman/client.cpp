@@ -40,7 +40,6 @@ namespace Client {
         // Invio username
         JoinMessage message;
         strncat(message.username, username, USERNAME_LENGTH - 1);
-
         _send(message);
     }
 
@@ -54,6 +53,11 @@ namespace Client {
 
         // Converte il messaggio in un messaggio di tipo union
         ServerMessageUnion message = {raw_msg};
+
+        if (game_over) {
+            clear_screen();
+            game_over = false;
+        }
 
         // Esegue l'azione corrispondente al messaggio ricevuto
         switch (raw_msg.action) {
@@ -425,7 +429,7 @@ namespace Client {
         TerminalSize size = get_terminal_size();
 
         int y = size.height - 2;
-
+        game_over = true;
         gotoxy(2, y);
         std::cout << "You Win!" << std::flush;
     }
@@ -434,7 +438,7 @@ namespace Client {
         TerminalSize size = get_terminal_size();
 
         int y = size.height - 2;
-
+        game_over = true;
         gotoxy(2, y);
         std::cout << "You Lose." << std::flush;
     }

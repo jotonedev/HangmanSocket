@@ -57,13 +57,13 @@ namespace Server {
     }
 
     void
-    HangmanServer::start(uint8_t _max_errors, const string &_start_blocked_letters, uint8_t _blocked_attempts,
+    HangmanServer::start(uint8_t _max_errors, const string _start_blocked_letters, uint8_t _blocked_attempts,
                          const string &_filename) {
         // Inizializzazione delle variabili
         this->max_errors = _max_errors;
         this->current_errors = 0;
         this->current_attempt = 0;
-        this->start_blocked_letters = _start_blocked_letters.c_str();
+        strncat(this->start_blocked_letters, _start_blocked_letters.c_str(), 26);
         this->blocked_attempts = _blocked_attempts;
         this->current_player = nullptr;
         this->attempts.clear();

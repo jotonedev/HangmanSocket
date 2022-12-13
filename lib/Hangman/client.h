@@ -46,6 +46,8 @@ namespace Client {
         uint8_t blocked_letters_round = 3;
         /// Contiene il numero di giocatori connessi al server
         uint8_t players_count = 0;
+        /// Contiene se la partita è finita
+        bool game_over = true;
 
         /**
          * Questa funzione si occupa di inviare un messaggio al server
