@@ -34,7 +34,6 @@ extensions = [
     "sphinx.ext.graphviz",
     "sphinx.ext.intersphinx",
     "sphinx.ext.viewcode",
-    "sphinx_issues",
     'sphinx_rtd_theme',
     'breathe',
     'exhale'
