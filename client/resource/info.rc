@@ -12,8 +12,8 @@ BEGIN
             VALUE "FileVersion",      "1.0\0"
             VALUE "InternalName",     "Hangman Client\0"
             VALUE "LegalCopyright",   "Copyright (c) 2022 John Toniutti\0"
-            VALUE "OriginalFilename", "server.exe\0"
-            VALUE "ProductName",      "server-hangman\0"
+            VALUE "OriginalFilename", "client.exe\0"
+            VALUE "ProductName",      "Client for the Hangman Game\0"
             VALUE "ProductVersion",   "1.0\0"
         END
     END
