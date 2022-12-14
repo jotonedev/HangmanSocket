@@ -24,7 +24,7 @@ void gotoxy(int x, int y) {
  * Clear screen
  */
 void clear_screen() {
-#ifdef _WIN32
+#if defined(_WIN32) || defined(__CYGWIN__)
     system("cls");
 #else
     system("clear");

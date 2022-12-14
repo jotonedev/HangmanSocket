@@ -1,3 +1,4 @@
+
 #include "client.h"
 #include "terminal_utils.h"
 
@@ -22,6 +23,16 @@ namespace Client {
     HangmanClient::~HangmanClient() {
         // Chiusura della sockfd
         shutdown(sockfd, SHUT_RDWR);
+
+#ifdef __CYGWIN__
+        // Cygwin gestisce la maggior parte delle funzioni dei socket con i thread
+        // Ciò impedisce una corretta chiusura del socket
+        // Per ovviare a questo problema, mettiamo una flag al descrittore che lo fa chiudere
+        // non appena viene utilizzato
+        int status = fcntl(sockfd, F_GETFD, 0);
+        if (status >= 0)
+            status = fcntl(sockfd, F_SETFD, status | FD_CLOEXEC);
+#endif
 
 #ifdef _WIN32
         closesocket(sockfd);

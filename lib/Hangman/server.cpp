@@ -45,6 +45,16 @@ namespace Server {
         // Chiusura della sockfd
         shutdown(sockfd, SHUT_RDWR);
 
+#ifdef __CYGWIN__
+        // Cygwin gestisce la maggior parte delle funzioni dei socket con i thread
+        // Ciò impedisce una corretta chiusura del socket
+        // Per ovviare a questo problema, mettiamo una flag al descrittore che lo fa chiudere
+        // non appena viene utilizzato
+        int status = fcntl(sockfd, F_GETFD, 0);
+        if (status >= 0)
+            status = fcntl(sockfd, F_SETFD, status | FD_CLOEXEC);
+#endif
+
 #ifdef _WIN32
         WSACleanup();
 #endif
@@ -57,7 +67,7 @@ namespace Server {
     }
 
     void
-    HangmanServer::start(uint8_t _max_errors, const string _start_blocked_letters, uint8_t _blocked_attempts,
+    HangmanServer::start(uint8_t _max_errors, const string& _start_blocked_letters, uint8_t _blocked_attempts,
                          const string &_filename) {
         // Inizializzazione delle variabili
         this->max_errors = _max_errors;
@@ -140,7 +150,7 @@ namespace Server {
         // copia la lista dei giocatori connessi
         std::vector<Player> players_copy = players;
 
-        if (players_copy.size() == 0) {
+        if (players_copy.empty()) {
             return;
         }
 
@@ -379,7 +389,7 @@ namespace Server {
         Client::LetterMessage packet;
 
         if (!_read(player, packet, packet.action, timeout)) {
-            return -3;
+            return -2;
         }
 
         // Verifica che la lettere faccia parte dell'alafabeto
@@ -437,7 +447,7 @@ namespace Server {
         Client::ShortPhraseMessage packet;
 
         if (!_read(player, packet, packet.action, timeout)) {
-            return -3;
+            return -1;
         }
 
         // Controlla se la frase è corretta
@@ -514,7 +524,7 @@ namespace Server {
     }
 
     void HangmanServer::run(const bool verbose) {
-        int prev_n_players = 0;
+        unsigned int prev_n_players = 0;
 
         try {
             start();

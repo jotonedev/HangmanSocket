@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <cstring>
+#include <sys/fcntl.h>
 #include "protocol.h"
 
 
@@ -51,9 +52,9 @@ namespace Client {
 
         /**
          * Questa funzione si occupa di inviare un messaggio al server
-         * @tparam TypeMessage Il tipo del messaggio da inviare
+         * @tparam TypeMessage Un tipo di messaggio generico di 128 bytes. Quindi può essere un qualsiasi messaggio, anche del client
          * @param message Il messaggio da inviare
-         * @return True se l'invio è andato a buon fine, false altrimenti
+         * @return Lo stato di invio del messaggio
          * @retval True se l'invio è andato a buon fine
          * @retval False se l'invio è fallito
          *
@@ -64,9 +65,9 @@ namespace Client {
 
         /**
          * Questa funzione si occupa di ricevere un messaggio dal server
-         * @tparam TypeMessage Il tipo del messaggio da ricevere
-         * @param message Dove salvare il messaggio ricevuto
-         * @return True se la ricezione è andata a buon fine, false altrimenti
+         * @tparam TypeMessage Un tipo di messaggio generico di 128 bytes. Quindi può essere un qualsiasi messaggio, anche del client
+         * @param message Il messaggio passato per reference sui cui verrà scritto il messaggio ricevuto
+         * @return Lo stato di ricezione del messaggio
          * @retval True se la ricezione è andata a buon fine
          * @retval False se la ricezione è fallita
          *
@@ -78,17 +79,19 @@ namespace Client {
     protected:
         /**
          * Questa funzione si occupa di ricevere una lettere in input da tastiera e di inviarla al server
-         * @return True se è andato tutto a buon fine, false altrimenti
+         *
+         * @return Se la lettera ricevuta è valida
          * @retval True se è andato tutto a buon fine
-         * @retval False se si ha raggiunto il timeout
+         * @retval False se si ha raggiunto il timeout o la lettera è sbagliata
          */
         bool _getLetter();
 
         /**
          * Questa funzione si occupa di ricevere una frase in input da tastiera e di inviarla al server
-         * @return True se è andato tutto a buon fine, false altrimenti
+         *
+         * @return Se la frase ricevuta è valida
          * @retval True se è andato tutto a buon fine
-         * @retval False se si ha raggiunto il timeout
+         * @retval False se si ha raggiunto il timeout o la frase è sbagliata
          */
         bool _getShortPhrase();
 
@@ -127,8 +130,8 @@ namespace Client {
         void _printAttempts(Server::UpdateAttemptsMessage *message);
 
         /**
-         * Questa funzione si occupa di stampare a video lo stato attuale dell'Hangman
-         * @param mistakes Mostra a video l'Hangman
+         * Questa funzione si occupa di stampare a video il disegno dell'impiccato
+         * @param mistakes Il numero di errori fatti
          */
         void _printHangman(int mistakes);
 

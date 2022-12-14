@@ -81,28 +81,29 @@ namespace Server {
 
         /**
          * Permette di inviare un messaggio ad un certo giocatore
-         * @tparam TypeMessage Un tipo di messaggio di 128 bytes
+         * @tparam TypeMessage Un tipo di messaggio generico di 128 bytes. Quindi può essere un qualsiasi messaggio, anche del client
          * @param player Il giocatore a cui inviare il messaggio
          * @param message Il messaggio da inviare
-         * @return true se l'invio è andato a buon fine, false altrimenti
+         *
+         * @return Lo stato di invio del messaggio
          * @retval true L'invio è andato a buon fine
          * @retval false L'invio non è andato a buon fine
-         *
-         * @note Se l'invio fallisce, il giocatore viene disconnesso
          */
         template<typename TypeMessage>
         bool _send(Player *player, TypeMessage &message);
 
         /**
          * Permette di leggere un messaggio da un certo giocatore
-         * @tparam TypeMessage Un tipo di messaggio di 128 bytes
-         * @tparam TypeAction L'azione che ci si aspetta di ricevere
+         * @tparam TypeMessage Un tipo di messaggio generico di 128 bytes. Quindi può essere un qualsiasi messaggio, anche del client
+         * @tparam TypeAction Il tipo di azione che ci si aspetta. Se TypeMessage è un messaggio del client, TypeAction sarà una action del client. Viceversa se TypeMessage è un messaggio del server, TypeAction sarà una action del server.
          *
          * @param player Il giocatore da cui aspettarsi il messaggio
-         * @param message Dove salvare il messaggio
+         * @param message Il messaggio passato per reference sui cui verrà scritto il messaggio ricevuto
          * @param timeout Il tempo massimo di attesa per il messaggio (in secondi)
          *
-         * @return Se la lettura è andata a buon fine
+         * @return Lo stato di lettura del messaggio
+         * @retval true L'invio è andato a buon fine
+         * @retval false L'invio non è andato a buon fine
          */
         template<class TypeMessage>
         bool
@@ -156,23 +157,25 @@ namespace Server {
 
         /**
          * Permette di inviare un'azione ad un certo giocatore
+         * @brief Crea un messaggio generico con l'azione e lo invia con _send()
          * @param player Il giocatore a cui inviare l'azione
          * @param action L'azione da inviare
-         * @return true se l'invio è andato a buon fine, false altrimenti
+         *
+         * @return Lo stato di invio restituito da _send()
          * @retval true L'invio è andato a buon fine
          * @retval false L'invio non è andato a buon fine
          */
         inline bool _send_action(Player *player, Server::Action action);
 
         /**
-         * Permette di eliminare un giocatore dalla lista dei giocatori
+         * Permette di eliminare un giocatore dalla lista dei giocatori e disconnetterlo
          * @param player Il Player da eliminare
          */
         void _remove_player(Player *player);
 
         /**
          * Permette di verificare se la parola o frase è stata indovinata
-         * @return se la parola o frase è stata indovinata
+         * @return Se la parola o frase è stata indovinata
          * @retval true se la parola o la frase è stata indovinata
          * @retval false se la parola o la frase non è stata indovinata
          */
@@ -182,11 +185,12 @@ namespace Server {
          * Permette di ricevere da un player un tentativo contenente una lettera
          * @param player Il player che deve fare il tentativo
          * @param timeout Il tempo massimo da aspettare in secondi
+         *
          * @return Un numero che rappresenta il risultato della funzione
          * @retval 1 Se il tentativo è andato a buon fine e ha indovinato
          * @retval 0 Se il tentativo è andato a buon fine e non ha indovinato
-         * @retval -1 Se la lettera è bloccata o se è già stata usata
-         * @retval -2 Se ha mandato un pacchetto sbagliato (in questo caso il client viene disconnesso)
+         * @retval -1 Se la lettera è bloccata o se è già stata usata o se non è una lettera dell'alfabeto ASCII
+         * @retval -2 Se la ricezione non è andata a buon fine
          */
         int _get_letter_from_player(Player *player, int timeout = 5);
 
@@ -194,10 +198,11 @@ namespace Server {
          * Permette di ricevere da un player un tentativo sulla frase da indovinare
          * @param player Il player che deve fare il tentativo
          * @param timeout Il tempo massimo da aspettare in secondi
+         *
          * @return Un numero che rappresenta il risultato della funzione
          * @retval 1 Se il tentativo è andato a buon fine e ha indovinato
          * @retval 0 Se il tentativo è andato a buon fine e non ha indovinato
-         * @retval -2 Se ha mandato un pacchetto sbagliato (in questo caso il client viene disconnesso)
+         * @retval -1 Se la ricezione non è andata a buon fine
          */
         int _get_short_phrase_from_player(Player *player, int timeout = 10);
 
@@ -230,7 +235,7 @@ namespace Server {
          * @param _port La porta del server
          * @throws std::runtime_error Se non è possibile creare il socket
          */
-        HangmanServer(const string &_ip = "0.0.0.0", uint16_t _port = 9090);
+        explicit HangmanServer(const string &_ip = "0.0.0.0", uint16_t _port = 9090);
 
         /**
          * Distruttore della classe HangmanServer
@@ -246,15 +251,15 @@ namespace Server {
          * @param _filename Il nome del file da cui caricare le frasi
          * @throws std::runtime_error Se il server non è stato avviato
          */
-        void start(uint8_t _max_errors = 10, const string _start_blocked_letters = "AEIOU",
+        void start(uint8_t _max_errors = 10, const string& _start_blocked_letters = "AEIOU",
                    uint8_t _blocked_attempts = 3, const string &_filename = "data/data.txt");
 
         /**
          * Esegue tutte le funzioni del server
          * @brief Permette di lasciare la gestione del server alla classe stessa, che si occuperà di avviare il server e gestire il loop di gioco
-         * @param verbose Se deve stampare un resoconto dello stato del server ad ogni loop
+         * @param verbose Se deve stampare un resoconto dello stato del server ad ogni ciclo
         */
-        void run(const bool verbose = true);
+        void run(bool verbose = true);
     };
 
 }
