@@ -1,1 +1,1 @@
-# Gioco dell'impiccato (Socket)
+# Hangman game (Socket)
